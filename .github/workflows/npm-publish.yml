@@ -26,9 +26,15 @@ jobs:
         working-directory: packages/minotaur-chess-engine/src
         run: npm run build
 
-      - name: Run Semantic Release
+      - name: Publish to npm
         working-directory: packages/minotaur-chess-engine/src
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+        run: npm publish --access public
+
+      # - name: Run Semantic Release
+      #   working-directory: packages/minotaur-chess-engine/src
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #   run: npx semantic-release

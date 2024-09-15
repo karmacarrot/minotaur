@@ -4,8 +4,8 @@
   "description": "A chess engine for JavaScript projects",
   "private": false,
   "license": "MIT",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "main": "./dist/board.js",
+  "module": "./dist/board.mjs",
   "types": "./dist/index.d.ts",
   "keywords": [
     "chess",

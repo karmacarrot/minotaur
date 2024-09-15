@@ -3,6 +3,12 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": ["src"],
+  "include": [
+    "src",
+    "../test/helpers/moveEval.test.ts",
+    "../test/helpers/bitboards.test.ts",
+    "../test/helpers/testHelper.ts",
+    "../test/helpers/boardEvaluation/boardEval.test.ts"
+  ],
   "exclude": ["node_modules"]
 }

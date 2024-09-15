@@ -1,5 +1,5 @@
 {
-  "extends": "@minotaur/typescript-config/nextjs.json",
+  "extends": "@karmacarrot/typescript-config/nextjs.json",
   "compilerOptions": {
     "plugins": [
       {

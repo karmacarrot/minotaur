@@ -1,9 +1,3 @@
-npx create-turbo@latest
-
-npm adduser
-
-npm whoami
-
 # Turborepo starter
 
 This is an official starter Turborepo.

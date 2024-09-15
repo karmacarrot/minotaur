@@ -1,5 +1,5 @@
 {
-  "extends": "@minotaur/typescript-config/react-library.json",
+  "extends": "@karmacarrot/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist"
   },

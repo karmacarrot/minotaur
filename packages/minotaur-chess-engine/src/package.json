@@ -1,8 +1,8 @@
 {
-  "name": "@minotaur/minotaur-chess-engine",
-  "version": "0.0.1",
+  "name": "@karmacarrot/minotaur-chess-engine",
+  "version": "0.0.2",
   "description": "A chess engine for JavaScript projects",
-  "private": true,
+  "private": false,
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -12,12 +12,26 @@
     "chess-engine",
     "games"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "karmacarrot",
   "scripts": {
-    "lint": ""
+    "build": "tsup"
   },
   "devDependencies": {
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.3.3",
+    "@semantic-release/npm": "^12.0.1",
+    "semantic-release": "^24.1.1",
     "tsup": "^8.2.4",
     "typescript": "^5.6.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karmacarrot/minotaur"
+  },
+  "files": [
+    "dist"
+  ]
 }

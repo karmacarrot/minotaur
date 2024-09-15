@@ -1,5 +1,5 @@
 {
-  "name": "@minotaur/eslint-config",
+  "name": "@karmacarrot/eslint-config",
   "version": "0.0.0",
   "private": true,
   "files": [

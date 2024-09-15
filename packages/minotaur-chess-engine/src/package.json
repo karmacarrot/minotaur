@@ -1,6 +1,6 @@
 {
   "name": "@karmacarrot/minotaur-chess-engine",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A chess engine for JavaScript projects.",
   "private": false,
   "license": "MIT",

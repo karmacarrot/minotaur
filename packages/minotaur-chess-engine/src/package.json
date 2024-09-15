@@ -1,0 +1,23 @@
+{
+  "name": "@minotaur/minotaur-chess-engine",
+  "version": "0.0.1",
+  "description": "A chess engine for JavaScript projects",
+  "private": true,
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "keywords": [
+    "chess",
+    "chess-engine",
+    "games"
+  ],
+  "author": "karmacarrot",
+  "scripts": {
+    "lint": ""
+  },
+  "devDependencies": {
+    "tsup": "^8.2.4",
+    "typescript": "^5.6.2"
+  }
+}

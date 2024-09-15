@@ -27,6 +27,7 @@ jobs:
         run: npm run build
 
       - name: Display .npmrc content
+        working-directory: packages/minotaur-chess-engine/src
         run: cat ~/.npmrc
 
       - name: Publish to npm

@@ -1,5 +1,6 @@
 import { LogLevels } from "../logging/definitions";
-import MultiLog from "../logging/logger";
+import { MultiLog } from "../logging/logger";
+
 import { LoggerConfig } from "../logging/logger.config";
 import { BitBoard, BitMove, Piece } from "../types";
 import {

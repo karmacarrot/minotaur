@@ -1,11 +1,11 @@
 {
   "name": "@karmacarrot/minotaur-chess-engine",
-  "version": "0.0.3",
+  "version": "0.0.9",
   "description": "A chess engine for JavaScript projects.",
   "private": false,
   "license": "MIT",
-  "main": "./dist/board.js",
-  "module": "./dist/board.mjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "keywords": [
     "chess",

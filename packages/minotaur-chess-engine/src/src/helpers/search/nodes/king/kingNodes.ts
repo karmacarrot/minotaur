@@ -4,10 +4,8 @@ import {
   allBlackPositions,
   allWhitePositions,
   applyMove,
-  binaryMask64,
   clearPosition,
   findBitPositions,
-  isABCtoFGHwraparound,
   isAtoHwraparound,
   isLongCastleRouteBlocked,
   isOccupiedComposite,
@@ -18,7 +16,6 @@ import {
   blackKingShortCastleRookDestination,
   diagonalOffsets,
   orthagonalOffsets,
-  whiteKingLongCastleDestination,
   whiteKingShortCastleDestination,
   whiteKingShortCastleRookDestination,
 } from "../../../definitions";

@@ -1,6 +1,6 @@
-import { writeFileSync } from "fs";
+//import { writeFileSync } from "fs";
 import { BitBoard, EvalLogs, GameNode, GameStatus } from "../types";
-import { exec } from "child_process";
+//import { exec } from "child_process";
 import { EmptyBoard, unicodePieceMap } from "../helpers/definitions";
 import { BoardArray } from "../board";
 import { bitBoardsReadable } from "../helpers/bitboards";
@@ -111,9 +111,10 @@ export const outputEvalLogsHtml = (logs: EvalLogs, testName: string): void => {
 
   console.log(fileName);
 
-  writeFileSync(fileName, htmlContent);
+  //TODO: find an alternative approach here or move out to a different package
+  // writeFileSync(fileName, htmlContent);
 
-  exec(`start ${fileName}`);
+  // exec(`start ${fileName}`);
 };
 
 export function LogBoardPositionsHTML(currentBoard: BitBoard): string {
@@ -204,7 +205,7 @@ export const outputSingleBitboardHtml = (
 
   console.log(fileName);
 
-  writeFileSync(fileName, htmlContent);
+  // writeFileSync(fileName, htmlContent);
 
-  exec(`start ${fileName}`);
+  // exec(`start ${fileName}`);
 };

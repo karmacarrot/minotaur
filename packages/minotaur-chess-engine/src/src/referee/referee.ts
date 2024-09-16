@@ -4,7 +4,7 @@ import {
   files,
   whiteStartingRank,
 } from "../helpers/definitions";
-import MultiLog from "../logging/logger";
+import { MultiLog } from "../logging/logger";
 import { LogLevels } from "../logging/definitions";
 import { LoggerConfig } from "../logging/logger.config";
 import {

@@ -1,6 +1,6 @@
 import { LoggerConfig } from "./logging/logger.config";
 import { LogLevels } from "./logging/definitions";
-import MultiLog from "./logging/logger";
+import { MultiLog } from "./logging/logger";
 import {
   applyMove,
   getBitBoardPosition,

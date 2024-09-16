@@ -1,6 +1,6 @@
 import { LogLevels } from "./definitions";
 
-function MultiLog(
+export function MultiLog(
   outputType: LogLevels,
   message: string,
   outputVerbosity: LogLevels
@@ -29,5 +29,3 @@ function MultiLog(
       console.log(message);
   }
 }
-
-export default MultiLog;

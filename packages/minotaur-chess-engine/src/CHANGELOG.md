@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/karmacarrot/minotaur/compare/v1.1.0...v1.2.0) (2024-09-17)
+
+
+### Features
+
+* adding components to minotaur react package ([720d075](https://github.com/karmacarrot/minotaur/commit/720d07550f80f2626dc04033f7e3e1e6bdf1e8ed))
+
 # [1.1.0](https://github.com/karmacarrot/minotaur/compare/v1.0.0...v1.1.0) (2024-09-17)
 
 

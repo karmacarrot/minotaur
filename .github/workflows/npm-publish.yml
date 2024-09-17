@@ -7,43 +7,61 @@ on:
 
 jobs:
   release:
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org/"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build with tsup
+          node-version: 21.x
         working-directory: packages/minotaur-chess-engine/src
-        run: npm run build
-
-      - name: Display .npmrc content
-        working-directory: packages/minotaur-chess-engine/src
-        run: cat .npmrc
-
-      - name: Print NPM Token for debugging
-        run: echo $NPM_TOKEN
+      - run: npm ci
+      - run: npm run build
+      - run: npx semantic-release
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# jobs:
+#   release:
+#     runs-on: ubuntu-latest
 
-      - name: Publish to npm
-        working-directory: packages/minotaur-chess-engine/src
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      # - name: Run Semantic Release
-      #   working-directory: packages/minotaur-chess-engine/src
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #   run: npx semantic-release
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "20"
+#           registry-url: "https://registry.npmjs.org/"
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Build with tsup
+#         working-directory: packages/minotaur-chess-engine/src
+#         run: npm run build
+
+#       - name: Display .npmrc content
+#         working-directory: packages/minotaur-chess-engine/src
+#         run: cat .npmrc
+
+#       - name: Print NPM Token for debugging
+#         run: echo $NPM_TOKEN
+#         env:
+#           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+#       # - name: Publish to npm
+#       #   working-directory: packages/minotaur-chess-engine/src
+#       #   env:
+#       #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+#       #   run: npm publish --access public
+
+#       - name: Run Semantic Release
+#         working-directory: packages/minotaur-chess-engine/src
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+#         run: npx semantic-release

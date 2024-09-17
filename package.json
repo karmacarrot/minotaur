@@ -23,6 +23,7 @@
   "workspaces": [
     "apps/*",
     "packages/*",
-    "packages/minotaur-chess-engine/src"
+    "packages/minotaur-chess-engine/src",
+    "packages/minotaur-chess-react/src"
   ]
 }

@@ -1,0 +1,39 @@
+{
+  "name": "@karmacarrot/minotaur-chess-react",
+  "version": "0.0.1",
+  "description": "React components for minotaur chess engine",
+  "private": false,
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "keywords": [
+    "chess",
+    "chess-engine",
+    "games",
+    "react"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "karmacarrot",
+  "scripts": {
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.4",
+    "typescript": "^5.6.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karmacarrot/minotaur"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@karmacarrot/minotaur-chess-engine": "*",
+    "js-confetti": "^0.12.0",
+    "react": "^18.3.1"
+  }
+}

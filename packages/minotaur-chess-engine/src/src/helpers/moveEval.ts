@@ -1,4 +1,3 @@
-import { exit } from "process";
 import {
   BitBoard,
   BitMove,

@@ -119,7 +119,7 @@ export const pieceImages: PieceImages = {
   blackBishop: "bishop_b", //black bishops
   blackRook: "rook_b", //black rooks
   blackQueen: "queen_b", //black queen
-  blackKing: "king_b", //black king
+  blackKing: "king_b", //black king.
 };
 
 export const slidingPieces = [

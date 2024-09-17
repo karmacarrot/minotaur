@@ -1,0 +1,726 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChessBoard should render 1`] = `
+<DocumentFragment>
+  <div
+    class="content-container"
+  >
+    <div
+      class="top-navigation"
+    >
+      <svg
+        class="title-hashtag"
+        fill="currentColor"
+        height="20"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 448 512"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 0 0-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 0 0-11.813 9.891L132.528 128H53.432a12 12 0 0 0-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 0 0-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0 0 11.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0 0 11.813-9.891L315.472 384h79.096a12 12 0 0 0 11.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0 0 11.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"
+        />
+      </svg>
+      <h5
+        class="title-text"
+      >
+        chess
+      </h5>
+      <div
+        class="search"
+      >
+        <input
+          class="search-input"
+          placeholder="Search..."
+          type="text"
+        />
+        <svg
+          class="text-secondary my-auto"
+          fill="currentColor"
+          height="18"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 512 512"
+          width="18"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+          />
+        </svg>
+      </div>
+      <svg
+        class="top-navigation-icon"
+        fill="currentColor"
+        height="24"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 448 512"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M439.39 362.29c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71zM67.53 368c21.22-27.97 44.42-74.33 44.53-159.42 0-.2-.06-.38-.06-.58 0-61.86 50.14-112 112-112s112 50.14 112 112c0 .2-.06.38-.06.58.11 85.1 23.31 131.46 44.53 159.42H67.53zM224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64z"
+        />
+      </svg>
+      <svg
+        class="top-navigation-icon"
+        fill="currentColor"
+        height="24"
+        stroke="currentColor"
+        stroke-width="0"
+        viewBox="0 0 496 512"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"
+        />
+      </svg>
+    </div>
+    <div
+      class="gamecontainer"
+    >
+      <div
+        class="boardcontainer"
+      >
+        <div
+          class="intro"
+        >
+          <p>
+            This chess game is using 64-bit binary integers for each type of piece which are then merged into an array for React to render into the board. State is managed by React and the piece movement is done through applying bitmasks in pure functions. Datastructures are intended to be immutable. Currently only pawns movement rules are enforced. Engine analysis is done by a recursive minimax function with alpha beta pruning yet to be implemented. The intention is to first create a strong engine for the pawns then slowly expand out to the other pieces.
+          </p>
+        </div>
+        <div
+          class="gamecontrols"
+        >
+          <div
+            class="MuiStack-root css-pl8gqh-MuiStack-root"
+          >
+            <div
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+            >
+              <div
+                aria-controls=":r0:"
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                aria-labelledby="board-state-select-label board-state-select"
+                class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                id="board-state-select"
+                role="combobox"
+                tabindex="0"
+              >
+                Start
+              </div>
+              <input
+                aria-hidden="true"
+                aria-invalid="false"
+                class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                tabindex="-1"
+                value="0"
+              />
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
+                data-testid="ArrowDropDownIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M7 10l5 5 5-5z"
+                />
+              </svg>
+              <fieldset
+                aria-hidden="true"
+                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              >
+                <legend
+                  class="css-yjsfm1"
+                >
+                  <span>
+                    Setup
+                  </span>
+                </legend>
+              </fieldset>
+            </div>
+            <button
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
+              tabindex="0"
+              type="button"
+            >
+              Reset
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <div
+              class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+            >
+              <label
+                class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+              >
+                <span
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"
+                >
+                  <input
+                    checked=""
+                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    data-indeterminate="false"
+                    type="checkbox"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    data-testid="CheckBoxIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                    />
+                  </svg>
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </span>
+                <span
+                  class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+                >
+                  Black computer
+                </span>
+              </label>
+              <label
+                class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+              >
+                <span
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"
+                >
+                  <input
+                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    data-indeterminate="false"
+                    type="checkbox"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    data-testid="CheckBoxOutlineBlankIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                    />
+                  </svg>
+                  <span
+                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                  />
+                </span>
+                <span
+                  class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+                >
+                  White Computer
+                </span>
+              </label>
+            </div>
+            <div
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary  css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+            >
+              <div
+                aria-controls=":r1:"
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                aria-labelledby="engine-depth engine-depth-select"
+                class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                id="engine-depth-select"
+                role="combobox"
+                tabindex="0"
+              >
+                3
+              </div>
+              <input
+                aria-hidden="true"
+                aria-invalid="false"
+                class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                tabindex="-1"
+                value="3"
+              />
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-hfutr2-MuiSvgIcon-root-MuiSelect-icon"
+                data-testid="ArrowDropDownIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M7 10l5 5 5-5z"
+                />
+              </svg>
+              <fieldset
+                aria-hidden="true"
+                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              >
+                <legend
+                  class="css-yjsfm1"
+                >
+                  <span>
+                    Depth
+                  </span>
+                </legend>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <div
+          class="boardwrapper"
+        >
+          <div
+            class="chessboard"
+          >
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackRook"
+                style="background-image: url(/assets/images/rook_b.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackKnight"
+                style="background-image: url(/assets/images/knight_b.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackBishop"
+                style="background-image: url(/assets/images/bishop_b.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackQueen"
+                style="background-image: url(/assets/images/queen_b.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackKing"
+                style="background-image: url(/assets/images/king_b.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackBishop"
+                style="background-image: url(/assets/images/bishop_b.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackKnight"
+                style="background-image: url(/assets/images/knight_b.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackRook"
+                style="background-image: url(/assets/images/rook_b.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackPawn"
+                style="background-image: url(/assets/images/pawn_b.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackPawn"
+                style="background-image: url(/assets/images/pawn_b.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackPawn"
+                style="background-image: url(/assets/images/pawn_b.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackPawn"
+                style="background-image: url(/assets/images/pawn_b.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackPawn"
+                style="background-image: url(/assets/images/pawn_b.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackPawn"
+                style="background-image: url(/assets/images/pawn_b.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackPawn"
+                style="background-image: url(/assets/images/pawn_b.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="blackPawn"
+                style="background-image: url(/assets/images/pawn_b.png);"
+              />
+            </div>
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="dark"
+            />
+            <div
+              class="light"
+            />
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whitePawn"
+                style="background-image: url(/assets/images/pawn_w.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whitePawn"
+                style="background-image: url(/assets/images/pawn_w.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whitePawn"
+                style="background-image: url(/assets/images/pawn_w.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whitePawn"
+                style="background-image: url(/assets/images/pawn_w.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whitePawn"
+                style="background-image: url(/assets/images/pawn_w.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whitePawn"
+                style="background-image: url(/assets/images/pawn_w.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whitePawn"
+                style="background-image: url(/assets/images/pawn_w.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whitePawn"
+                style="background-image: url(/assets/images/pawn_w.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whiteRook"
+                style="background-image: url(/assets/images/rook_w.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whiteKnight"
+                style="background-image: url(/assets/images/knight_w.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whiteBishop"
+                style="background-image: url(/assets/images/bishop_w.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whiteQueen"
+                style="background-image: url(/assets/images/queen_w.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whiteKing"
+                style="background-image: url(/assets/images/king_w.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whiteBishop"
+                style="background-image: url(/assets/images/bishop_w.png);"
+              />
+            </div>
+            <div
+              class="dark"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whiteKnight"
+                style="background-image: url(/assets/images/knight_w.png);"
+              />
+            </div>
+            <div
+              class="light"
+            >
+              <div
+                class="piece"
+                draggable="true"
+                id="whiteRook"
+                style="background-image: url(/assets/images/rook_w.png);"
+              />
+            </div>
+          </div>
+          <div
+            class="statusbar"
+          >
+            <ul>
+              <li>
+                Turn: White
+              </li>
+              <li>
+                History: 
+                <ul />
+              </li>
+              <li>
+                White player: Human
+              </li>
+              <li>
+                Black player: Computer
+              </li>
+            </ul>
+            <div
+              class="evalbarcontainer"
+            >
+              0.04
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

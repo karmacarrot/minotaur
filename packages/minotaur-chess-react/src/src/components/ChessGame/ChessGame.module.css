@@ -1,0 +1,20 @@
+.boardcontainer {
+  width: 100%;
+}
+
+.dumpcontainer {
+  width: 100%;
+}
+
+.gamecontainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.intro {
+  margin: 50px;
+}
+
+.boardwrapper {
+  display: flex;
+}

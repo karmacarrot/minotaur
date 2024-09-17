@@ -1,0 +1,10 @@
+.arrayvalue {
+  border: 1px;
+  border-style: solid;
+  display: flex;
+  float: left;
+  padding: 5px;
+}
+.datadump {
+  margin: 50px;
+}

@@ -163,7 +163,7 @@ var pieceImages = {
   blackQueen: "queen_b",
   //black queen
   blackKing: "king_b"
-  //black king
+  //black king.
 };
 var slidingPieces = [
   "whitePawn",

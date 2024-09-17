@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/karmacarrot/minotaur/compare/v1.0.0...v1.1.0) (2024-09-17)
+
+
+### Features
+
+* testing semantic with a feature commit ([c891159](https://github.com/karmacarrot/minotaur/commit/c891159f52bad40a8cd92ca88c0853296a69bb71))
+
 # 1.0.0 (2024-09-17)
 
 

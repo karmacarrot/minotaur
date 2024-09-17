@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/karmacarrot/minotaur/compare/v1.2.0...v1.2.1) (2024-09-17)
+
+
+### Bug Fixes
+
+* re-exporting components ([d4c8c4d](https://github.com/karmacarrot/minotaur/commit/d4c8c4dacc911a3d206aff029d9680b64db91a2b))
+
 # [1.2.0](https://github.com/karmacarrot/minotaur/compare/v1.1.0...v1.2.0) (2024-09-17)
 
 

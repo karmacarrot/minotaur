@@ -3,7 +3,7 @@
 import { Piece, pieceImages } from "@karmacarrot/minotaur-chess-engine";
 import styles from "./Tile.module.css";
 
-export default function Tile({
+export function Tile({
   movePiece,
   pickUpPiece,
   putDownPiece,

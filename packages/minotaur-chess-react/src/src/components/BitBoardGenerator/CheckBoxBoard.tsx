@@ -5,7 +5,7 @@ interface CheckBoxBoardProps {
   setCheckboxState: (row: number, col: number, isChecked: boolean) => void;
 }
 
-export default function CheckBoxBoard({
+export function CheckBoxBoard({
   checkboxStates,
   setCheckboxState,
 }: CheckBoxBoardProps) {

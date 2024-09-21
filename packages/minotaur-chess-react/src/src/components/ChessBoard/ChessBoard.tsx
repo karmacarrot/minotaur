@@ -1,6 +1,6 @@
 "use client";
 import styles from "./ChessBoard.module.css";
-import Tile from "./../Tile/Tile";
+import { Tile } from "./../Tile/Tile";
 import { useState } from "react";
 import {
   xOrYTileLength,
@@ -9,7 +9,7 @@ import {
 } from "@karmacarrot/minotaur-chess-engine";
 import { BoardOffset } from "./definitions";
 
-export default function ChessBoard({
+export function ChessBoard({
   boardArray,
   blackKingCheck,
   whiteKingCheck,

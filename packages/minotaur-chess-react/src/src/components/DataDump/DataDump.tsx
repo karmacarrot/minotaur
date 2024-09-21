@@ -4,7 +4,7 @@ import {
   BoardArray,
 } from "@karmacarrot/minotaur-chess-engine";
 import styles from "./DataDump.module.css";
-export default function DataDump({ boardState }: { boardState: BitBoard }) {
+export function DataDump({ boardState }: { boardState: BitBoard }) {
   const boardAsArray = BoardArray(boardState);
   return (
     <div className={styles.datadump}>

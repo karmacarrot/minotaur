@@ -1,12 +1,12 @@
 "use client";
 
-import ChessBoard from "../ChessBoard/ChessBoard";
+import { ChessBoard } from "../ChessBoard/ChessBoard";
 import styles from "./ChessGame.module.css";
 import { GameStatus } from "../GameStatus/GameStatus";
 import { GameControls } from "../GameControls/GameControls";
-import { useMinotaur } from "@karmacarrot/minotaur-chess-react";
+import { useMinotaur } from "../../hooks/useMinotaur";
 
-export default function ChessGame() {
+export function ChessGame() {
   const {
     currentBoard,
     resetGame,

@@ -6,7 +6,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import ChessBoard from "../ChessBoard/ChessBoard";
+import { ChessBoard } from "../ChessBoard/ChessBoard";
 import {
   BoardArray,
   initBoard,
@@ -15,10 +15,10 @@ import {
 } from "@karmacarrot/minotaur-chess-engine";
 
 import { useState } from "react";
-import CheckBoxBoard from "./CheckBoxBoard";
+import { CheckBoxBoard } from "./CheckBoxBoard";
 import styles from "./BitBoardGenerator.module.css";
 
-export default function BitBoardGenerator() {
+export function BitBoardGenerator() {
   const [currentBoard, setCurrentBoard] = useState(
     initBoard(BoardArrangements.EmptyBoard)
   );

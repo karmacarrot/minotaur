@@ -3,6 +3,12 @@ export type BoardUpdateResponse = {
   MoveAttempted: BoardMove;
 };
 
+export interface MinotaurConfig {
+  pieceImages: {
+    [key: string]: string;
+  };
+}
+
 export type BoardMove = {
   PieceMoved: Piece;
   PieceTaken: Piece;

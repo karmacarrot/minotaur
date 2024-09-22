@@ -5,8 +5,13 @@ import styles from "./ChessGame.module.css";
 import { GameStatus } from "../GameStatus/GameStatus";
 import { GameControls } from "../GameControls/GameControls";
 import { useMinotaur } from "../../hooks/useMinotaur";
+import { ChessGameProps } from "../../definitions";
 
-export function ChessGame() {
+export const ChessGame: React.FC<ChessGameProps> = ({ config }) => {
+  if (!config || !config.pieceImages) {
+    throw new Error("minotaurConfig is not provided or missing pieceImages!");
+  }
+
   const {
     currentBoard,
     resetGame,
@@ -34,6 +39,7 @@ export function ChessGame() {
               movePiece={movePiece}
               blackKingCheck={gameStatus.blackKingChecked}
               whiteKingCheck={gameStatus.whiteKingChecked}
+              config={config}
             ></ChessBoard>
             <GameStatus
               boardState={currentBoard}
@@ -70,4 +76,4 @@ export function ChessGame() {
       </div>
     </div>
   );
-}
+};

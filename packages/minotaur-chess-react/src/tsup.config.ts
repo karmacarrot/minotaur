@@ -9,6 +9,7 @@ export default defineConfig({
   dts: true,
   shims: true,
   skipNodeModulesBundle: true,
-  plugins: [cssModulesPlugin()],
+  plugins: [cssModulesPlugin({ inject: true })],
   clean: true,
+  onSuccess: "node ./copy-assets.mjs",
 });

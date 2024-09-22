@@ -1,6 +1,6 @@
 {
   "name": "@karmacarrot/minotaur-chess-react",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "React components for minotaur chess engine",
   "private": false,
   "license": "MIT",
@@ -21,6 +21,8 @@
     "build": "tsup"
   },
   "devDependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@karmacarrot/eslint-config": "*",
     "@karmacarrot/typescript-config": "*",
     "@turbo/gen": "^1.12.4",
@@ -28,8 +30,12 @@
     "@types/node": "^20.11.24",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
+    "cpx": "^1.5.0",
     "esbuild-css-modules-plugin": "^3.1.2",
+    "esbuild-plugin-copy": "^2.1.1",
     "eslint": "^8.57.0",
+    "react": "^18",
+    "react-dom": "^18",
     "tsup": "^8.2.4",
     "typescript": "^5.6.2"
   },
@@ -41,9 +47,14 @@
     "dist"
   ],
   "dependencies": {
-    "@karmacarrot/minotaur-chess-engine": "*",
+    "@karmacarrot/minotaur-chess-engine": "*"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@mui/material": "^6.1.0",
     "js-confetti": "^0.12.0",
-    "react": "^18.3.1"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

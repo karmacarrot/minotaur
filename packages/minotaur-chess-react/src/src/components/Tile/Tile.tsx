@@ -1,6 +1,10 @@
 "use client";
 
-import { Piece, pieceImages } from "@karmacarrot/minotaur-chess-engine";
+import {
+  MinotaurConfig,
+  Piece,
+  pieceImages,
+} from "@karmacarrot/minotaur-chess-engine";
 import styles from "./Tile.module.css";
 
 export function Tile({
@@ -10,6 +14,7 @@ export function Tile({
   tiletype,
   piece,
   threat,
+  config,
 }: {
   movePiece: (piece: Piece, x: number, y: number) => any;
   pickUpPiece: (piece: Piece, x: number, y: number) => any;
@@ -17,10 +22,11 @@ export function Tile({
   tiletype: string;
   piece: Piece;
   threat: boolean;
+  config: MinotaurConfig;
 }) {
   let pieceImage = "";
-  if (piece) {
-    pieceImage = `/assets/images/${pieceImages[piece]}.png`;
+  if (piece && config.pieceImages[piece]) {
+    pieceImage = config.pieceImages[piece];
   }
   return (
     <div className={tiletype === "dark" ? styles.dark : styles.light}>

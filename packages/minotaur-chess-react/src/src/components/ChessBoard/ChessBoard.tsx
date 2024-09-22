@@ -8,12 +8,14 @@ import {
   Piece,
 } from "@karmacarrot/minotaur-chess-engine";
 import { BoardOffset } from "./definitions";
+import { MinotaurConfig } from "@karmacarrot/minotaur-chess-engine";
 
 export function ChessBoard({
   boardArray,
   blackKingCheck,
   whiteKingCheck,
   movePiece,
+  config,
 }: {
   boardArray: ChessboardArray;
   blackKingCheck: boolean;
@@ -26,6 +28,7 @@ export function ChessBoard({
     yTo: number,
     boardOffset: BoardOffset
   ) => void;
+  config: MinotaurConfig;
 }) {
   let tiles = [];
   let useDark = false;
@@ -71,6 +74,7 @@ export function ChessBoard({
             putDownPiece={endDragPiece}
             movePiece={dragPiece}
             threat={threat}
+            config={config}
           />
         ) : (
           <Tile
@@ -81,6 +85,7 @@ export function ChessBoard({
             putDownPiece={endDragPiece}
             movePiece={dragPiece}
             threat={threat}
+            config={config}
           />
         )
       );

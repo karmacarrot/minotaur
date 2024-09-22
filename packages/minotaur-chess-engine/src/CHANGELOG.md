@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/karmacarrot/minotaur/compare/v1.2.1...v1.3.0) (2024-09-22)
+
+
+### Features
+
+* adding images, config for consuming apps, various refactoring ([04b31a8](https://github.com/karmacarrot/minotaur/commit/04b31a888ebce275a61bd3542fc9c9ad7f16b193))
+
 ## [1.2.1](https://github.com/karmacarrot/minotaur/compare/v1.2.0...v1.2.1) (2024-09-17)
 
 

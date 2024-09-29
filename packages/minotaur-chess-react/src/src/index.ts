@@ -10,3 +10,5 @@ export * from "./components/GameStatus/GameStatus";
 export * from "./components/Tile/Tile";
 
 export * from "./definitions";
+
+export type { MinotaurConfig } from "@karmacarrot/minotaur-chess-engine";

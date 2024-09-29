@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./EvaluationBar.module.css";
+
 //import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
 
 export function EvaluationBar({ score }: { score: number }) {

@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/karmacarrot/minotaur/compare/v1.3.0...v1.3.1) (2024-09-29)
+
+
+### Bug Fixes
+
+* refactored react components to use styled components instead of partials ([d7147b7](https://github.com/karmacarrot/minotaur/commit/d7147b7cfc33aa66351ebab3d59ab6ac2dfe31d6))
+
 # [1.3.0](https://github.com/karmacarrot/minotaur/compare/v1.2.1...v1.3.0) (2024-09-22)
 
 

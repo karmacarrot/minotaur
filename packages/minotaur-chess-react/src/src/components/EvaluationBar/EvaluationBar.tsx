@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./EvaluationBar.module.css";
 //import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
 
-function EvaluationBar({ score }: { score: number }) {
+export function EvaluationBar({ score }: { score: number }) {
   return (
     <div>
       Eval: {score}
@@ -21,5 +21,3 @@ function EvaluationBar({ score }: { score: number }) {
     </div>
   );
 }
-
-export default EvaluationBar;

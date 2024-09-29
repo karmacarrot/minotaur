@@ -1,5 +1,5 @@
 "use client";
-import styles from "./ChessBoard.module.css";
+
 import { Tile } from "./../Tile/Tile";
 import { useState } from "react";
 import {
@@ -9,6 +9,18 @@ import {
 } from "@karmacarrot/minotaur-chess-engine";
 import { BoardOffset } from "./definitions";
 import { MinotaurConfig } from "@karmacarrot/minotaur-chess-engine";
+import styled from "styled-components";
+
+const TileContainer = styled.div`
+  width: 400px;
+  height: 400px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  margin: 50px;
+  border: 1px;
+  border-style: solid;
+`;
 
 export function ChessBoard({
   boardArray,
@@ -96,7 +108,7 @@ export function ChessBoard({
   }
 
   return (
-    <div
+    <TileContainer
       ref={(el) => {
         if (!el) return;
         boardOffset = {
@@ -104,9 +116,8 @@ export function ChessBoard({
           y: el.getBoundingClientRect().y,
         };
       }}
-      className={styles.chessboard}
     >
       {tiles}
-    </div>
+    </TileContainer>
   );
 }

@@ -1,7 +1,4 @@
 import { defineConfig } from "tsup";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const cssModulesPlugin = require("esbuild-css-modules-plugin");
 
 export default defineConfig({
   format: ["cjs", "esm"],
@@ -9,7 +6,8 @@ export default defineConfig({
   dts: true,
   shims: true,
   skipNodeModulesBundle: true,
-  plugins: [cssModulesPlugin({ inject: true })],
   clean: true,
-  onSuccess: "node ./copy-assets.mjs",
+
+  onSuccess:
+    "cross-env npx postcss ./src/**/*.css --dir dist && node ./copy-assets.mjs",
 });

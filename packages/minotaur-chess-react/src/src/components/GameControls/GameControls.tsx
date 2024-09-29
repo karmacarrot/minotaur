@@ -2,7 +2,6 @@
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
-import styles from "./GameControls.module.css";
 import {
   Checkbox,
   FormControlLabel,
@@ -13,6 +12,14 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { BoardArrangements } from "@karmacarrot/minotaur-chess-engine";
+import styled from "styled-components";
+
+const GameControlsContainer = styled.div`
+  margin-left: 50px;
+  margin-top: 10px;
+  margin-bottom: 10;
+`;
+
 export function GameControls({
   resetGame,
   updateControl,
@@ -55,7 +62,7 @@ export function GameControls({
   };
 
   return (
-    <div className={styles.gamecontrols}>
+    <GameControlsContainer>
       <Stack spacing={2} direction='row'>
         <Select
           labelId='board-state-select-label'
@@ -126,6 +133,6 @@ export function GameControls({
           <MenuItem value={4}>4</MenuItem>
         </Select>
       </Stack>
-    </div>
+    </GameControlsContainer>
   );
 }

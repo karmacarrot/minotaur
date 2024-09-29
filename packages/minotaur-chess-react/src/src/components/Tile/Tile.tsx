@@ -1,11 +1,41 @@
 "use client";
 
-import {
-  MinotaurConfig,
-  Piece,
-  pieceImages,
-} from "@karmacarrot/minotaur-chess-engine";
-import styles from "./Tile.module.css";
+import styled from "styled-components";
+import { MinotaurConfig, Piece } from "@karmacarrot/minotaur-chess-engine";
+
+const TileContainer = styled.div<{ tileType: string }>`
+  height: 50px;
+  width: 50px;
+  display: grid;
+  background-color: ${({ tileType }) =>
+    tileType === "dark" ? "#975bba" : "#e6cdf3"};
+`;
+
+const PieceContainer = styled.div<{ threat: boolean; pieceImage: string }>`
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 45px;
+  height: 50px;
+  width: 50px;
+  background-image: url(${({ pieceImage }) => pieceImage});
+  hover {
+    cursor: grab;
+  }
+  active {
+    cursor: grabbing;
+  }
+  pointer-events: auto;
+  ${({ threat }) =>
+    threat &&
+    `
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgb(134, 12, 12);
+    background-size: 45px;
+    height: 50px;
+    width: 50px;
+  `}
+`;
 
 export function Tile({
   movePiece,
@@ -28,11 +58,11 @@ export function Tile({
   if (piece && config.pieceImages[piece]) {
     pieceImage = config.pieceImages[piece];
   }
+
   return (
-    <div className={tiletype === "dark" ? styles.dark : styles.light}>
+    <TileContainer tileType={tiletype}>
       {piece && (
         <div
-          className={threat ? styles.threat : styles.piece}
           draggable
           onDragStart={(e) => {
             pickUpPiece(piece, e.pageX, e.pageY);
@@ -43,10 +73,10 @@ export function Tile({
           onDragEnd={(e) => {
             putDownPiece(piece, e.pageX, e.pageY);
           }}
-          id={piece}
-          style={{ backgroundImage: `url(${pieceImage})` }}
-        ></div>
+        >
+          <PieceContainer threat={threat} pieceImage={pieceImage} id={piece} />
+        </div>
       )}
-    </div>
+    </TileContainer>
   );
 }

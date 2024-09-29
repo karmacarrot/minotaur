@@ -1,11 +1,33 @@
 "use client";
 
 import { ChessBoard } from "../ChessBoard/ChessBoard";
-import styles from "./ChessGame.module.css";
+
 import { GameStatus } from "../GameStatus/GameStatus";
 import { GameControls } from "../GameControls/GameControls";
 import { useMinotaur } from "../../hooks/useMinotaur";
 import { ChessGameProps } from "../../definitions";
+import styled from "styled-components";
+
+const GameContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const BoardContainer = styled.div`
+  width: 100%;
+`;
+
+const DumpContainer = styled.div`
+  width: 100%;
+`;
+
+const IntroContainer = styled.div`
+  margin: 50px;
+`;
+
+const BoardWrapper = styled.div`
+  display: flex;
+`;
 
 export const ChessGame: React.FC<ChessGameProps> = ({ config }) => {
   if (!config || !config.pieceImages) {
@@ -25,15 +47,15 @@ export const ChessGame: React.FC<ChessGameProps> = ({ config }) => {
 
   return (
     <div className='content-container'>
-      <div className={styles.gamecontainer}>
-        <div className={styles.boardcontainer}>
+      <GameContainer>
+        <BoardContainer>
           <GameControls
             updateControl={updateComputerControl}
             resetGame={resetGame}
             engineDepth={engineDepth}
             setDepth={setEngineDepth}
           ></GameControls>
-          <div className={styles.boardwrapper}>
+          <BoardWrapper>
             <ChessBoard
               boardArray={boardAsArray}
               movePiece={movePiece}
@@ -45,8 +67,8 @@ export const ChessGame: React.FC<ChessGameProps> = ({ config }) => {
               boardState={currentBoard}
               gameStatus={gameStatus}
             ></GameStatus>
-          </div>
-          <div className={styles.intro}>
+          </BoardWrapper>
+          <IntroContainer>
             <p>
               This chess game is using 64-bit binary integers for each type of
               piece which are then merged into an array for React to render into
@@ -68,12 +90,12 @@ export const ChessGame: React.FC<ChessGameProps> = ({ config }) => {
               <li>Castling / en passant - to do</li>
               <li>alpha / beta pruning, eval optimisations - to do</li>
             </ul>
-          </div>
-        </div>
-        {/* <div className={styles.dumpcontainer}>
+          </IntroContainer>
+        </BoardContainer>
+        {/* <DumpContainer>
           <DataDump boardState={currentBoard} />
-        </div> */}
-      </div>
+        </DumpContainer> */}
+      </GameContainer>
     </div>
   );
 };

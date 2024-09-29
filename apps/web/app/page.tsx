@@ -1,12 +1,15 @@
 "use client";
 import { ChessGame } from "@karmacarrot/minotaur-chess-react";
-import { minotaurConfig } from "./../minotaur";
 import styles from "./page.module.css";
+import { minotaurConfig } from "../minotaur";
 
 export default function Home() {
   return (
     <div className={styles.page}>
-      <ChessGame config={minotaurConfig}></ChessGame>
+      <main className={styles.main}>
+        <ChessGame config={minotaurConfig}></ChessGame>
+      </main>
+      <footer className={styles.footer}></footer>
     </div>
   );
 }

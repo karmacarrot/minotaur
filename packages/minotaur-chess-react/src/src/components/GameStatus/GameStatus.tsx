@@ -4,8 +4,8 @@ import {
   evaluateBoard,
   GameStatus as GameStatusModel,
 } from "@karmacarrot/minotaur-chess-engine";
-import EvaluationBar from "../EvaluationBar/EvaluationBar";
-import styles from "./GameStatus.module.css";
+import { EvaluationBar } from "../EvaluationBar/EvaluationBar";
+import styled from "styled-components";
 
 function renderMoveHistory(moveHistory: BoardMove[]) {
   const moveString = (move: BoardMove) => {
@@ -22,6 +22,11 @@ function renderMoveHistory(moveHistory: BoardMove[]) {
   return <ul>{moveHistory.map((x) => moveString(x))}</ul>;
 }
 
+const StatusContainer = styled.div`
+  margin: 50px;
+  float: left;
+`;
+
 export function GameStatus({
   gameStatus,
   boardState,
@@ -32,7 +37,7 @@ export function GameStatus({
   const evalBoard = evaluateBoard(boardState, gameStatus.isWhitesTurn);
 
   return (
-    <div className={styles.statusbar}>
+    <StatusContainer>
       <ul>
         <li key='turn'>Turn: {gameStatus.isWhitesTurn ? "White" : "Black"}</li>
 
@@ -48,6 +53,6 @@ export function GameStatus({
         </li>
       </ul>
       <EvaluationBar score={evalBoard}></EvaluationBar>
-    </div>
+    </StatusContainer>
   );
 }

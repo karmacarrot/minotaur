@@ -1,6 +1,6 @@
 {
   "name": "@karmacarrot/minotaur-chess-react",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "React components for minotaur chess engine",
   "private": false,
   "license": "MIT",

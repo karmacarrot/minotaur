@@ -1,4 +1,4 @@
-// import { MinotaurConfig } from "@karmacarrot/minotaur-chess-react";
+import { MinotaurConfig } from "@karmacarrot/minotaur-chess-react";
 
 export const minotaurConfig: MinotaurConfig = {
   pieceImages: {

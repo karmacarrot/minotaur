@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config) => {
-    config.resolve.symlinks = false;
+    config.watchOptions = {
+      ignored: /node_modules([\\]+|\/)+(?!@karmacarrot)/,
+    };
     return config;
   },
 };

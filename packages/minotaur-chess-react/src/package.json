@@ -18,7 +18,8 @@
   },
   "author": "karmacarrot",
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "devDependencies": {
     "@emotion/react": "^11.11.4",

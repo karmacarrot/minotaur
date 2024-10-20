@@ -1,19 +1,14 @@
 /**
  * @jest-environment node
  */
+
 import {
+  StartingBoard,
+  movePiece,
+  StartingNode,
   createEvalLogs,
-  outputSinglePiecePositions,
-} from "../../../../../Logging/evaluationLogs";
-import { movePiece } from "../../../../board";
-import {
-  allBlackPositions,
-  allWhitePositions,
-  bitCount,
-} from "../../../bitboards";
-import { StartingBoard } from "../../../definitions";
-import { StartingNode } from "../nodeGenerators";
-import { queenNodes } from "./queenNodes";
+  queenNodes,
+} from "@karmacarrot/minotaur-chess-engine";
 
 describe("queenNodes", () => {
   it("returns all legal white queen nodes after moving d pawn and queen", () => {

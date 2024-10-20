@@ -1,20 +1,22 @@
-import { BoardArray } from "../../src/src/board";
-import { BitBoard } from "../types";
-import { bigIntToBinaryString } from "../../src/src/helpers/bitboards";
-import { unicodePieceMap } from "../../src/src/helpers/definitions";
+import {
+  BitBoard,
+  BoardArray,
+  unicodePieceMap,
+  bigIntToBinaryString,
+} from '@karmacarrot/minotaur-chess-engine';
 
 export function LogBoardPositions(currentBoard: BitBoard) {
   const board = BoardArray(currentBoard);
-  let boardString = "";
+  let boardString = '';
   for (let row = 7; row >= 0; row--) {
-    let rowString = "________________________________________\n";
+    let rowString = '________________________________________\n';
     for (let col = 7; col >= 0; col--) {
-      rowString += "| ";
+      rowString += '| ';
       const piece = board[row][col];
-      rowString += piece ? `${unicodePieceMap[piece] || piece}` : ".";
-      rowString += " |";
+      rowString += piece ? `${unicodePieceMap[piece] || piece}` : '.';
+      rowString += ' |';
     }
-    boardString += rowString + "\n";
+    boardString += rowString + '\n';
   }
   console.log(boardString);
 }

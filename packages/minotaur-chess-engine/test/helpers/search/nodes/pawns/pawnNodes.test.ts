@@ -1,33 +1,32 @@
 /**
  * @jest-environment node
  */
-import { LoggerConfig } from "../../../../../../logger.config";
+
 import {
-  createEvalLogs,
-  outputEvalLogsHtml,
-} from "../../../../../Logging/evaluationLogs";
-import { DuellingPawnsBoard } from "../../../../referee/mockBoardStates";
-import { allPositions, applyMove, bitCount } from "../../../bitboards";
-import {
-  EmptyBoard,
-  InitialGameStatus,
-  StartingBoard,
-} from "../../../definitions";
-import { generateNodeId } from "../nodeGenerators";
-import {
+  allPositions,
+  applyMove,
+  bitCount,
   blackPawnNodes,
   blackPawnTwoSquareNodes,
+  createEvalLogs,
+  DuellingPawnsBoard,
+  EmptyBoard,
+  generateNodeId,
+  InitialGameStatus,
+  LoggerConfig,
+  outputEvalLogsHtml,
+  StartingBoard,
   whitePawnNodes,
-} from "./pawnNodes";
+} from '@karmacarrot/minotaur-chess-engine';
 
-describe("whitePawnNodes", () => {
-  it("returns 16 possible nodes from a starting board", () => {
+describe('whitePawnNodes', () => {
+  it('returns 16 possible nodes from a starting board', () => {
     const startBoard = { ...StartingBoard };
     const startStatus = { ...InitialGameStatus };
     const currentNode = {
       boardState: startBoard,
       gameState: startStatus,
-      parentId: "",
+      parentId: '',
       id: generateNodeId(),
     };
 
@@ -35,13 +34,13 @@ describe("whitePawnNodes", () => {
     expect(whitePawnNodeArray.length).toBe(16);
   });
 
-  it("returns 14 possible white nodes from duelling pawns board", () => {
+  it('returns 14 possible white nodes from duelling pawns board', () => {
     const duellingBoard = { ...DuellingPawnsBoard };
     const startStatus = { ...InitialGameStatus };
     const currentNode = {
       boardState: duellingBoard,
       gameState: startStatus,
-      parentId: "",
+      parentId: '',
       id: generateNodeId(),
     };
 
@@ -54,14 +53,14 @@ describe("whitePawnNodes", () => {
     }
   });
 
-  it("returns 16 possible nodes for black pawns from a starting row", () => {
+  it('returns 16 possible nodes for black pawns from a starting row', () => {
     const startBoard = { ...EmptyBoard };
     startBoard.blackPawn = StartingBoard.blackPawn;
     const startStatus = { ...InitialGameStatus };
     const currentNode = {
       boardState: startBoard,
       gameState: startStatus,
-      parentId: "",
+      parentId: '',
       id: generateNodeId(),
     };
 
@@ -69,17 +68,17 @@ describe("whitePawnNodes", () => {
     expect(blackPawnNodeArray.length).toBe(16);
   });
 
-  it("returns 16 possible nodes for black pawns from a starting row after white d4", () => {
+  it('returns 16 possible nodes for black pawns from a starting row after white d4', () => {
     const startBoard = { ...StartingBoard };
     const startStatus = { ...InitialGameStatus };
 
-    const newBoard = applyMove(startBoard, 12, 28, "whitePawn");
+    const newBoard = applyMove(startBoard, 12, 28, 'whitePawn');
     startStatus.isWhitesTurn = false;
 
     const currentNode = {
       boardState: newBoard,
       gameState: startStatus,
-      parentId: "",
+      parentId: '',
       id: generateNodeId(),
     };
 
@@ -87,13 +86,13 @@ describe("whitePawnNodes", () => {
     expect(blackPawnNodeArray.length).toBe(16);
   });
 
-  it("returns 14 possible black pawn nodes from duelling pawns board", () => {
+  it('returns 14 possible black pawn nodes from duelling pawns board', () => {
     const duellingBoard = { ...DuellingPawnsBoard };
     const startStatus = { ...InitialGameStatus };
     const currentNode = {
       boardState: duellingBoard,
       gameState: startStatus,
-      parentId: "",
+      parentId: '',
       id: generateNodeId(),
     };
 
@@ -107,47 +106,44 @@ describe("whitePawnNodes", () => {
   });
 });
 
-describe("blackPawnTwoSquareNodes", () => {
-  it("returns 8 possible 2 step moves from white d4 opening", () => {
+describe('blackPawnTwoSquareNodes', () => {
+  it('returns 8 possible 2 step moves from white d4 opening', () => {
     const startBoard = { ...StartingBoard };
     const startStatus = { ...InitialGameStatus };
 
-    const newBoard = applyMove(startBoard, 12, 28, "whitePawn");
+    const newBoard = applyMove(startBoard, 12, 28, 'whitePawn');
     startStatus.isWhitesTurn = false;
 
     const currentNode = {
       boardState: newBoard,
       gameState: startStatus,
-      parentId: "",
+      parentId: '',
       id: generateNodeId(),
     };
 
     const allOccupiedPositions = allPositions(currentNode.boardState);
 
-    const blackPawnNodeArray = blackPawnTwoSquareNodes(
-      currentNode,
-      allOccupiedPositions
-    );
+    const blackPawnNodeArray = blackPawnTwoSquareNodes(currentNode, allOccupiedPositions);
     expect(blackPawnNodeArray.length).toBe(8);
   });
 
-  it("cannot move onto occupied squares in the same file", () => {
+  it('cannot move onto occupied squares in the same file', () => {
     const startBoard = { ...StartingBoard };
     const startStatus = { ...InitialGameStatus };
     const evalLogs = createEvalLogs();
-    const firstMove = applyMove(startBoard, 10, 26, "whitePawn");
-    const secondMove = applyMove(firstMove, 53, 37, "blackPawn");
-    const thirdMove = applyMove(secondMove, 26, 34, "whitePawn");
+    const firstMove = applyMove(startBoard, 10, 26, 'whitePawn');
+    const secondMove = applyMove(firstMove, 53, 37, 'blackPawn');
+    const thirdMove = applyMove(secondMove, 26, 34, 'whitePawn');
     startStatus.isWhitesTurn = false;
 
     const currentNode = {
       boardState: thirdMove,
       gameState: startStatus,
-      parentId: "",
+      parentId: '',
       id: generateNodeId(),
     };
 
-    const illegalMove = applyMove(thirdMove, 50, 34, "blackPawn");
+    const illegalMove = applyMove(thirdMove, 50, 34, 'blackPawn');
 
     const blackPawnNodeArray = blackPawnNodes(currentNode);
     const foundNode = blackPawnNodeArray.find((node) => {
@@ -159,10 +155,7 @@ describe("blackPawnTwoSquareNodes", () => {
       blackPawnNodeArray.forEach((pawnNode) => {
         evalLogs.evalAddNode(pawnNode, 0);
       });
-      outputEvalLogsHtml(
-        evalLogs,
-        "cannot move onto occupied squares in the same file"
-      );
+      outputEvalLogsHtml(evalLogs, 'cannot move onto occupied squares in the same file');
     }
 
     expect(foundNode).toBeFalsy();

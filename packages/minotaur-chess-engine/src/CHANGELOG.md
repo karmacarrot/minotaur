@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/karmacarrot/minotaur/compare/v1.4.0...v1.4.1) (2024-10-20)
+
+
+### Bug Fixes
+
+* fixing non running tests ([e506523](https://github.com/karmacarrot/minotaur/commit/e5065239558747669185490725a92fdc4783deec))
+
 # [1.4.0](https://github.com/karmacarrot/minotaur/compare/v1.3.1...v1.4.0) (2024-09-29)
 
 

@@ -243,37 +243,43 @@ export const useMinotaur = (boardSideLength: number) => {
   };
 
   useEffect(() => {
-    if (
-      !gameStatus.isWhitesTurn &&
-      gameStatus.blackComputerControl &&
-      !gameStatus.isGameOver
-    ) {
-      console.log("Black to move!");
-      const bestMove = FindBestMoveMiniMax(
-        currentBoard,
-        gameStatus,
-        engineDepth
-      );
-
-      if (bestMove.to > 0 && bestMove.from > 0) {
-        console.log(`computer moves black ${bestMove.from} to ${bestMove.to}`);
-        console.log(`computer made ${bestMove.evaluations} evaluations`);
-        const newBoardState = applyMove(
+    const makeComputerMove = async () => {
+      if (
+        !gameStatus.isWhitesTurn &&
+        gameStatus.blackComputerControl &&
+        !gameStatus.isGameOver
+      ) {
+        console.log("Black to move!");
+        const bestMove = await FindBestMoveMiniMax(
           currentBoard,
-          bestMove.from,
-          bestMove.to,
-          bestMove.piece
+          gameStatus,
+          engineDepth
         );
-        setCurrentBoard(newBoardState);
 
-        const bestBoardMove = bitMoveToBoardMove(bestMove);
-        handleMoveHistoryUpdates(bestBoardMove);
-        checkCheckStatus(newBoardState);
-      } else {
-        console.log("checking mate for black");
-        checkMateCheck(0, gameStatus.blackKingChecked);
+        if (bestMove.to > 0 && bestMove.from > 0) {
+          console.log(
+            `computer moves black ${bestMove.from} to ${bestMove.to}`
+          );
+          console.log(`computer made ${bestMove.evaluations} evaluations`);
+          const newBoardState = applyMove(
+            currentBoard,
+            bestMove.from,
+            bestMove.to,
+            bestMove.piece
+          );
+          setCurrentBoard(newBoardState);
+
+          const bestBoardMove = bitMoveToBoardMove(bestMove);
+          handleMoveHistoryUpdates(bestBoardMove);
+          checkCheckStatus(newBoardState);
+        } else {
+          console.log("checking mate for black");
+          checkMateCheck(0, gameStatus.blackKingChecked);
+        }
       }
-    }
+    };
+
+    makeComputerMove();
   }, [currentBoard, gameStatus, checkCheckStatus, engineDepth, checkMateCheck]);
 
   return {

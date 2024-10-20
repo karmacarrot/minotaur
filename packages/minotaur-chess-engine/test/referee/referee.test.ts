@@ -1,8 +1,3 @@
-import { isLegalMove, isOnStartingRank, isOpponentChecked } from "./referee";
-import { BitBoard, BoardMove, Piece } from "../types";
-import { EndGameBoard, MiddleGameBoard } from "./mockBoardStates";
-import { movePiece, moveSlidingPiece } from "../board";
-import { allBlackPositions, allWhitePositions } from "../helpers/bitboards";
 describe("isLegalMove", () => {
   it.each([
     ["whitePawn", "Doesn't move at all", null, "e", "e", 2, 2, false],

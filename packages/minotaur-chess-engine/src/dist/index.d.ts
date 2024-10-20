@@ -308,7 +308,7 @@ declare function isLongCastleRouteBlocked(board: BitBoard, isWhitesTurn: boolean
  * @deprecated The method should not be used
  */
 declare function FindBestMoves(currentBoard: BitBoard, isWhitesTurn: boolean): ScoreArray;
-declare function FindBestMoveMiniMax(currentBoard: BitBoard, currentGameState: GameStatus, engineDepth: number): BitMove;
+declare function FindBestMoveMiniMax(currentBoard: BitBoard, currentGameState: GameStatus, engineDepth: number): Promise<BitMove>;
 declare function WhitePawnCaptures(boardState: BitBoard, allOccupiedBlackPositions: bigint): BitMove[];
 declare function WhitePawnMovesComposite(boardState: BitBoard): BitMove[];
 declare function AllWhitePawnMovesOneSquare(boardState: BitBoard, allOccupiedPositions: bigint): bigint;

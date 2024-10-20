@@ -1824,7 +1824,7 @@ function FindBestMoves(currentBoard, isWhitesTurn) {
   moveScores.sort((a, b) => b.score - a.score);
   return moveScores.slice(0, 3);
 }
-function FindBestMoveMiniMax(currentBoard, currentGameState, engineDepth) {
+async function FindBestMoveMiniMax(currentBoard, currentGameState, engineDepth) {
   const currentNode = {
     boardState: currentBoard,
     gameState: currentGameState,

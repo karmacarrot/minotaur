@@ -55,11 +55,11 @@ export function FindBestMoves(
   return moveScores.slice(0, 3);
 }
 
-export function FindBestMoveMiniMax(
+export async function FindBestMoveMiniMax(
   currentBoard: BitBoard,
   currentGameState: GameStatus,
   engineDepth: number
-): BitMove {
+): Promise<BitMove> {
   const currentNode = {
     boardState: currentBoard,
     gameState: currentGameState,

@@ -1,20 +1,20 @@
-import { BitBoard, BitMove, EvalLogs, GameNode } from "../../types";
-import { evaluateBoard } from "../boardevaluation/boardEval";
-import { generateLegalMoves } from "./nodes/nodeGenerators";
-import { getMoveFromBoardStates } from "../bitboards";
+import { BitBoard, BitMove, EvalLogs, GameNode } from '../../types';
+import { evaluateBoard } from '../boardevaluation/boardEval';
+import { generateLegalMoves } from './nodes/nodeGenerators';
+import { getMoveFromBoardStates } from '../bitboards';
 
 export function maxMove(
   node: GameNode,
   depth: number,
   scoreForWhite: boolean,
   evalLogs: EvalLogs
-): BitMove {
+): [BitMove, GameNode[]] {
   if (depth === 0 || node.gameState.isGameOver) {
     const score = evaluateBoard(node.boardState, scoreForWhite);
     const scoredNoMove = noMove(score);
 
     evalLogs.evalAddNode(node, depth);
-    return scoredNoMove;
+    return [scoredNoMove, []];
   }
 
   let maxEval = -Infinity;
@@ -35,7 +35,7 @@ export function maxMove(
     }
   }
   evalLogs.evalAddNode(node, depth);
-  return scoredMove(maxEval, node.boardState, maxMove);
+  return [scoredMove(maxEval, node.boardState, maxMove), possibleMaximiserMoves];
 }
 
 function miniMax(
@@ -106,17 +106,13 @@ function noMove(score: number) {
   return {
     from: 0,
     to: 0,
-    piece: "none",
-    pieceTaken: "none",
+    piece: 'none',
+    pieceTaken: 'none',
     score: score,
   } as BitMove;
 }
 
-export function scoredMove(
-  score: number,
-  previousBoardState: BitBoard,
-  newBoardState: BitBoard
-) {
+export function scoredMove(score: number, previousBoardState: BitBoard, newBoardState: BitBoard) {
   let scoredBitmove = getMoveFromBoardStates(previousBoardState, newBoardState);
   scoredBitmove.score = score;
   return scoredBitmove;

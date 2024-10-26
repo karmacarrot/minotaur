@@ -1,5 +1,5 @@
-"use client";
-import { useCallback, useEffect, useState } from "react";
+'use client';
+import { useCallback, useEffect, useState } from 'react';
 import {
   BoardArray,
   movePiece as movePieceOnBoard,
@@ -11,20 +11,17 @@ import {
   InitialGameStatus,
   BoardMove,
   BitBoard,
-  LogLevels,
   Piece,
   applyMove,
   FindBestMoveMiniMax,
   isOpponentCheckedMemo,
-} from "@karmacarrot/minotaur-chess-engine";
+} from '@karmacarrot/minotaur-chess-engine';
 
-import JSConfetti from "js-confetti";
-import { BoardOffset } from "../definitions";
+import JSConfetti from 'js-confetti';
+import { BoardOffset } from '../definitions';
 
 export const useMinotaur = (boardSideLength: number) => {
-  const [currentBoard, setCurrentBoard] = useState(
-    initBoard(BoardArrangements.StartingPositions)
-  );
+  const [currentBoard, setCurrentBoard] = useState(initBoard(BoardArrangements.StartingPositions));
 
   const [gameStatus, setGameStatus] = useState(InitialGameStatus);
   const boardAsArray = BoardArray({ ...currentBoard });
@@ -59,37 +56,26 @@ export const useMinotaur = (boardSideLength: number) => {
     return;
   };
 
-  const checkMateCheck = useCallback(
-    (potentialMoves: number, isChecked: boolean) => {
-      if (potentialMoves === 0) {
-        updateGameEndStatus("setGameOver", true);
-        const jsConfetti = new JSConfetti();
+  const checkMateCheck = useCallback((potentialMoves: number, isChecked: boolean) => {
+    if (potentialMoves === 0) {
+      updateGameEndStatus('setGameOver', true);
+      const jsConfetti = new JSConfetti();
 
-        if (isChecked) {
-          jsConfetti.addConfetti();
-        }
+      if (isChecked) {
+        jsConfetti.addConfetti();
       }
-    },
-    []
-  );
+    }
+  }, []);
 
   const checkCheckStatus = useCallback(
     (newBoardState: BitBoard) => {
-      updateCheckStatus("setWhiteCheck", false);
-      updateCheckStatus("setBlackCheck", false);
+      updateCheckStatus('setWhiteCheck', false);
+      updateCheckStatus('setBlackCheck', false);
       if (isOpponentCheckedMemo(newBoardState, gameStatus.isWhitesTurn).check) {
-        updateCheckStatus(
-          gameStatus.isWhitesTurn ? "setBlackCheck" : "setWhiteCheck",
-          true
-        );
+        updateCheckStatus(gameStatus.isWhitesTurn ? 'setBlackCheck' : 'setWhiteCheck', true);
       }
-      if (
-        isOpponentCheckedMemo(newBoardState, !gameStatus.isWhitesTurn).check
-      ) {
-        updateCheckStatus(
-          !gameStatus.isWhitesTurn ? "setBlackCheck" : "setWhiteCheck",
-          true
-        );
+      if (isOpponentCheckedMemo(newBoardState, !gameStatus.isWhitesTurn).check) {
+        updateCheckStatus(!gameStatus.isWhitesTurn ? 'setBlackCheck' : 'setWhiteCheck', true);
       }
     },
     [gameStatus]
@@ -103,32 +89,19 @@ export const useMinotaur = (boardSideLength: number) => {
     yTo: number,
     boardOffset: BoardOffset
   ) => {
-    // MultiLog(
-    //   LogLevels.info,
-    //   `moving ${piece}, ${xFrom}, ${yFrom}, ${xTo}, ${yTo}`,
-    //   LoggerConfig.verbosity
-    // );
-
-    if (gameStatus.isWhitesTurn && !piece?.toLowerCase().includes("white")) {
+    if (gameStatus.isWhitesTurn && !piece?.toLowerCase().includes('white')) {
       return;
     }
-    if (!gameStatus.isWhitesTurn && !piece?.toLowerCase().includes("black")) {
+    if (!gameStatus.isWhitesTurn && !piece?.toLowerCase().includes('black')) {
       return;
     }
 
     const toRank = getRank(yTo, boardSideLength, boardOffset.y);
     const fromRank = getRank(yFrom, boardSideLength, boardOffset.y);
-    const toFile = getFile(xTo, boardSideLength, boardOffset.x) || "";
-    const fromFile = getFile(xFrom, boardSideLength, boardOffset.x) || "";
+    const toFile = getFile(xTo, boardSideLength, boardOffset.x) || '';
+    const fromFile = getFile(xFrom, boardSideLength, boardOffset.x) || '';
 
-    const moveResponse = movePieceOnBoard(
-      currentBoard,
-      piece,
-      fromRank,
-      fromFile,
-      toRank,
-      toFile
-    );
+    const moveResponse = movePieceOnBoard(currentBoard, piece, fromRank, fromFile, toRank, toFile);
 
     if (moveResponse.MoveAttempted.isLegal) {
       setCurrentBoard(moveResponse.BoardState);
@@ -138,7 +111,7 @@ export const useMinotaur = (boardSideLength: number) => {
   };
 
   const updateComputerControl = (
-    action: "setBlackControl" | "setWhiteControl",
+    action: 'setBlackControl' | 'setWhiteControl',
     payload: boolean
   ) => {
     setGameStatus(function (prevStatus) {
@@ -148,13 +121,9 @@ export const useMinotaur = (boardSideLength: number) => {
         moveHistory: prevStatus.moveHistory,
         positionEvaluation: prevStatus.positionEvaluation,
         blackComputerControl:
-          action === "setBlackControl"
-            ? payload
-            : prevStatus.blackComputerControl,
+          action === 'setBlackControl' ? payload : prevStatus.blackComputerControl,
         whiteComputerControl:
-          action === "setWhiteControl"
-            ? payload
-            : prevStatus.whiteComputerControl,
+          action === 'setWhiteControl' ? payload : prevStatus.whiteComputerControl,
         whiteKingChecked: prevStatus.whiteKingChecked,
         blackKingChecked: prevStatus.blackKingChecked,
         blackKingCanCastleLong: prevStatus.blackKingCanCastleLong,
@@ -165,20 +134,15 @@ export const useMinotaur = (boardSideLength: number) => {
     });
   };
 
-  const updateCheckStatus = (
-    action: "setBlackCheck" | "setWhiteCheck",
-    payload: boolean
-  ) => {
+  const updateCheckStatus = (action: 'setBlackCheck' | 'setWhiteCheck', payload: boolean) => {
     setGameStatus(function (prevStatus) {
       return {
         isGameOver: prevStatus.isGameOver,
         isWhitesTurn: prevStatus.isWhitesTurn,
         moveHistory: prevStatus.moveHistory,
         positionEvaluation: prevStatus.positionEvaluation,
-        blackKingChecked:
-          action === "setBlackCheck" ? payload : prevStatus.blackKingChecked,
-        whiteKingChecked:
-          action === "setWhiteCheck" ? payload : prevStatus.whiteKingChecked,
+        blackKingChecked: action === 'setBlackCheck' ? payload : prevStatus.blackKingChecked,
+        whiteKingChecked: action === 'setWhiteCheck' ? payload : prevStatus.whiteKingChecked,
         whiteComputerControl: prevStatus.whiteComputerControl,
         blackComputerControl: prevStatus.blackComputerControl,
         blackKingCanCastleLong: prevStatus.blackKingCanCastleLong,
@@ -190,7 +154,7 @@ export const useMinotaur = (boardSideLength: number) => {
   };
 
   const updateCastlingStatus = (
-    action: "setBlackLong" | "setBlackShort" | "setWhiteLong" | "setWhiteShort",
+    action: 'setBlackLong' | 'setBlackShort' | 'setWhiteLong' | 'setWhiteShort',
     payload: boolean
   ) => {
     setGameStatus(function (prevStatus) {
@@ -204,29 +168,21 @@ export const useMinotaur = (boardSideLength: number) => {
         whiteComputerControl: prevStatus.whiteComputerControl,
         blackComputerControl: prevStatus.blackComputerControl,
         blackKingCanCastleLong:
-          action === "setBlackLong"
-            ? payload
-            : prevStatus.blackKingCanCastleLong,
+          action === 'setBlackLong' ? payload : prevStatus.blackKingCanCastleLong,
         blackKingCanCastleShort:
-          action === "setBlackShort"
-            ? payload
-            : prevStatus.blackKingCanCastleShort,
+          action === 'setBlackShort' ? payload : prevStatus.blackKingCanCastleShort,
         whiteKingCanCastleLong:
-          action === "setWhiteLong"
-            ? payload
-            : prevStatus.whiteKingCanCastleLong,
+          action === 'setWhiteLong' ? payload : prevStatus.whiteKingCanCastleLong,
         whiteKingCanCastleShort:
-          action === "setWhiteShort"
-            ? payload
-            : prevStatus.whiteKingCanCastleShort,
+          action === 'setWhiteShort' ? payload : prevStatus.whiteKingCanCastleShort,
       };
     });
   };
 
-  const updateGameEndStatus = (action: "setGameOver", payload: boolean) => {
+  const updateGameEndStatus = (action: 'setGameOver', payload: boolean) => {
     setGameStatus(function (prevStatus) {
       return {
-        isGameOver: action === "setGameOver" ? payload : prevStatus.isGameOver,
+        isGameOver: action === 'setGameOver' ? payload : prevStatus.isGameOver,
         isWhitesTurn: prevStatus.isWhitesTurn,
         moveHistory: prevStatus.moveHistory,
         positionEvaluation: prevStatus.positionEvaluation,
@@ -244,36 +200,22 @@ export const useMinotaur = (boardSideLength: number) => {
 
   useEffect(() => {
     const makeComputerMove = async () => {
-      if (
-        !gameStatus.isWhitesTurn &&
-        gameStatus.blackComputerControl &&
-        !gameStatus.isGameOver
-      ) {
-        console.log("Black to move!");
-        const bestMove = await FindBestMoveMiniMax(
-          currentBoard,
-          gameStatus,
-          engineDepth
-        );
+      if (!gameStatus.isWhitesTurn && gameStatus.blackComputerControl && !gameStatus.isGameOver) {
+        console.log('Black to move!');
+        const miniMaxResult = await FindBestMoveMiniMax(currentBoard, gameStatus, engineDepth);
+        const bestMove = miniMaxResult[0];
 
         if (bestMove.to > 0 && bestMove.from > 0) {
-          console.log(
-            `computer moves black ${bestMove.from} to ${bestMove.to}`
-          );
+          console.log(`computer moves black ${bestMove.from} to ${bestMove.to}`);
           console.log(`computer made ${bestMove.evaluations} evaluations`);
-          const newBoardState = applyMove(
-            currentBoard,
-            bestMove.from,
-            bestMove.to,
-            bestMove.piece
-          );
+          const newBoardState = applyMove(currentBoard, bestMove.from, bestMove.to, bestMove.piece);
           setCurrentBoard(newBoardState);
 
           const bestBoardMove = bitMoveToBoardMove(bestMove);
           handleMoveHistoryUpdates(bestBoardMove);
           checkCheckStatus(newBoardState);
         } else {
-          console.log("checking mate for black");
+          console.log('checking mate for black');
           checkMateCheck(0, gameStatus.blackKingChecked);
         }
       }

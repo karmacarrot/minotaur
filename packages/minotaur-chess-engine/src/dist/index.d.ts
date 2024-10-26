@@ -308,7 +308,7 @@ declare function isLongCastleRouteBlocked(board: BitBoard, isWhitesTurn: boolean
  * @deprecated The method should not be used
  */
 declare function FindBestMoves(currentBoard: BitBoard, isWhitesTurn: boolean): ScoreArray;
-declare function FindBestMoveMiniMax(currentBoard: BitBoard, currentGameState: GameStatus, engineDepth: number): Promise<BitMove>;
+declare function FindBestMoveMiniMax(currentBoard: BitBoard, currentGameState: GameStatus, engineDepth: number): Promise<[BitMove, GameNode[]]>;
 declare function WhitePawnCaptures(boardState: BitBoard, allOccupiedBlackPositions: bigint): BitMove[];
 declare function WhitePawnMovesComposite(boardState: BitBoard): BitMove[];
 declare function AllWhitePawnMovesOneSquare(boardState: BitBoard, allOccupiedPositions: bigint): bigint;
@@ -343,7 +343,7 @@ declare function evaluateKingSafety(currentBoard: BitBoard, evaluateForWhite: bo
 
 declare const memoize: <T extends (...args: any[]) => any>(fn: T) => T;
 
-declare function maxMove(node: GameNode, depth: number, scoreForWhite: boolean, evalLogs: EvalLogs): BitMove;
+declare function maxMove(node: GameNode, depth: number, scoreForWhite: boolean, evalLogs: EvalLogs): [BitMove, GameNode[]];
 declare function scoredMove(score: number, previousBoardState: BitBoard, newBoardState: BitBoard): BitMove;
 
 declare function pushNewNode(currentNodeList: GameNode[], parentNode: GameNode, newBoardState: BitBoard, evalLogs: EvalLogs, depth: number): GameNode[];

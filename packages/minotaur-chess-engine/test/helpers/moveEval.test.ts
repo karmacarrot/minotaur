@@ -56,8 +56,8 @@ describe('FindBestMoveMiniMax', () => {
   it('makes a legal move on opening for white', async () => {
     const startingBoard = { ...StartingBoard };
     const startingGameState = { ...InitialGameStatus };
-    const bestMove = await FindBestMoveMiniMax(startingBoard, startingGameState, 1);
-
+    const miniMaxResult = await FindBestMoveMiniMax(startingBoard, startingGameState, 1);
+    const bestMove = miniMaxResult[0];
     expect(bestMove.to > 16 && bestMove.to <= 32).toBeTruthy;
     expect(bestMove.from > 11 && bestMove.from < 14).toBeTruthy;
   });
@@ -65,8 +65,8 @@ describe('FindBestMoveMiniMax', () => {
     const startingBoard = { ...StartingBoard };
     const startingGameState = { ...InitialGameStatus };
     startingGameState.isWhitesTurn = false;
-    const bestMove = await FindBestMoveMiniMax(startingBoard, startingGameState, 1);
-
+    const miniMaxResult = await FindBestMoveMiniMax(startingBoard, startingGameState, 1);
+    const bestMove = miniMaxResult[0];
     expect(bestMove.to).toBeLessThanOrEqual(48);
     expect(bestMove.to).toBeGreaterThanOrEqual(32);
     expect(bestMove.from).toBeLessThanOrEqual(54);

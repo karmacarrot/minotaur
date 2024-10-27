@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/karmacarrot/minotaur/compare/v1.4.2...v1.4.3) (2024-10-27)
+
+
+### Bug Fixes
+
+* missing dependencies resolved for failing react tests after moving to monorepo ([e131d1e](https://github.com/karmacarrot/minotaur/commit/e131d1e379d880b5fdf9aac610a009dd01076304))
+
 ## [1.4.2](https://github.com/karmacarrot/minotaur/compare/v1.4.1...v1.4.2) (2024-10-20)
 
 

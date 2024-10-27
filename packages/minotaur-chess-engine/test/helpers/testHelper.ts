@@ -11,10 +11,12 @@ export function LogBoardPositions(currentBoard: BitBoard) {
   for (let row = 7; row >= 0; row--) {
     let rowString = '________________________________________\n';
     for (let col = 7; col >= 0; col--) {
-      rowString += '| ';
-      const piece = board[row][col];
-      rowString += piece ? `${unicodePieceMap[piece] || piece}` : '.';
-      rowString += ' |';
+      if (board && board[row]) {
+        rowString += '| ';
+        const piece = board[row]?.[col];
+        rowString += piece ? `${unicodePieceMap[piece] || piece}` : '.';
+        rowString += ' |';
+      }
     }
     boardString += rowString + '\n';
   }

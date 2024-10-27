@@ -33,7 +33,7 @@ describe('maxMove function', () => {
     };
     const miniMaxResult = maxMove(currentNode, 1, true, evalLogs);
 
-    const { from, to, score } = miniMaxResult;
+    const { from, to, score } = miniMaxResult[0];
     expect(score).toBeGreaterThan(0);
     expect({ from, to }).toEqual({ from: 13, to: 29 });
 
@@ -66,7 +66,7 @@ describe('maxMove function', () => {
     };
     const miniMaxResult = maxMove(currentNode, depth, true, evalLogs);
 
-    const { from, to, score } = miniMaxResult;
+    const { from, to, score } = miniMaxResult[0];
     expect(from).toBeGreaterThan(0);
     expect(to).toBeGreaterThan(0);
 
@@ -99,7 +99,7 @@ describe('maxMove function', () => {
     };
     const miniMaxResult = maxMove(currentNode, depth, false, evalLogs);
 
-    const { from, to, score } = miniMaxResult;
+    const { from, to, score } = miniMaxResult[0];
     expect(from).toBeGreaterThan(0);
     expect(to).toBeGreaterThan(0);
 
@@ -121,7 +121,7 @@ describe('maxMove function', () => {
     };
     const miniMaxResult = maxMove(currentNode, 2, false, evalLogs);
 
-    const { from, to } = miniMaxResult;
+    const { from, to } = miniMaxResult[0];
 
     expect({ from, to }).toEqual({ from: 52, to: 36 });
 
@@ -208,7 +208,7 @@ describe('maxMove function', () => {
     };
     const miniMaxResult = maxMove(currentNode, 2, false, evalLogs);
 
-    const { from, to } = miniMaxResult;
+    const { from, to } = miniMaxResult[0];
     if (showEvalOutputs) {
       outputEvalLogsHtml(evalLogs, 'picks a central pawn move from a starting board for black');
     }
@@ -227,7 +227,7 @@ describe('maxMove function', () => {
     };
     const miniMaxResult = maxMove(currentNode, 0, true, evalLogs);
 
-    const { from, to, piece } = miniMaxResult;
+    const { from, to, piece } = miniMaxResult[0];
     expect({ from, to, piece }).toEqual({ from: 0, to: 0, piece: 'none' });
 
     if (showEvalOutputs) {
@@ -247,7 +247,7 @@ describe('maxMove function', () => {
     currentNode.gameState.isGameOver = true;
     const miniMaxResult = maxMove(currentNode, 0, true, evalLogs);
 
-    const { from, to, piece } = miniMaxResult;
+    const { from, to, piece } = miniMaxResult[0];
     expect({ from, to, piece }).toEqual({ from: 0, to: 0, piece: 'none' });
 
     if (showEvalOutputs) {

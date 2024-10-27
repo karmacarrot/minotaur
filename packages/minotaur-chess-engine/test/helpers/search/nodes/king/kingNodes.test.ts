@@ -18,6 +18,7 @@ import {
   CastleForBlackGameBoard,
   kingCastlingNodes,
 } from '@karmacarrot/minotaur-chess-engine';
+import { LogBoardPositions } from '../../../testHelper';
 
 describe('kingNodes', () => {
   it('returns all legal white king nodes after executing a bong cloud', () => {
@@ -104,5 +105,8 @@ describe('kingCastlingNodes', () => {
     const potentialMoves = kingCastlingNodes(startNode, evalLogs);
 
     expect(potentialMoves.length).toBe(1);
+
+    LogBoardPositions(startingBoard);
+    LogBoardPositions(potentialMoves[0].boardState);
   });
 });

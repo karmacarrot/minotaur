@@ -22,6 +22,11 @@ import {
   CastleForBlackAfterGameBoard,
   clearPosition,
   blackKingShortCastleRookDestination,
+  CastleForBlackGameLongBoard,
+  blackKingLongCastleDestination,
+  blackKingLongCastleRookDestination,
+  bitCount,
+  bigIntToBinaryString,
 } from '@karmacarrot/minotaur-chess-engine';
 import { LogBoardPositions } from '../../../testHelper';
 
@@ -101,7 +106,7 @@ describe('kingNodes', () => {
 });
 
 describe('kingCastlingNodes', () => {
-  it("generates a move when it's possible to castle", () => {
+  it("generates a move when it's possible to castle short", () => {
     const startingBoard = { ...CastleForBlackGameBoard };
     const startNode = StartingNode();
     startNode.boardState = startingBoard;
@@ -114,7 +119,7 @@ describe('kingCastlingNodes', () => {
     LogBoardPositions(startingBoard);
     LogBoardPositions(potentialMoves[0].boardState);
   });
-  it('moves the king and rook to the correct positions when castling', () => {
+  it('moves the king and rook to the correct positions when castling short', () => {
     const startingBoard = { ...CastleForBlackGameBoard };
     const startNode = StartingNode();
     startNode.boardState = startingBoard;
@@ -129,6 +134,43 @@ describe('kingCastlingNodes', () => {
     );
     expect(move.boardState.blackRook & blackKingShortCastleRookDestination).toBe(
       blackKingShortCastleRookDestination
+    );
+  });
+  it("generates a move when it's possible to castle long", () => {
+    const startingBoard = { ...CastleForBlackGameLongBoard };
+    const startNode = StartingNode();
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+    startNode.gameState.blackKingCanCastleShort = false;
+    startNode.gameState.blackKingCanCastleLong = true;
+
+    const evalLogs = createEvalLogs();
+    const potentialMoves = kingCastlingNodes(startNode, evalLogs);
+
+    expect(potentialMoves.length).toBe(1);
+
+    LogBoardPositions(startingBoard);
+    LogBoardPositions(potentialMoves[0].boardState);
+  });
+
+  it('moves the king and rook to the correct positions when castling long', () => {
+    const startingBoard = { ...CastleForBlackGameLongBoard };
+    const startNode = StartingNode();
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+    startNode.gameState.blackKingCanCastleShort = false;
+    startNode.gameState.blackKingCanCastleLong = true;
+    const evalLogs = createEvalLogs();
+    const potentialMoves = kingCastlingNodes(startNode, evalLogs);
+
+    const move = potentialMoves[0];
+
+    expect(bitCount(move.boardState.blackRook)).toEqual(1);
+    expect(move.boardState.blackKing & blackKingLongCastleDestination).toBe(
+      blackKingLongCastleDestination
+    );
+    expect(move.boardState.blackRook & blackKingLongCastleRookDestination).toBe(
+      blackKingLongCastleRookDestination
     );
   });
 });

@@ -12,10 +12,14 @@ import {
   isShortCastleRouteBlocked,
 } from '../../../bitboards';
 import {
+  blackKingLongCastleDestination,
+  blackKingLongCastleRookDestination,
   blackKingShortCastleDestination,
   blackKingShortCastleRookDestination,
   diagonalOffsets,
   orthagonalOffsets,
+  whiteKingLongCastleDestination,
+  whiteKingLongCastleRookDestination,
   whiteKingShortCastleDestination,
   whiteKingShortCastleRookDestination,
 } from '../../../definitions';
@@ -79,6 +83,7 @@ export function kingCastlingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[
     return possibleNodes;
   }
   //TODO: check we aren't moving through or into check
+
   if (kingCanShort) {
     const isShortPathOccupied = isShortCastleRouteBlocked(node.boardState, isWhitesTurn);
     if (!isShortPathOccupied) {
@@ -92,7 +97,9 @@ export function kingCastlingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[
         newBoard.blackRook = clearPosition(newBoard, 64).blackRook;
         newBoard.blackRook = newBoard.blackRook | blackKingShortCastleRookDestination;
       }
+
       const newKingNode = NodeFactory(node, newBoard);
+
       possibleNodes.push(newKingNode);
       if (evalLogs.evalLoggingEnabled) {
         evalLogs.evalAddNode(newKingNode, 0);
@@ -102,6 +109,24 @@ export function kingCastlingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[
 
   if (kingCanLong) {
     const isLongPathOccupied = isLongCastleRouteBlocked(node.boardState, isWhitesTurn);
+    if (!isLongPathOccupied) {
+      const newBoard = { ...node.boardState };
+      if (isWhitesTurn) {
+        newBoard.whiteKing = whiteKingLongCastleDestination;
+        newBoard.whiteRook = clearPosition(newBoard, 1).whiteRook;
+        newBoard.whiteRook = newBoard.whiteRook | whiteKingLongCastleRookDestination;
+      } else {
+        newBoard.blackKing = blackKingLongCastleDestination;
+        newBoard.blackRook = clearPosition(newBoard, 57).blackRook;
+        newBoard.blackRook = newBoard.blackRook | blackKingLongCastleRookDestination;
+      }
+      const newKingNode = NodeFactory(node, newBoard);
+
+      possibleNodes.push(newKingNode);
+      if (evalLogs.evalLoggingEnabled) {
+        evalLogs.evalAddNode(newKingNode, 0);
+      }
+    }
   }
 
   return possibleNodes;

@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/karmacarrot/minotaur/compare/v1.4.3...v1.4.4) (2024-10-27)
+
+
+### Bug Fixes
+
+* fixing castling test ([dbde592](https://github.com/karmacarrot/minotaur/commit/dbde5929fc2ebfcf42b4e6570d78f6c4f3e8e75f))
+
 ## [1.4.3](https://github.com/karmacarrot/minotaur/compare/v1.4.2...v1.4.3) (2024-10-27)
 
 

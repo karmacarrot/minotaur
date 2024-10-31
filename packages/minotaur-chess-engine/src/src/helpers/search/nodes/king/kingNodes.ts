@@ -1,5 +1,5 @@
-import { isMyKingInCheck } from "../../../../referee/referee";
-import { EvalLogs, GameNode } from "../../../../types";
+import { isMyKingInCheck } from '../../../../referee/referee';
+import { EvalLogs, GameNode } from '../../../../types';
 import {
   allBlackPositions,
   allWhitePositions,
@@ -10,7 +10,7 @@ import {
   isLongCastleRouteBlocked,
   isOccupiedComposite,
   isShortCastleRouteBlocked,
-} from "../../../bitboards";
+} from '../../../bitboards';
 import {
   blackKingShortCastleDestination,
   blackKingShortCastleRookDestination,
@@ -18,16 +18,14 @@ import {
   orthagonalOffsets,
   whiteKingShortCastleDestination,
   whiteKingShortCastleRookDestination,
-} from "../../../definitions";
-import { NodeFactory } from "../nodeGenerators";
+} from '../../../definitions';
+import { NodeFactory } from '../nodeGenerators';
 
 export function kingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[] {
   let possibleNodes: GameNode[] = [];
 
   const isWhitesTurn = node.gameState.isWhitesTurn;
-  const kingToMove = isWhitesTurn
-    ? node.boardState.whiteKing
-    : node.boardState.blackKing;
+  const kingToMove = isWhitesTurn ? node.boardState.whiteKing : node.boardState.blackKing;
 
   const kingPositions = findBitPositions(kingToMove);
   const allFriendlyOccupiedPositions = isWhitesTurn
@@ -51,7 +49,7 @@ export function kingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[] {
           node.boardState,
           kingPosition,
           newPosition,
-          isWhitesTurn ? "whiteKing" : "blackKing"
+          isWhitesTurn ? 'whiteKing' : 'blackKing'
         );
         if (!isMyKingInCheck(newBoardState, isWhitesTurn).check) {
           const newKingNode = NodeFactory(node, newBoardState);
@@ -66,10 +64,7 @@ export function kingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[] {
   return possibleNodes;
 }
 
-export function kingCastlingNodes(
-  node: GameNode,
-  evalLogs: EvalLogs
-): GameNode[] {
+export function kingCastlingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[] {
   let possibleNodes: GameNode[] = [];
   const isWhitesTurn = node.gameState.isWhitesTurn;
 
@@ -85,22 +80,17 @@ export function kingCastlingNodes(
   }
   //TODO: check we aren't moving through or into check
   if (kingCanShort) {
-    const isShortPathOccupied = isShortCastleRouteBlocked(
-      node.boardState,
-      isWhitesTurn
-    );
+    const isShortPathOccupied = isShortCastleRouteBlocked(node.boardState, isWhitesTurn);
     if (!isShortPathOccupied) {
       const newBoard = { ...node.boardState };
       if (isWhitesTurn) {
         newBoard.whiteKing = whiteKingShortCastleDestination;
         newBoard.whiteRook = clearPosition(newBoard, 8).whiteRook;
-        newBoard.whiteRook =
-          newBoard.whiteRook & whiteKingShortCastleRookDestination;
+        newBoard.whiteRook = newBoard.whiteRook | whiteKingShortCastleRookDestination;
       } else {
         newBoard.blackKing = blackKingShortCastleDestination;
         newBoard.blackRook = clearPosition(newBoard, 64).blackRook;
-        newBoard.blackRook =
-          newBoard.blackRook & blackKingShortCastleRookDestination;
+        newBoard.blackRook = newBoard.blackRook | blackKingShortCastleRookDestination;
       }
       const newKingNode = NodeFactory(node, newBoard);
       possibleNodes.push(newKingNode);
@@ -111,10 +101,7 @@ export function kingCastlingNodes(
   }
 
   if (kingCanLong) {
-    const isLongPathOccupied = isLongCastleRouteBlocked(
-      node.boardState,
-      isWhitesTurn
-    );
+    const isLongPathOccupied = isLongCastleRouteBlocked(node.boardState, isWhitesTurn);
   }
 
   return possibleNodes;

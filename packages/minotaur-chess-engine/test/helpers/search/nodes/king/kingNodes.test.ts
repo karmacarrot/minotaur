@@ -17,6 +17,11 @@ import {
   binaryMask64,
   CastleForBlackGameBoard,
   kingCastlingNodes,
+  blackKingShortCastleDestination,
+  blackKingShortRook,
+  CastleForBlackAfterGameBoard,
+  clearPosition,
+  blackKingShortCastleRookDestination,
 } from '@karmacarrot/minotaur-chess-engine';
 import { LogBoardPositions } from '../../../testHelper';
 
@@ -96,7 +101,7 @@ describe('kingNodes', () => {
 });
 
 describe('kingCastlingNodes', () => {
-  it('castles the king when possible to do so', () => {
+  it("generates a move when it's possible to castle", () => {
     const startingBoard = { ...CastleForBlackGameBoard };
     const startNode = StartingNode();
     startNode.boardState = startingBoard;
@@ -108,5 +113,22 @@ describe('kingCastlingNodes', () => {
 
     LogBoardPositions(startingBoard);
     LogBoardPositions(potentialMoves[0].boardState);
+  });
+  it('moves the king and rook to the correct positions when castling', () => {
+    const startingBoard = { ...CastleForBlackGameBoard };
+    const startNode = StartingNode();
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+    const evalLogs = createEvalLogs();
+    const potentialMoves = kingCastlingNodes(startNode, evalLogs);
+
+    const move = potentialMoves[0];
+
+    expect(move.boardState.blackKing & blackKingShortCastleDestination).toBe(
+      blackKingShortCastleDestination
+    );
+    expect(move.boardState.blackRook & blackKingShortCastleRookDestination).toBe(
+      blackKingShortCastleRookDestination
+    );
   });
 });

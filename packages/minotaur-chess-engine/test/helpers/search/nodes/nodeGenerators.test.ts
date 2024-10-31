@@ -8,7 +8,13 @@ import {
   GameNode,
   generateNodeId,
   generateLegalMoves,
+  CastleForBlackGameBoard,
+  StartingNode,
+  createEvalLogs,
+  blackKingShortCastleDestination,
+  blackKingShortCastleRookDestination,
 } from '@karmacarrot/minotaur-chess-engine';
+import { LogBoardPositions } from '../../testHelper';
 
 describe('generateLegalMoves', () => {
   it('generates the correct possible starting moves for white', () => {
@@ -22,6 +28,24 @@ describe('generateLegalMoves', () => {
     };
     const possibleMoves = generateLegalMoves(currentNode);
     expect(possibleMoves.length).toBe(20);
+  });
+
+  it('includes a castling move for black when castling is possible', () => {
+    const startingBoard = { ...CastleForBlackGameBoard };
+    const startNode = StartingNode();
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+
+    const potentialMoves = generateLegalMoves(startNode);
+
+    const castleMove = potentialMoves.find(
+      (x) =>
+        x.boardState.blackKing === blackKingShortCastleDestination &&
+        x.boardState.blackRook == blackKingShortCastleRookDestination
+    );
+    expect(castleMove).toBeTruthy;
+
+    castleMove && LogBoardPositions(castleMove.boardState);
   });
 });
 

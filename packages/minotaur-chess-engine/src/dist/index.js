@@ -1480,20 +1480,17 @@ function kingCastlingNodes(node, evalLogs) {
     return possibleNodes;
   }
   if (kingCanShort) {
-    const isShortPathOccupied = isShortCastleRouteBlocked(
-      node.boardState,
-      isWhitesTurn
-    );
+    const isShortPathOccupied = isShortCastleRouteBlocked(node.boardState, isWhitesTurn);
     if (!isShortPathOccupied) {
       const newBoard = { ...node.boardState };
       if (isWhitesTurn) {
         newBoard.whiteKing = whiteKingShortCastleDestination;
         newBoard.whiteRook = clearPosition(newBoard, 8).whiteRook;
-        newBoard.whiteRook = newBoard.whiteRook & whiteKingShortCastleRookDestination;
+        newBoard.whiteRook = newBoard.whiteRook | whiteKingShortCastleRookDestination;
       } else {
         newBoard.blackKing = blackKingShortCastleDestination;
         newBoard.blackRook = clearPosition(newBoard, 64).blackRook;
-        newBoard.blackRook = newBoard.blackRook & blackKingShortCastleRookDestination;
+        newBoard.blackRook = newBoard.blackRook | blackKingShortCastleRookDestination;
       }
       const newKingNode = NodeFactory(node, newBoard);
       possibleNodes.push(newKingNode);
@@ -1503,10 +1500,7 @@ function kingCastlingNodes(node, evalLogs) {
     }
   }
   if (kingCanLong) {
-    const isLongPathOccupied = isLongCastleRouteBlocked(
-      node.boardState,
-      isWhitesTurn
-    );
+    const isLongPathOccupied = isLongCastleRouteBlocked(node.boardState, isWhitesTurn);
   }
   return possibleNodes;
 }

@@ -208,10 +208,21 @@ export const useMinotaur = (boardSideLength: number) => {
         if (bestMove.to > 0 && bestMove.from > 0) {
           console.log(`computer moves black ${bestMove.from} to ${bestMove.to}`);
           console.log(`computer made ${bestMove.evaluations} evaluations`);
-          const newBoardState = applyMove(currentBoard, bestMove.from, bestMove.to, bestMove.piece);
+          let newBoardState = applyMove(currentBoard, bestMove.from, bestMove.to, bestMove.piece);
+
+          if (bestMove.castleRookFrom > 0 || bestMove.castleRookTo > 0) {
+            newBoardState = applyMove(
+              newBoardState,
+              bestMove.castleRookFrom,
+              bestMove.castleRookTo,
+              gameStatus.isWhitesTurn ? 'whiteRook' : 'blackRook'
+            );
+          }
+
           setCurrentBoard(newBoardState);
 
           const bestBoardMove = bitMoveToBoardMove(bestMove);
+
           handleMoveHistoryUpdates(bestBoardMove);
           checkCheckStatus(newBoardState);
         } else {

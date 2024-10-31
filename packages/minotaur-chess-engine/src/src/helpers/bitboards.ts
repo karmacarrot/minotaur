@@ -1,8 +1,8 @@
-import { LogLevels } from "../logging/definitions";
-import { MultiLog } from "../logging/logger";
+import { LogLevels } from '../logging/definitions';
+import { MultiLog } from '../logging/logger';
 
-import { LoggerConfig } from "../logging/logger.config";
-import { BitBoard, BitMove, Piece } from "../types";
+import { LoggerConfig } from '../logging/logger.config';
+import { BitBoard, BitMove, Piece } from '../types';
 import {
   allOnes,
   blackKingLongCastleRoute,
@@ -10,7 +10,7 @@ import {
   files,
   whiteKingLongCastleRoute,
   whiteKingShortCastleRoute,
-} from "./definitions";
+} from './definitions';
 
 export function applyMove(
   bitBoard: BitBoard,
@@ -24,31 +24,24 @@ export function applyMove(
 
   MultiLog(
     LogLevels.info,
-    `apply move to ${bigIntToBinaryString(
-      bitBoard[pieceBitBoard]
-    )} from ${from} to ${to} `,
+    `apply move to ${bigIntToBinaryString(bitBoard[pieceBitBoard])} from ${from} to ${to} `,
     LoggerConfig.verbosity
   );
 
   const fromMaskString = bigIntToBinaryString(fromMask);
   const toMaskString = bigIntToBinaryString(toMask);
 
-  MultiLog(
-    LogLevels.info,
-    `from mask ${fromMaskString}`,
-    LoggerConfig.verbosity
-  );
+  MultiLog(LogLevels.info, `from mask ${fromMaskString}`, LoggerConfig.verbosity);
   MultiLog(LogLevels.info, `to mask ${toMaskString}`, LoggerConfig.verbosity);
 
   newBitBoard = clearPosition(newBitBoard, to);
 
-  newBitBoard[pieceBitBoard] =
-    (newBitBoard[pieceBitBoard] & ~fromMask) | toMask;
+  newBitBoard[pieceBitBoard] = (newBitBoard[pieceBitBoard] & ~fromMask) | toMask;
   return newBitBoard;
 }
 
 export function clearPosition(bitBoard: BitBoard, position: number) {
-  const removalMask = binaryMask64(position, "all_ones_with_position_as_zero");
+  const removalMask = binaryMask64(position, 'all_ones_with_position_as_zero');
   const removalMaskString = bigIntToBinaryString(removalMask);
   MultiLog(LogLevels.warn, removalMaskString, LoggerConfig.verbosity);
 
@@ -56,11 +49,7 @@ export function clearPosition(bitBoard: BitBoard, position: number) {
   for (let piece in newBitBoard) {
     let pieceBoard = newBitBoard[piece as keyof typeof newBitBoard];
     const pieceBoardString = bigIntToBinaryString(pieceBoard);
-    MultiLog(
-      LogLevels.info,
-      `${piece} is ${pieceBoardString}`,
-      LoggerConfig.verbosity
-    );
+    MultiLog(LogLevels.info, `${piece} is ${pieceBoardString}`, LoggerConfig.verbosity);
 
     newBitBoard[piece as keyof typeof newBitBoard] = pieceBoard & removalMask;
   }
@@ -94,7 +83,7 @@ export function bigIntToBinaryString(inputNumber: BigInt) {
   let binaryString = inputNumber.toString(2);
   const desiredWidth = 64;
 
-  let paddedBinaryString = binaryString.padStart(desiredWidth, "0");
+  let paddedBinaryString = binaryString.padStart(desiredWidth, '0');
 
   return paddedBinaryString;
 }
@@ -113,28 +102,20 @@ export function bitCount(bitboard: bigint) {
 
 export function binaryMask64(
   position: number,
-  maskType: "all_zeroes_with_position_as_one" | "all_ones_with_position_as_zero"
+  maskType: 'all_zeroes_with_position_as_one' | 'all_ones_with_position_as_zero'
 ): bigint {
   const binaryMask = BigInt(1) << BigInt(64 - position);
-  if (maskType === "all_zeroes_with_position_as_one") {
+  if (maskType === 'all_zeroes_with_position_as_one') {
     return binaryMask;
   }
-  MultiLog(
-    LogLevels.info,
-    bigIntToBinaryString(allOnes),
-    LoggerConfig.verbosity
-  );
-  MultiLog(
-    LogLevels.info,
-    bigIntToBinaryString(binaryMask),
-    LoggerConfig.verbosity
-  );
+  MultiLog(LogLevels.info, bigIntToBinaryString(allOnes), LoggerConfig.verbosity);
+  MultiLog(LogLevels.info, bigIntToBinaryString(binaryMask), LoggerConfig.verbosity);
 
   return allOnes & ~binaryMask;
 }
 
 export function occupiedBy(currentBoard: BitBoard, position: number): Piece {
-  const queryMask = binaryMask64(position, "all_zeroes_with_position_as_one");
+  const queryMask = binaryMask64(position, 'all_zeroes_with_position_as_one');
 
   for (let piece in currentBoard) {
     let pieceBoard = currentBoard[piece as keyof typeof currentBoard];
@@ -152,11 +133,8 @@ export function isOccupied(currentBoard: BitBoard, position: number): boolean {
   return isOccupiedComposite(compositePositions, position);
 }
 
-export function isOccupiedComposite(
-  compositePositions: bigint,
-  position: number
-): boolean {
-  const queryMask = binaryMask64(position, "all_zeroes_with_position_as_one");
+export function isOccupiedComposite(compositePositions: bigint, position: number): boolean {
+  const queryMask = binaryMask64(position, 'all_zeroes_with_position_as_one');
 
   const foundPiece = compositePositions & queryMask;
 
@@ -178,10 +156,8 @@ export function allWhitePositions(currentBoard: BitBoard): bigint {
   let compositePositions = BigInt(0);
 
   for (let piece in currentBoard) {
-    if (piece.toLowerCase().includes("white")) {
-      let pieceBoard = currentBoard[
-        piece as keyof typeof currentBoard
-      ] as bigint;
+    if (piece.toLowerCase().includes('white')) {
+      let pieceBoard = currentBoard[piece as keyof typeof currentBoard] as bigint;
       compositePositions = compositePositions | pieceBoard;
     }
   }
@@ -193,10 +169,8 @@ export function allBlackPositions(currentBoard: BitBoard): bigint {
   let compositePositions = BigInt(0);
 
   for (let piece in currentBoard) {
-    if (piece.toLowerCase().includes("black")) {
-      let pieceBoard = currentBoard[
-        piece as keyof typeof currentBoard
-      ] as bigint;
+    if (piece.toLowerCase().includes('black')) {
+      let pieceBoard = currentBoard[piece as keyof typeof currentBoard] as bigint;
       compositePositions = compositePositions | pieceBoard;
     }
   }
@@ -204,30 +178,22 @@ export function allBlackPositions(currentBoard: BitBoard): bigint {
   return compositePositions;
 }
 
-export function getMoveFromBoardStates(
-  before: BitBoard,
-  after: BitBoard
-): BitMove {
+export function getMoveFromBoardStates(before: BitBoard, after: BitBoard): BitMove {
   if (
-    (before.blackKing !== after.blackKing &&
-      before.blackRook !== after.blackRook) ||
-    (before.whiteKing !== after.whiteKing &&
-      before.whiteRook !== after.whiteRook)
+    (before.blackKing !== after.blackKing && before.blackRook !== after.blackRook) ||
+    (before.whiteKing !== after.whiteKing && before.whiteRook !== after.whiteRook)
   ) {
     return getCastledMoveFromBoardStates(before, after);
   }
   return getSinglePieceMoveFromBoardStates(before, after);
 }
 
-export function getSinglePieceMoveFromBoardStates(
-  before: BitBoard,
-  after: BitBoard
-): BitMove {
+export function getSinglePieceMoveFromBoardStates(before: BitBoard, after: BitBoard): BitMove {
   let move: BitMove = {
     from: 0,
     to: 0,
-    piece: "none",
-    pieceTaken: "none",
+    piece: 'none',
+    pieceTaken: 'none',
     score: 0,
     evaluations: 0,
     castleRookFrom: 0,
@@ -235,7 +201,7 @@ export function getSinglePieceMoveFromBoardStates(
   };
 
   for (const piece of Object.keys(before) as (keyof BitBoard)[]) {
-    if (piece === "none") continue;
+    if (piece === 'none') continue;
 
     const beforeBitboard = before[piece];
     const afterBitboard = after[piece];
@@ -263,10 +229,7 @@ export function getSinglePieceMoveFromBoardStates(
   return move;
 }
 
-export function getBeforeAndAfterPositions(
-  before: bigint,
-  after: bigint
-): [number, number] {
+export function getBeforeAndAfterPositions(before: bigint, after: bigint): [number, number] {
   let beforePosition = 0,
     afterPosition = 0;
 
@@ -285,51 +248,36 @@ export function getBeforeAndAfterPositions(
   return [beforePosition, afterPosition];
 }
 
-export function getCastledMoveFromBoardStates(
-  before: BitBoard,
-  after: BitBoard
-): BitMove {
+export function getCastledMoveFromBoardStates(before: BitBoard, after: BitBoard): BitMove {
   let move: BitMove = {
     from: 0,
     to: 0,
-    piece: "none",
-    pieceTaken: "none",
+    piece: 'none',
+    pieceTaken: 'none',
     score: 0,
     evaluations: 0,
     castleRookFrom: 0,
     castleRookTo: 0,
   };
 
-  if (
-    before.blackKing !== after.blackKing &&
-    before.blackRook !== after.blackRook
-  ) {
+  if (before.blackKing !== after.blackKing && before.blackRook !== after.blackRook) {
     //black castled
-    move.piece = "blackKing";
+    move.piece = 'blackKing';
     const blackKingNewPosition = findBitPosition(after.blackKing);
     move.from = 61;
     move.to = blackKingNewPosition ? blackKingNewPosition : 0;
-    const [beforeRook, afterRook] = getBeforeAndAfterPositions(
-      before.blackRook,
-      after.blackRook
-    );
+    const [beforeRook, afterRook] = getBeforeAndAfterPositions(before.blackRook, after.blackRook);
     move.castleRookFrom = beforeRook;
     move.castleRookTo = afterRook;
   }
 
-  if (
-    before.whiteKing !== after.whiteKing &&
-    before.whiteRook !== after.whiteRook
-  ) {
+  if (before.whiteKing !== after.whiteKing && before.whiteRook !== after.whiteRook) {
     //white castled
-    move.piece = "whiteKing";
+    move.piece = 'whiteKing';
     const whiteKingNewPosition = findBitPosition(after.whiteKing);
     move.from = 5;
     move.to = whiteKingNewPosition ? whiteKingNewPosition : 0;
-    const [beforeRook, afterRook] = getBeforeAndAfterPositions(
-      before.whiteRook,
-      after.whiteRook
-    );
+    const [beforeRook, afterRook] = getBeforeAndAfterPositions(before.whiteRook, after.whiteRook);
     move.castleRookFrom = beforeRook;
     move.castleRookTo = afterRook;
   }
@@ -381,38 +329,30 @@ export function findBitPosition(bitboard: bigint) {
   }
 }
 
-export function isAtoHwraparound(
-  fromPosition: number,
-  toPosition: number
-): boolean {
+export function isAtoHwraparound(fromPosition: number, toPosition: number): boolean {
   const { file: fromFile } = getFileAndRank(fromPosition);
   const { file: toFile } = getFileAndRank(toPosition);
 
-  return (
-    (fromFile! + toFile).includes("a") && (fromFile! + toFile).includes("h")
-  );
+  return (fromFile! + toFile).includes('a') && (fromFile! + toFile).includes('h');
 }
 
-export function isABCtoFGHwraparound(
-  fromPosition: number,
-  toPosition: number
-): boolean {
+export function isABCtoFGHwraparound(fromPosition: number, toPosition: number): boolean {
   const { file: fromFile } = getFileAndRank(fromPosition);
   const { file: toFile } = getFileAndRank(toPosition);
 
   let leftSideFile = false;
   if (
-    (fromFile! + toFile).includes("a") ||
-    (fromFile! + toFile).includes("b") ||
-    (fromFile! + toFile).includes("c")
+    (fromFile! + toFile).includes('a') ||
+    (fromFile! + toFile).includes('b') ||
+    (fromFile! + toFile).includes('c')
   ) {
     leftSideFile = true;
   }
   let rightSideFile = false;
   if (
-    (fromFile! + toFile).includes("f") ||
-    (fromFile! + toFile).includes("g") ||
-    (fromFile! + toFile).includes("h")
+    (fromFile! + toFile).includes('f') ||
+    (fromFile! + toFile).includes('g') ||
+    (fromFile! + toFile).includes('h')
   ) {
     rightSideFile = true;
   }
@@ -439,24 +379,15 @@ export function bitBoardsReadable(bitBoard: BitBoard) {
   };
 }
 
-export function isShortCastleRouteBlocked(
-  board: BitBoard,
-  isWhitesTurn: boolean
-) {
+export function isShortCastleRouteBlocked(board: BitBoard, isWhitesTurn: boolean) {
   const compositePositions = allPositions(board);
   return !!(
-    compositePositions &
-    (isWhitesTurn ? whiteKingShortCastleRoute : blackKingShortCastleRoute)
+    compositePositions & (isWhitesTurn ? whiteKingShortCastleRoute : blackKingShortCastleRoute)
   );
 }
 
-export function isLongCastleRouteBlocked(
-  board: BitBoard,
-  isWhitesTurn: boolean
-): boolean {
+export function isLongCastleRouteBlocked(board: BitBoard, isWhitesTurn: boolean): boolean {
   const compositePositions = allPositions(board);
-  const pathBlockingPositions = isWhitesTurn
-    ? whiteKingLongCastleRoute
-    : blackKingLongCastleRoute;
+  const pathBlockingPositions = isWhitesTurn ? whiteKingLongCastleRoute : blackKingLongCastleRoute;
   return !!(compositePositions & pathBlockingPositions);
 }

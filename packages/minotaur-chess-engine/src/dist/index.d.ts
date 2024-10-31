@@ -270,7 +270,7 @@ declare function getFileAndRank(bitBoardPosition: number): {
 };
 declare function bigIntToBinaryString(inputNumber: BigInt): string;
 declare function bitCount(bitboard: bigint): number;
-declare function binaryMask64(position: number, maskType: "all_zeroes_with_position_as_one" | "all_ones_with_position_as_zero"): bigint;
+declare function binaryMask64(position: number, maskType: 'all_zeroes_with_position_as_one' | 'all_ones_with_position_as_zero'): bigint;
 declare function occupiedBy(currentBoard: BitBoard, position: number): Piece;
 declare function isOccupied(currentBoard: BitBoard, position: number): boolean;
 declare function isOccupiedComposite(compositePositions: bigint, position: number): boolean;

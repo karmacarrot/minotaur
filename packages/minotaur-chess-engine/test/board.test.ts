@@ -183,6 +183,8 @@ describe('bitMoveToBoardMove', () => {
   const testCases = [
     {
       bitMove: {
+        castleRookFrom: 0,
+        castleRookTo: 0,
         from: 9,
         to: 17,
         piece: 'whitePawn' as keyof BitBoard,
@@ -196,10 +198,14 @@ describe('bitMoveToBoardMove', () => {
         RankFrom: 2,
         RankTo: 3,
         isLegal: true,
+        castleRookFrom: '',
+        castleRookTo: '',
       },
     },
     {
       bitMove: {
+        castleRookFrom: 0,
+        castleRookTo: 0,
         from: 64,
         to: 48,
         piece: 'blackRook' as keyof BitBoard,
@@ -213,6 +219,31 @@ describe('bitMoveToBoardMove', () => {
         RankFrom: 8,
         RankTo: 6,
         isLegal: true,
+        castleRookFrom: '',
+        castleRookTo: '',
+      },
+    },
+    {
+      bitMove: {
+        castleRookFrom: 64,
+        castleRookTo: 62,
+        evaluations: 0,
+        from: 61,
+        piece: 'blackKing',
+        pieceTaken: 'none',
+        score: -8.95,
+        to: 63,
+      } as BitMove,
+      boardMove: {
+        PieceMoved: 'blackKing' as keyof BitBoard,
+        PieceTaken: 'none',
+        FileFrom: 'e',
+        FileTo: 'g',
+        RankFrom: 8,
+        RankTo: 8,
+        isLegal: true,
+        castleRookFrom: 'h',
+        castleRookTo: 'f',
       },
     },
   ];

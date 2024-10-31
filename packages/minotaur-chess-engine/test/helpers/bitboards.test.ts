@@ -45,6 +45,12 @@ describe('applyMove', () => {
       '0000000000000000000000000000000010111111000000000000000000000000'
     );
   });
+  it('correctly applies a castling move to the board', () => {
+    const canCastleBoard = { ...CastleForBlackGameBoard };
+    const castled = applyMove(canCastleBoard, 25, 34, 'whitePawn');
+
+    expect(castled).toEqual(CastleForBlackAfterGameBoard);
+  });
 });
 
 describe('getBitBoardPosition', () => {
@@ -69,7 +75,7 @@ describe('clearPosition', () => {
     const mutatedBoard = clearPosition(startingBoard, position);
     const initialBoardArray = BoardArray(mutatedBoard);
 
-    expect(initialBoardArray[1].toString()).toBe(
+    expect(initialBoardArray[1]?.toString()).toBe(
       'whitePawn,whitePawn,whitePawn,whitePawn,whitePawn,whitePawn,whitePawn,'
     );
   });

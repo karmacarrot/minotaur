@@ -511,18 +511,12 @@ function applyMove(bitBoard, from, to, pieceBitBoard) {
   const toMask = BigInt(1) << BigInt(64 - to);
   MultiLog(
     3 /* info */,
-    `apply move to ${bigIntToBinaryString(
-      bitBoard[pieceBitBoard]
-    )} from ${from} to ${to} `,
+    `apply move to ${bigIntToBinaryString(bitBoard[pieceBitBoard])} from ${from} to ${to} `,
     LoggerConfig.verbosity
   );
   const fromMaskString = bigIntToBinaryString(fromMask);
   const toMaskString = bigIntToBinaryString(toMask);
-  MultiLog(
-    3 /* info */,
-    `from mask ${fromMaskString}`,
-    LoggerConfig.verbosity
-  );
+  MultiLog(3 /* info */, `from mask ${fromMaskString}`, LoggerConfig.verbosity);
   MultiLog(3 /* info */, `to mask ${toMaskString}`, LoggerConfig.verbosity);
   newBitBoard = clearPosition(newBitBoard, to);
   newBitBoard[pieceBitBoard] = newBitBoard[pieceBitBoard] & ~fromMask | toMask;
@@ -536,11 +530,7 @@ function clearPosition(bitBoard, position) {
   for (let piece in newBitBoard) {
     let pieceBoard = newBitBoard[piece];
     const pieceBoardString = bigIntToBinaryString(pieceBoard);
-    MultiLog(
-      3 /* info */,
-      `${piece} is ${pieceBoardString}`,
-      LoggerConfig.verbosity
-    );
+    MultiLog(3 /* info */, `${piece} is ${pieceBoardString}`, LoggerConfig.verbosity);
     newBitBoard[piece] = pieceBoard & removalMask;
   }
   return newBitBoard;
@@ -583,16 +573,8 @@ function binaryMask64(position, maskType) {
   if (maskType === "all_zeroes_with_position_as_one") {
     return binaryMask;
   }
-  MultiLog(
-    3 /* info */,
-    bigIntToBinaryString(allOnes),
-    LoggerConfig.verbosity
-  );
-  MultiLog(
-    3 /* info */,
-    bigIntToBinaryString(binaryMask),
-    LoggerConfig.verbosity
-  );
+  MultiLog(3 /* info */, bigIntToBinaryString(allOnes), LoggerConfig.verbosity);
+  MultiLog(3 /* info */, bigIntToBinaryString(binaryMask), LoggerConfig.verbosity);
   return allOnes & ~binaryMask;
 }
 function occupiedBy(currentBoard, position) {
@@ -714,10 +696,7 @@ function getCastledMoveFromBoardStates(before, after) {
     const blackKingNewPosition = findBitPosition(after.blackKing);
     move.from = 61;
     move.to = blackKingNewPosition ? blackKingNewPosition : 0;
-    const [beforeRook, afterRook] = getBeforeAndAfterPositions(
-      before.blackRook,
-      after.blackRook
-    );
+    const [beforeRook, afterRook] = getBeforeAndAfterPositions(before.blackRook, after.blackRook);
     move.castleRookFrom = beforeRook;
     move.castleRookTo = afterRook;
   }
@@ -726,10 +705,7 @@ function getCastledMoveFromBoardStates(before, after) {
     const whiteKingNewPosition = findBitPosition(after.whiteKing);
     move.from = 5;
     move.to = whiteKingNewPosition ? whiteKingNewPosition : 0;
-    const [beforeRook, afterRook] = getBeforeAndAfterPositions(
-      before.whiteRook,
-      after.whiteRook
-    );
+    const [beforeRook, afterRook] = getBeforeAndAfterPositions(before.whiteRook, after.whiteRook);
     move.castleRookFrom = beforeRook;
     move.castleRookTo = afterRook;
   }
@@ -2723,10 +2699,7 @@ function initBoard(arrangement) {
   }
 }
 function BoardArray(currentBitBoard) {
-  const board = Array.from(
-    { length: xOrYTileLength },
-    () => Array(8).fill(null)
-  );
+  const board = Array.from({ length: xOrYTileLength }, () => Array(8).fill(null));
   for (let piece in currentBitBoard) {
     for (let square = 0; square < numberOfTiles; square++) {
       if ((currentBitBoard[piece] & BigInt(1) << BigInt(square)) !== BigInt(0)) {
@@ -2824,17 +2797,8 @@ function moveSlidingPiece(currentBitBoard, rankFrom, fileFrom, rankTo, fileTo, p
   );
   const fromPosition = getBitBoardPosition(fileFrom, rankFrom);
   const toPosition = getBitBoardPosition(fileTo, rankTo);
-  MultiLog(
-    3 /* info */,
-    `from ${fromPosition} to ${toPosition}`,
-    LoggerConfig.verbosity
-  );
-  const newPawns = applyMove(
-    currentBitBoard,
-    fromPosition,
-    toPosition,
-    pieceType
-  );
+  MultiLog(3 /* info */, `from ${fromPosition} to ${toPosition}`, LoggerConfig.verbosity);
+  const newPawns = applyMove(currentBitBoard, fromPosition, toPosition, pieceType);
   return newPawns;
 }
 function getPathAlgabraic(move) {
@@ -2864,6 +2828,8 @@ function getPathAlgabraic(move) {
 function bitMoveToBoardMove(bitMove) {
   const boardMoveTo = getFileAndRank(bitMove.to);
   const boardMoveFrom = getFileAndRank(bitMove.from);
+  const castleRookMoveTo = bitMove.castleRookTo > 0 ? getFileAndRank(bitMove.castleRookTo).file : "";
+  const castleRookMoveFrom = bitMove.castleRookFrom > 0 ? getFileAndRank(bitMove.castleRookFrom).file : "";
   return {
     PieceMoved: bitMove.piece,
     PieceTaken: bitMove.pieceTaken,
@@ -2871,7 +2837,9 @@ function bitMoveToBoardMove(bitMove) {
     FileTo: boardMoveTo.file,
     RankFrom: boardMoveFrom.rank,
     RankTo: boardMoveTo.rank,
-    isLegal: true
+    isLegal: true,
+    castleRookFrom: castleRookMoveFrom,
+    castleRookTo: castleRookMoveTo
   };
 }
 

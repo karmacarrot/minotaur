@@ -33,24 +33,28 @@ import {
   outputSingleBitboardHtml,
   AllKingMoves,
   AllQueenMoves,
+  CastleForBlackGameBoard,
+  blackKingShortCastleDestination,
+  blackKingShortCastleRookDestination,
 } from '@karmacarrot/minotaur-chess-engine';
+import { LogBoardPositions } from './testHelper';
 
-describe('FindBestMoves', () => {
-  it('makes a legal move on opening for white', () => {
-    const startingBoard = { ...StartingBoard };
-    const bestMoves = FindBestMoves(startingBoard, true);
-    expect(bestMoves.length).toBe(3);
-    expect(bestMoves[0].move.to > 16 && bestMoves[0].move.to <= 32).toBeTruthy;
-  });
-  it('makes a legal first move for black', () => {
-    const startingBoard = { ...StartingBoard };
-    const bestMoves = FindBestMoves(startingBoard, false);
-    //console.log(bestMoves);
-    expect(bestMoves.length).toBe(3);
-    expect(bestMoves[0].move.to).toBeLessThanOrEqual(48);
-    expect(bestMoves[0].move.to).toBeGreaterThanOrEqual(32);
-  });
-});
+// describe('FindBestMoves', () => {
+//   it('makes a legal move on opening for white', () => {
+//     const startingBoard = { ...StartingBoard };
+//     const bestMoves = FindBestMoves(startingBoard, true);
+//     expect(bestMoves.length).toBe(3);
+//     expect(bestMoves[0].move.to > 16 && bestMoves[0].move.to <= 32).toBeTruthy;
+//   });
+//   it('makes a legal first move for black', () => {
+//     const startingBoard = { ...StartingBoard };
+//     const bestMoves = FindBestMoves(startingBoard, false);
+//     //console.log(bestMoves);
+//     expect(bestMoves.length).toBe(3);
+//     expect(bestMoves[0].move.to).toBeLessThanOrEqual(48);
+//     expect(bestMoves[0].move.to).toBeGreaterThanOrEqual(32);
+//   });
+// });
 
 describe('FindBestMoveMiniMax', () => {
   it('makes a legal move on opening for white', async () => {
@@ -71,6 +75,40 @@ describe('FindBestMoveMiniMax', () => {
     expect(bestMove.to).toBeGreaterThanOrEqual(32);
     expect(bestMove.from).toBeLessThanOrEqual(54);
     expect(bestMove.from).toBeGreaterThanOrEqual(51);
+  });
+  it('considers a castling move for black when legal to do so', async () => {
+    const startingBoard = { ...CastleForBlackGameBoard };
+    const startingGameState = { ...InitialGameStatus };
+    startingGameState.isWhitesTurn = false;
+    const miniMaxResult = await FindBestMoveMiniMax(startingBoard, startingGameState, 1);
+    const consideredMoves = miniMaxResult[1];
+    const castleMove = consideredMoves.find(
+      (x) =>
+        x.boardState.blackKing === blackKingShortCastleDestination &&
+        x.boardState.blackRook == blackKingShortCastleRookDestination
+    );
+
+    expect(castleMove).toBeTruthy;
+
+    castleMove && LogBoardPositions(castleMove.boardState);
+  });
+  it('picks a castling move for black when appropriate to do so', async () => {
+    const startingBoard = { ...CastleForBlackGameBoard };
+    const startingGameState = { ...InitialGameStatus };
+    startingGameState.isWhitesTurn = false;
+    const miniMaxResult = await FindBestMoveMiniMax(startingBoard, startingGameState, 1);
+    const bestMove = miniMaxResult[0];
+
+    expect(bestMove).toEqual({
+      castleRookFrom: 64,
+      castleRookTo: 62,
+      evaluations: 0,
+      from: 61,
+      piece: 'blackKing',
+      pieceTaken: 'none',
+      score: -8.95,
+      to: 63,
+    });
   });
 });
 

@@ -1,11 +1,7 @@
-import { LoggerConfig } from "./logging/logger.config";
-import { LogLevels } from "./logging/definitions";
-import { MultiLog } from "./logging/logger";
-import {
-  applyMove,
-  getBitBoardPosition,
-  getFileAndRank,
-} from "./helpers/bitboards";
+import { LoggerConfig } from './logging/logger.config';
+import { LogLevels } from './logging/definitions';
+import { MultiLog } from './logging/logger';
+import { applyMove, getBitBoardPosition, getFileAndRank } from './helpers/bitboards';
 import {
   BoardArrangements,
   EmptyBoard,
@@ -13,7 +9,7 @@ import {
   files,
   numberOfTiles,
   xOrYTileLength,
-} from "./helpers/definitions";
+} from './helpers/definitions';
 import {
   BlackLongCastledGameBoard,
   BlackShortCastledGameBoard,
@@ -25,16 +21,9 @@ import {
   MateInOneForWhiteGameBoard,
   MiddleGameBoard,
   MiniMaxTestBoardOne,
-} from "./referee/mockBoardStates";
-import { isLegalMove } from "./referee/referee";
-import {
-  BitBoard,
-  BitMove,
-  BoardMove,
-  BoardUpdateResponse,
-  ChessboardArray,
-  Piece,
-} from "./types";
+} from './referee/mockBoardStates';
+import { isLegalMove } from './referee/referee';
+import { BitBoard, BitMove, BoardMove, BoardUpdateResponse, ChessboardArray, Piece } from './types';
 
 export function initBoard(arrangement: BoardArrangements): BitBoard {
   switch (arrangement) {
@@ -68,15 +57,12 @@ export function initBoard(arrangement: BoardArrangements): BitBoard {
 }
 
 export function BoardArray(currentBitBoard: BitBoard) {
-  const board: ChessboardArray = Array.from({ length: xOrYTileLength }, () =>
-    Array(8).fill(null)
-  );
+  const board: ChessboardArray = Array.from({ length: xOrYTileLength }, () => Array(8).fill(null));
 
   for (let piece in currentBitBoard) {
     for (let square = 0; square < numberOfTiles; square++) {
       if (
-        (currentBitBoard[piece as keyof typeof currentBitBoard] &
-          (BigInt(1) << BigInt(square))) !==
+        (currentBitBoard[piece as keyof typeof currentBitBoard] & (BigInt(1) << BigInt(square))) !==
         BigInt(0)
       ) {
         const row = xOrYTileLength - 1 - Math.floor(square / xOrYTileLength);
@@ -123,7 +109,7 @@ export function movePiece(
     fileFrom,
     rankTo,
     fileTo,
-    pieceType != null ? pieceType : "whitePawn"
+    pieceType != null ? pieceType : 'whitePawn'
   );
   const isLegal = isLegalMove(moveAttempted, currentBitBoard, newState);
   moveAttempted.isLegal = isLegal.isLegal;
@@ -199,18 +185,9 @@ export function moveSlidingPiece(
 
   const fromPosition = getBitBoardPosition(fileFrom, rankFrom);
   const toPosition = getBitBoardPosition(fileTo, rankTo);
-  MultiLog(
-    LogLevels.info,
-    `from ${fromPosition} to ${toPosition}`,
-    LoggerConfig.verbosity
-  );
+  MultiLog(LogLevels.info, `from ${fromPosition} to ${toPosition}`, LoggerConfig.verbosity);
 
-  const newPawns = applyMove(
-    currentBitBoard,
-    fromPosition,
-    toPosition,
-    pieceType
-  );
+  const newPawns = applyMove(currentBitBoard, fromPosition, toPosition, pieceType);
   return newPawns;
 }
 
@@ -249,6 +226,11 @@ export function bitMoveToBoardMove(bitMove: BitMove) {
   const boardMoveTo = getFileAndRank(bitMove.to);
   const boardMoveFrom = getFileAndRank(bitMove.from);
 
+  const castleRookMoveTo =
+    bitMove.castleRookTo > 0 ? getFileAndRank(bitMove.castleRookTo).file : '';
+  const castleRookMoveFrom =
+    bitMove.castleRookFrom > 0 ? getFileAndRank(bitMove.castleRookFrom).file : '';
+
   return {
     PieceMoved: bitMove.piece,
     PieceTaken: bitMove.pieceTaken,
@@ -257,5 +239,7 @@ export function bitMoveToBoardMove(bitMove: BitMove) {
     RankFrom: boardMoveFrom.rank,
     RankTo: boardMoveTo.rank,
     isLegal: true,
+    castleRookFrom: castleRookMoveFrom,
+    castleRookTo: castleRookMoveTo,
   } as BoardMove;
 }

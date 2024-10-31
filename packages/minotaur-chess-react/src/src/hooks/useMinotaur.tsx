@@ -101,12 +101,26 @@ export const useMinotaur = (boardSideLength: number) => {
     const toFile = getFile(xTo, boardSideLength, boardOffset.x) || '';
     const fromFile = getFile(xFrom, boardSideLength, boardOffset.x) || '';
 
-    const moveResponse = movePieceOnBoard(currentBoard, piece, fromRank, fromFile, toRank, toFile);
+    const moveResponse = movePieceOnBoard(
+      currentBoard,
+      piece,
+      fromRank,
+      fromFile,
+      toRank,
+      toFile,
+      gameStatus
+    );
 
     if (moveResponse.MoveAttempted.isLegal) {
       setCurrentBoard(moveResponse.BoardState);
       handleMoveHistoryUpdates(moveResponse.MoveAttempted);
       checkCheckStatus(moveResponse.BoardState);
+      if (moveResponse.CastleLongLost) {
+        updateCastlingStatus(gameStatus.isWhitesTurn ? 'setWhiteLong' : 'setBlackLong', false);
+      }
+      if (moveResponse.CastleShortLost) {
+        updateCastlingStatus(gameStatus.isWhitesTurn ? 'setWhiteShort' : 'setBlackShort', false);
+      }
     }
   };
 
@@ -243,6 +257,8 @@ export const useMinotaur = (boardSideLength: number) => {
     setEngineDepth,
     gameStatus,
     updateComputerControl,
+    updateCheckStatus,
+    updateGameEndStatus,
     movePiece,
   };
 };

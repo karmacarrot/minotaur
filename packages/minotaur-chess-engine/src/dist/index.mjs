@@ -2010,16 +2010,50 @@ var memoize = (fn) => {
   };
 };
 
+// src/helpers/rules/castling.ts
+function canCastle(boardState, kingCanCastle, isWhitesTurn, isShortCastle) {
+  if (!kingCanCastle) {
+    return false;
+  }
+  const isPathOccupied = isShortCastle ? isShortCastleRouteBlocked(boardState, isWhitesTurn) : isLongCastleRouteBlocked(boardState, isWhitesTurn);
+  if (isPathOccupied) {
+    return false;
+  }
+  const newBoard = { ...boardState };
+  if (isWhitesTurn) {
+    if (isShortCastle) {
+      newBoard.whiteKing = whiteKingShortCastleDestination;
+      newBoard.whiteRook = clearPosition(newBoard, 8).whiteRook;
+      newBoard.whiteRook |= whiteKingShortCastleRookDestination;
+      return true;
+    } else {
+      newBoard.whiteKing = whiteKingLongCastleDestination;
+      newBoard.whiteRook = clearPosition(newBoard, 1).whiteRook;
+      newBoard.whiteRook |= whiteKingLongCastleRookDestination;
+      return true;
+    }
+  } else {
+    if (isShortCastle) {
+      newBoard.blackKing = blackKingShortCastleDestination;
+      newBoard.blackRook = clearPosition(newBoard, 64).blackRook;
+      newBoard.blackRook |= blackKingShortCastleRookDestination;
+      return true;
+    } else {
+      newBoard.blackKing = blackKingLongCastleDestination;
+      newBoard.blackRook = clearPosition(newBoard, 57).blackRook;
+      newBoard.blackRook |= blackKingLongCastleRookDestination;
+      return true;
+    }
+  }
+}
+
 // src/referee/referee.ts
-function isLegalMove(moveAttempted, boardState, proposedBoardState) {
+function isLegalMove(moveAttempted, boardState, proposedBoardState, gameState) {
   if (moveAttempted.FileFrom === moveAttempted.FileTo && moveAttempted.RankFrom === moveAttempted.RankTo) {
     return { isLegal: false, reason: "no move detected" };
   }
   const evaluateForWhite = moveAttempted.PieceMoved ? moveAttempted.PieceMoved.includes("white") : false;
-  const movingPlayerCurrentCheckStatus = isOpponentCheckedMemo(
-    boardState,
-    !evaluateForWhite
-  );
+  const movingPlayerCurrentCheckStatus = isOpponentCheckedMemo(boardState, !evaluateForWhite);
   const movingPlayerProposedCheckStatus = isOpponentCheckedMemo(
     proposedBoardState,
     !evaluateForWhite
@@ -2030,15 +2064,28 @@ function isLegalMove(moveAttempted, boardState, proposedBoardState) {
   if (!movingPlayerCurrentCheckStatus.check && movingPlayerProposedCheckStatus.check) {
     return { isLegal: false, reason: "can't move into check" };
   }
-  const bitMove = getBitBoardPosition(
-    moveAttempted.FileTo,
-    moveAttempted.RankTo
-  );
+  const bitMove = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const bitMoveMask = binaryMask64(bitMove, "all_zeroes_with_position_as_one");
   const friendlyPositions = evaluateForWhite ? allWhitePositions(boardState) : allBlackPositions(boardState);
   const enemyPositions = evaluateForWhite ? allBlackPositions(boardState) : allWhitePositions(boardState);
   if ((bitMoveMask & friendlyPositions) > BigInt(0)) {
     return { isLegal: false, reason: "can't take your own pieces" };
+  }
+  if (moveAttempted.PieceMoved === "blackKing" && moveAttempted.FileFrom === "e" && moveAttempted.FileTo === "g") {
+    const isLegalCastle = canCastle(boardState, gameState.blackKingCanCastleShort, false, true);
+    return { isLegal: isLegalCastle, reason: "castling rules checked" };
+  }
+  if (moveAttempted.PieceMoved === "blackKing" && moveAttempted.FileFrom === "e" && moveAttempted.FileTo === "c") {
+    const isLegalCastle = canCastle(boardState, gameState.blackKingCanCastleLong, false, false);
+    return { isLegal: isLegalCastle, reason: "castling rules checked" };
+  }
+  if (moveAttempted.PieceMoved === "whiteKing" && moveAttempted.FileFrom === "e" && moveAttempted.FileTo === "g") {
+    const isLegalCastle = canCastle(boardState, gameState.whiteKingCanCastleShort, true, true);
+    return { isLegal: isLegalCastle, reason: "castling rules checked" };
+  }
+  if (moveAttempted.PieceMoved === "whiteKing" && moveAttempted.FileFrom === "e" && moveAttempted.FileTo === "c") {
+    const isLegalCastle = canCastle(boardState, gameState.whiteKingCanCastleLong, true, false);
+    return { isLegal: isLegalCastle, reason: "castling rules checked" };
   }
   switch (moveAttempted.PieceMoved) {
     case "whitePawn":
@@ -2112,18 +2159,12 @@ function isLegalMove(moveAttempted, boardState, proposedBoardState) {
   }
 }
 function isLegalQueenMove(moveAttempted, boardState, evaluateForWhite, friendlyPositions, enemyPositions) {
-  const destinationPosition = getBitBoardPosition(
-    moveAttempted.FileTo,
-    moveAttempted.RankTo
-  );
+  const destinationPosition = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const destinationOccupiedBy = occupiedBy(boardState, destinationPosition);
   if (destinationOccupiedBy?.includes("King")) {
     return false;
   }
-  const destinationMask = binaryMask64(
-    destinationPosition,
-    "all_zeroes_with_position_as_one"
-  );
+  const destinationMask = binaryMask64(destinationPosition, "all_zeroes_with_position_as_one");
   const allPossibleQueenMoves = AllQueenMoves(
     boardState,
     friendlyPositions,
@@ -2133,38 +2174,22 @@ function isLegalQueenMove(moveAttempted, boardState, evaluateForWhite, friendlyP
   return (allPossibleQueenMoves & destinationMask) > BigInt(0);
 }
 function isLegalKingMove(moveAttempted, boardState, evaluateForWhite, friendlyPositions, enemyPositions) {
-  const destinationPosition = getBitBoardPosition(
-    moveAttempted.FileTo,
-    moveAttempted.RankTo
-  );
+  const destinationPosition = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const destinationOccupiedBy = occupiedBy(boardState, destinationPosition);
   if (destinationOccupiedBy?.includes("King")) {
     return false;
   }
-  const destinationMask = binaryMask64(
-    destinationPosition,
-    "all_zeroes_with_position_as_one"
-  );
-  const allPossibleKingMoves = AllKingMoves(
-    boardState,
-    friendlyPositions,
-    evaluateForWhite
-  );
+  const destinationMask = binaryMask64(destinationPosition, "all_zeroes_with_position_as_one");
+  const allPossibleKingMoves = AllKingMoves(boardState, friendlyPositions, evaluateForWhite);
   return (allPossibleKingMoves & destinationMask) > BigInt(0);
 }
 function isLegalRookMove(moveAttempted, boardState, evaluateForWhite, friendlyPositions, enemyPositions) {
-  const destinationPosition = getBitBoardPosition(
-    moveAttempted.FileTo,
-    moveAttempted.RankTo
-  );
+  const destinationPosition = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const destinationOccupiedBy = occupiedBy(boardState, destinationPosition);
   if (destinationOccupiedBy?.includes("King")) {
     return false;
   }
-  const destinationMask = binaryMask64(
-    destinationPosition,
-    "all_zeroes_with_position_as_one"
-  );
+  const destinationMask = binaryMask64(destinationPosition, "all_zeroes_with_position_as_one");
   const allPossibleRookMoves = AllRookMoves(
     boardState,
     friendlyPositions,
@@ -2174,18 +2199,12 @@ function isLegalRookMove(moveAttempted, boardState, evaluateForWhite, friendlyPo
   return (allPossibleRookMoves & destinationMask) > BigInt(0);
 }
 function isLegalBishopMove(moveAttempted, boardState, evaluateForWhite, friendlyPositions, enemyPositions) {
-  const destinationPosition = getBitBoardPosition(
-    moveAttempted.FileTo,
-    moveAttempted.RankTo
-  );
+  const destinationPosition = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const destinationOccupiedBy = occupiedBy(boardState, destinationPosition);
   if (destinationOccupiedBy?.includes("King")) {
     return false;
   }
-  const destinationMask = binaryMask64(
-    destinationPosition,
-    "all_zeroes_with_position_as_one"
-  );
+  const destinationMask = binaryMask64(destinationPosition, "all_zeroes_with_position_as_one");
   const allPossibleBishopMoves = AllBishopMoves(
     boardState,
     friendlyPositions,
@@ -2195,23 +2214,13 @@ function isLegalBishopMove(moveAttempted, boardState, evaluateForWhite, friendly
   return (allPossibleBishopMoves & destinationMask) > BigInt(0);
 }
 function isLegalKnightMove(moveAttempted, boardState, evaluateForWhite, friendlyPositions, enemyPositions) {
-  const destinationPosition = getBitBoardPosition(
-    moveAttempted.FileTo,
-    moveAttempted.RankTo
-  );
+  const destinationPosition = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const destinationOccupiedBy = occupiedBy(boardState, destinationPosition);
   if (destinationOccupiedBy?.includes("King")) {
     return false;
   }
-  const destinationMask = binaryMask64(
-    destinationPosition,
-    "all_zeroes_with_position_as_one"
-  );
-  const allPossibleKnightMoves = AllKnightMoves(
-    boardState,
-    friendlyPositions,
-    evaluateForWhite
-  );
+  const destinationMask = binaryMask64(destinationPosition, "all_zeroes_with_position_as_one");
+  const allPossibleKnightMoves = AllKnightMoves(boardState, friendlyPositions, evaluateForWhite);
   return (allPossibleKnightMoves & destinationMask) > BigInt(0);
 }
 function isLegalPawnMove(moveAttempted, boardState) {
@@ -2221,10 +2230,7 @@ function isLegalPawnMove(moveAttempted, boardState) {
   if (moveAttempted.PieceMoved === "blackPawn" && moveAttempted.RankTo >= moveAttempted.RankFrom) {
     return false;
   }
-  const destinationPosition = getBitBoardPosition(
-    moveAttempted.FileTo,
-    moveAttempted.RankTo
-  );
+  const destinationPosition = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const ranksMoved = Math.abs(moveAttempted.RankFrom - moveAttempted.RankTo);
   const startingRank = isOnStartingRank(moveAttempted);
   const destinationOccupiedBy = occupiedBy(boardState, destinationPosition);
@@ -2315,7 +2321,37 @@ function BoardArray(currentBitBoard) {
   }
   return board;
 }
-function movePiece(currentBitBoard, pieceType, rankFrom, fileFrom, rankTo, fileTo) {
+function getCastleStatus(pieceType, rankFrom) {
+  let castleLongLost = false;
+  let castleShortLost = false;
+  if (pieceType === "blackKing" || pieceType === "whiteKing") {
+    castleLongLost = false;
+    castleShortLost = false;
+  }
+  if ((pieceType === "blackRook" || pieceType === "whiteRook") && rankFrom === 1) {
+    castleLongLost = true;
+  }
+  if ((pieceType === "blackRook" || pieceType === "whiteRook") && rankFrom === 8) {
+    castleShortLost = true;
+  }
+  return { castleLongLost, castleShortLost };
+}
+function handleCastleMove(boardState, pieceType, fileFrom, fileTo) {
+  if (pieceType === "blackKing" && fileFrom === "e" && fileTo === "g") {
+    return moveAnyPiece(boardState, 8, "h", 8, "f", "blackRook");
+  }
+  if (pieceType === "blackKing" && fileFrom === "e" && fileTo === "c") {
+    return moveAnyPiece(boardState, 8, "a", 8, "d", "blackRook");
+  }
+  if (pieceType === "whiteKing" && fileFrom === "e" && fileTo === "g") {
+    return moveAnyPiece(boardState, 1, "h", 1, "f", "whiteRook");
+  }
+  if (pieceType === "whiteKing" && fileFrom === "e" && fileTo === "c") {
+    return moveAnyPiece(boardState, 1, "a", 1, "d", "whiteRook");
+  }
+  return boardState;
+}
+function movePiece(currentBitBoard, pieceType, rankFrom, fileFrom, rankTo, fileTo, gameState) {
   MultiLog(
     3 /* info */,
     `requested a move for a ${pieceType} from ${fileFrom}${rankFrom} to ${fileTo}${rankTo}`,
@@ -2330,9 +2366,11 @@ function movePiece(currentBitBoard, pieceType, rankFrom, fileFrom, rankTo, fileT
     RankTo: rankTo,
     isLegal: false,
     PieceMoved: pieceType,
-    PieceTaken: null
+    PieceTaken: null,
+    CastleRookFrom: "",
+    CastleRookTo: ""
   };
-  const newState = moveSlidingPiece(
+  let newState = moveAnyPiece(
     currentBitBoard,
     rankFrom,
     fileFrom,
@@ -2340,14 +2378,20 @@ function movePiece(currentBitBoard, pieceType, rankFrom, fileFrom, rankTo, fileT
     fileTo,
     pieceType != null ? pieceType : "whitePawn"
   );
-  const isLegal = isLegalMove(moveAttempted, currentBitBoard, newState);
+  if (pieceType === "blackKing" || pieceType === "whiteKing") {
+    newState = handleCastleMove(newState, pieceType, fileFrom, fileTo);
+  }
+  const isLegal = isLegalMove(moveAttempted, currentBitBoard, newState, gameState);
   moveAttempted.isLegal = isLegal.isLegal;
   if (!fileFrom || !fileTo || !isLegal) {
     return {
       BoardState: currentBitBoard,
-      MoveAttempted: moveAttempted
+      MoveAttempted: moveAttempted,
+      CastleLongLost: false,
+      CastleShortLost: false
     };
   }
+  const castleStatus = getCastleStatus(pieceType, rankFrom);
   if (isLegal) {
     MultiLog(3 /* info */, "It's a legal move", LoggerConfig.verbosity);
   }
@@ -2361,8 +2405,12 @@ function movePiece(currentBitBoard, pieceType, rankFrom, fileFrom, rankTo, fileT
         RankTo: rankTo,
         isLegal: isLegal.isLegal,
         PieceMoved: pieceType,
-        PieceTaken: null
-      }
+        PieceTaken: null,
+        CastleRookFrom: "",
+        CastleRookTo: ""
+      },
+      CastleLongLost: castleStatus.castleLongLost,
+      CastleShortLost: castleStatus.castleShortLost
     };
   }
   return {
@@ -2374,8 +2422,12 @@ function movePiece(currentBitBoard, pieceType, rankFrom, fileFrom, rankTo, fileT
       RankTo: rankTo,
       isLegal: isLegal.isLegal,
       PieceMoved: pieceType,
-      PieceTaken: null
-    }
+      PieceTaken: null,
+      CastleRookFrom: "",
+      CastleRookTo: ""
+    },
+    CastleLongLost: castleStatus.castleLongLost,
+    CastleShortLost: castleStatus.castleShortLost
   };
 }
 function getFile(x, boardWidth, xOffset) {
@@ -2391,7 +2443,7 @@ function getRank(y, boardHeight, yOffset) {
   const rank = 7 - reverseRank + 2;
   return rank;
 }
-function moveSlidingPiece(currentBitBoard, rankFrom, fileFrom, rankTo, fileTo, pieceType) {
+function moveAnyPiece(currentBitBoard, rankFrom, fileFrom, rankTo, fileTo, pieceType) {
   MultiLog(
     3 /* info */,
     `from ${fileFrom}${rankFrom} to ${fileTo}${rankTo}`,
@@ -2440,8 +2492,8 @@ function bitMoveToBoardMove(bitMove) {
     RankFrom: boardMoveFrom.rank,
     RankTo: boardMoveTo.rank,
     isLegal: true,
-    castleRookFrom: castleRookMoveFrom,
-    castleRookTo: castleRookMoveTo
+    CastleRookFrom: castleRookMoveFrom,
+    CastleRookTo: castleRookMoveTo
   };
 }
 
@@ -2720,6 +2772,7 @@ export {
   generateNodeId,
   getBeforeAndAfterPositions,
   getBitBoardPosition,
+  getCastleStatus,
   getCastledMoveFromBoardStates,
   getFile,
   getFileAndRank,
@@ -2728,6 +2781,7 @@ export {
   getRank,
   getSinglePieceMoveFromBoardStates,
   h8,
+  handleCastleMove,
   initBoard,
   isABCtoFGHwraparound,
   isAtoHwraparound,
@@ -2752,8 +2806,8 @@ export {
   knightNodes,
   maxMove,
   memoize,
+  moveAnyPiece,
   movePiece,
-  moveSlidingPiece,
   numberOfTiles,
   occupiedBy,
   orthagonalOffsets,

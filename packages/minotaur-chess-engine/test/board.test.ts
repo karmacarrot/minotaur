@@ -1,7 +1,7 @@
 import {
   StartingBoard,
   BoardArray,
-  moveSlidingPiece,
+  moveAnyPiece,
   MultiLog,
   LogLevels,
   LoggerConfig,
@@ -12,6 +12,11 @@ import {
   BitBoard,
   BitMove,
   bitMoveToBoardMove,
+  movePiece,
+  CastleForBlackGameBoard,
+  StartingNode,
+  getCastleStatus,
+  handleCastleMove,
 } from '@karmacarrot/minotaur-chess-engine';
 import { faker } from '@faker-js/faker';
 
@@ -71,7 +76,7 @@ describe('BoardArray', () => {
   });
 });
 
-describe('moveSlidingPiece', () => {
+describe('moveAnyPiece', () => {
   type TestCase = [string, string, number, string, number, string];
   const whiteTestCases: TestCase[] = [
     ['allows a white pawn to move forward from A2 to A3', 'a', 2, 'a', 3, ''],
@@ -79,7 +84,7 @@ describe('moveSlidingPiece', () => {
 
   it('allows a white pawn to move forward 1 unoccupied square or 2 from starting rank', () => {
     const startingBoard = StartingBoard;
-    const newBoardState = moveSlidingPiece(startingBoard, 2, 'a', 3, 'a', 'whitePawn');
+    const newBoardState = moveAnyPiece(startingBoard, 2, 'a', 3, 'a', 'whitePawn');
     const newBoardArray = BoardArray(newBoardState);
 
     expect(newBoardArray[1] && newBoardArray[1][7]).toBe(null);
@@ -87,7 +92,7 @@ describe('moveSlidingPiece', () => {
   });
   it('allows a black pawn to move forward 1 unoccupied square or 2 from starting rank', () => {
     const startingBoard = StartingBoard;
-    const newBoardState = moveSlidingPiece(startingBoard, 7, 'a', 5, 'a', 'blackPawn');
+    const newBoardState = moveAnyPiece(startingBoard, 7, 'a', 5, 'a', 'blackPawn');
     const newBoardArray = BoardArray(newBoardState);
     expect(newBoardArray[4][7]);
     expect(newBoardArray[6][7]).toBe(null);
@@ -156,6 +161,8 @@ describe('getPathAlgabraic', () => {
       FileTo: 'a',
       RankFrom: 2,
       RankTo: 4,
+      CastleRookFrom: '',
+      CastleRookTo: '',
     };
     const positionsArray = getPathAlgabraic(pawnMove);
     expect(positionsArray).toHaveLength(2);
@@ -171,6 +178,8 @@ describe('getPathAlgabraic', () => {
       FileTo: 'a',
       RankFrom: 7,
       RankTo: 5,
+      CastleRookFrom: '',
+      CastleRookTo: '',
     };
     const positionsArray = getPathAlgabraic(pawnMove);
     expect(positionsArray).toHaveLength(2);
@@ -252,4 +261,65 @@ describe('bitMoveToBoardMove', () => {
     const result = bitMoveToBoardMove(moves.bitMove);
     expect(result).toEqual(moves.boardMove);
   });
+});
+
+describe('movePiece', () => {
+  it("should invalidate long castle option for black when moving Queen's rook", () => {
+    const startingBoard = { ...CastleForBlackGameBoard };
+    const updateResponse = movePiece(startingBoard, 'blackRook', 8, 'h', 8, 'g');
+    expect(updateResponse.CastleShortLost).toBe(true);
+    expect(updateResponse.CastleLongLost).toBe(false);
+  });
+});
+
+describe('handleCastleMove', () => {
+  let mockState: BitBoard;
+
+  beforeEach(() => {
+    mockState = CastleForBlackGameBoard;
+  });
+
+  it('moves black rook during kingside castling', () => {
+    const result = handleCastleMove(mockState, 'blackKing', 'e', 'g');
+    expect(result).toEqual(moveAnyPiece(mockState, 8, 'h', 8, 'f', 'blackRook'));
+  });
+
+  it('moves black rook during queenside castling', () => {
+    const result = handleCastleMove(mockState, 'blackKing', 'e', 'c');
+    expect(result).toEqual(moveAnyPiece(mockState, 8, 'a', 8, 'd', 'blackRook'));
+  });
+
+  it('moves white rook during kingside castling', () => {
+    const result = handleCastleMove(mockState, 'whiteKing', 'e', 'g');
+    expect(result).toEqual(moveAnyPiece(mockState, 1, 'h', 1, 'f', 'whiteRook'));
+  });
+
+  it('moves white rook during queenside castling', () => {
+    const result = handleCastleMove(mockState, 'whiteKing', 'e', 'c');
+    expect(result).toEqual(moveAnyPiece(mockState, 1, 'a', 1, 'd', 'whiteRook'));
+  });
+
+  it('returns unmodified state for non-castling moves', () => {
+    const result = handleCastleMove(mockState, 'whiteKing', 'e', 'f');
+    expect(result).toBe(mockState);
+  });
+});
+
+describe('updateCastleStatus', () => {
+  it.each`
+    pieceType      | rankFrom | expectedLong | expectedShort
+    ${'blackKing'} | ${5}     | ${false}     | ${false}
+    ${'whiteKing'} | ${5}     | ${false}     | ${false}
+    ${'blackRook'} | ${1}     | ${true}      | ${false}
+    ${'blackRook'} | ${8}     | ${false}     | ${true}
+    ${'whiteRook'} | ${1}     | ${true}      | ${false}
+    ${'whiteRook'} | ${8}     | ${false}     | ${true}
+  `(
+    'returns correct status for pieceType=$pieceType and rankFrom=$rankFrom',
+    ({ pieceType, rankFrom, expectedLong, expectedShort }) => {
+      const result = getCastleStatus(pieceType, rankFrom);
+      expect(result.castleLongLost).toBe(expectedLong);
+      expect(result.castleShortLost).toBe(expectedShort);
+    }
+  );
 });

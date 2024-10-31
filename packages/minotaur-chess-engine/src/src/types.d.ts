@@ -1,6 +1,8 @@
 export type BoardUpdateResponse = {
   BoardState: BitBoard;
   MoveAttempted: BoardMove;
+  CastleLongLost: boolean;
+  CastleShortLost: boolean;
 };
 
 export interface MinotaurConfig {
@@ -14,24 +16,26 @@ export type BoardMove = {
   PieceTaken: Piece;
   FileFrom: string;
   FileTo: string;
+  CastleRookFrom: string;
+  CastleRookTo: string;
   RankFrom: number;
   RankTo: number;
   isLegal: boolean;
 };
 
 export type Piece =
-  | "whitePawn"
-  | "whiteKnight"
-  | "whiteBishop"
-  | "whiteRook"
-  | "whiteQueen"
-  | "whiteKing"
-  | "blackPawn"
-  | "blackKnight"
-  | "blackBishop"
-  | "blackRook"
-  | "blackQueen"
-  | "blackKing"
+  | 'whitePawn'
+  | 'whiteKnight'
+  | 'whiteBishop'
+  | 'whiteRook'
+  | 'whiteQueen'
+  | 'whiteKing'
+  | 'blackPawn'
+  | 'blackKnight'
+  | 'blackBishop'
+  | 'blackRook'
+  | 'blackQueen'
+  | 'blackKing'
   | null;
 
 export type ChessboardArray = Piece[][];
@@ -92,6 +96,11 @@ export interface GameStatus {
   blackKingCanCastleShort: boolean;
 }
 
+export interface CastleStatus {
+  castleLongLost: boolean;
+  castleShortLost: boolean;
+}
+
 export type BitMove = {
   from: number;
   to: number;
@@ -129,10 +138,11 @@ export type CheckStatus = {
 export type LegalityResponse = {
   isLegal: boolean;
   reason:
-    | "need to move out of check"
+    | 'need to move out of check'
     | "can't move into check"
-    | "piece move rules evaluation"
-    | "no move detected"
+    | 'piece move rules evaluation'
+    | 'no move detected'
     | "can't take your own pieces"
-    | "fill your boots";
+    | 'castling rules checked'
+    | 'fill your boots';
 };

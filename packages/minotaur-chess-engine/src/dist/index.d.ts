@@ -1,6 +1,8 @@
 type BoardUpdateResponse = {
   BoardState: BitBoard;
   MoveAttempted: BoardMove;
+  CastleLongLost: boolean;
+  CastleShortLost: boolean;
 };
 
 interface MinotaurConfig {
@@ -14,24 +16,26 @@ type BoardMove = {
   PieceTaken: Piece;
   FileFrom: string;
   FileTo: string;
+  CastleRookFrom: string;
+  CastleRookTo: string;
   RankFrom: number;
   RankTo: number;
   isLegal: boolean;
 };
 
 type Piece =
-  | "whitePawn"
-  | "whiteKnight"
-  | "whiteBishop"
-  | "whiteRook"
-  | "whiteQueen"
-  | "whiteKing"
-  | "blackPawn"
-  | "blackKnight"
-  | "blackBishop"
-  | "blackRook"
-  | "blackQueen"
-  | "blackKing"
+  | 'whitePawn'
+  | 'whiteKnight'
+  | 'whiteBishop'
+  | 'whiteRook'
+  | 'whiteQueen'
+  | 'whiteKing'
+  | 'blackPawn'
+  | 'blackKnight'
+  | 'blackBishop'
+  | 'blackRook'
+  | 'blackQueen'
+  | 'blackKing'
   | null;
 
 type ChessboardArray = Piece[][];
@@ -92,6 +96,11 @@ interface GameStatus {
   blackKingCanCastleShort: boolean;
 }
 
+interface CastleStatus {
+  castleLongLost: boolean;
+  castleShortLost: boolean;
+}
+
 type BitMove = {
   from: number;
   to: number;
@@ -129,12 +138,13 @@ type CheckStatus = {
 type LegalityResponse = {
   isLegal: boolean;
   reason:
-    | "need to move out of check"
+    | 'need to move out of check'
     | "can't move into check"
-    | "piece move rules evaluation"
-    | "no move detected"
+    | 'piece move rules evaluation'
+    | 'no move detected'
     | "can't take your own pieces"
-    | "fill your boots";
+    | 'castling rules checked'
+    | 'fill your boots';
 };
 
 declare const InitialGameStatus: GameStatus;
@@ -237,10 +247,12 @@ declare const blackPawnShortGuards: bigint;
 
 declare function initBoard(arrangement: BoardArrangements): BitBoard;
 declare function BoardArray(currentBitBoard: BitBoard): ChessboardArray;
-declare function movePiece(currentBitBoard: BitBoard, pieceType: Piece, rankFrom: number, fileFrom: string, rankTo: number, fileTo: string): BoardUpdateResponse;
+declare function getCastleStatus(pieceType: Piece, rankFrom: number): CastleStatus;
+declare function handleCastleMove(boardState: BitBoard, pieceType: Piece, fileFrom: string, fileTo: string): BitBoard;
+declare function movePiece(currentBitBoard: BitBoard, pieceType: Piece, rankFrom: number, fileFrom: string, rankTo: number, fileTo: string, gameState: GameStatus): BoardUpdateResponse;
 declare function getFile(x: number, boardWidth: number, xOffset: number): string | undefined;
 declare function getRank(y: number, boardHeight: number, yOffset: number): number;
-declare function moveSlidingPiece(currentBitBoard: BitBoard, rankFrom: number, fileFrom: string, rankTo: number, fileTo: string, pieceType: keyof BitBoard): BitBoard;
+declare function moveAnyPiece(currentBitBoard: BitBoard, rankFrom: number, fileFrom: string, rankTo: number, fileTo: string, pieceType: keyof BitBoard): BitBoard;
 declare function getPathAlgabraic(move: BoardMove): {
     rank: number;
     file: string | undefined;
@@ -422,7 +434,7 @@ declare const LoggerConfig: {
 
 declare function MultiLog(outputType: LogLevels, message: string, outputVerbosity: LogLevels): void;
 
-declare function isLegalMove(moveAttempted: BoardMove, boardState: BitBoard, proposedBoardState: BitBoard): LegalityResponse;
+declare function isLegalMove(moveAttempted: BoardMove, boardState: BitBoard, proposedBoardState: BitBoard, gameState: GameStatus): LegalityResponse;
 declare function isLegalQueenMove(moveAttempted: BoardMove, boardState: BitBoard, evaluateForWhite: boolean, friendlyPositions: bigint, enemyPositions: bigint): boolean;
 declare function isLegalKingMove(moveAttempted: BoardMove, boardState: BitBoard, evaluateForWhite: boolean, friendlyPositions: bigint, enemyPositions: bigint): boolean;
 declare function isLegalRookMove(moveAttempted: BoardMove, boardState: BitBoard, evaluateForWhite: boolean, friendlyPositions: bigint, enemyPositions: bigint): boolean;
@@ -453,4 +465,4 @@ declare const blackPawnChain_Pyramid: bigint;
 declare const blackPawnChain_ThreeIslands: bigint;
 declare const blackPawnChain_NoChains: bigint;
 
-export { AllBishopMoves, AllBlackPawnCaptures, AllBlackPawnMovesComposite, AllBlackPawnMovesOneSquare, AllBlackPawnMovesTwoSquare, AllCompiledMoves, AllKingMoves, AllKnightMoves, AllQueenMoves, AllRookMoves, AllWhitePawnCaptures, AllWhitePawnMovesComposite, AllWhitePawnMovesOneSquare, AllWhitePawnMovesTwoSquare, type BitBoard, type BitMove, BlackAdvantageBoard, BlackLongCastledGameBoard, BlackPawnCaptures, BlackPawnMovesComposite, BlackPawnMovesOneSquare, BlackShortCastledGameBoard, BoardArrangements, BoardArray, type BoardMove, type BoardUpdateResponse, CastleForBlackAfterGameBoard, CastleForBlackGameBoard, CastleForBlackGameLongBoard, CentralDominanceWeightings, type CheckStatus, type ChessboardArray, DuellingPawnsBoard, EmptyBoard, EndGameBoard, type EvalLayer, type EvalLogs, EvalWeightings, FindBestMoveMiniMax, FindBestMoves, type GameNode, type GameStatus, InitialGameStatus, type LegalityResponse, LogBoardPositionsHTML, LogLevels, LoggerConfig, MateInOneForBlackGameBoard, MateInOneForWhiteGameBoard, MiddleGameBoard, MiniMaxTestBoardOne, type MinotaurConfig, MultiLog, NodeFactory, type Piece, type PieceImages, RankWeightings, type Score, type ScoreArray, StartingBoard, StartingNode, WhitePawnCaptures, WhitePawnMovesComposite, a1, aTogFilesOnly, allBlackPositions, allOnes, allPositions, allWhitePositions, applyMove, bTohFilesOnly, bigIntToBinaryString, binaryMask64, bishopNodes, bitBoardsReadable, bitCount, bitMoveToBoardMove, blackKingLongCastleDestination, blackKingLongCastleRookDestination, blackKingLongCastleRoute, blackKingLongRook, blackKingShortCastleDestination, blackKingShortCastleRookDestination, blackKingShortCastleRoute, blackKingShortRook, blackPawnCaptureNodes, blackPawnChain_NoChains, blackPawnChain_Pyramid, blackPawnChain_ThreeIslands, blackPawnLongGuards, blackPawnNodes, blackPawnShortGuards, blackPawnTwoSquareNodes, blackStartingRank, clearPosition, createEvalLogs, diagonalOffsets, evalLoggingOff, evalLoggingOn, evaluateBoard, evaluateCentralDominanceAdvantages, evaluateFreedomToMove, evaluateKingSafety, evaluateMaterialAdvantages, evaluatePawnChains, evaluatePieceDevelopment, evaluatePositionalAdvantages, evaluatePromotionalPossibilities, files, findBitPosition, findBitPositionReverse, findBitPositions, fullBitMask, generateLegalMoves, generateNodeId, getBeforeAndAfterPositions, getBitBoardPosition, getCastledMoveFromBoardStates, getFile, getFileAndRank, getMoveFromBoardStates, getPathAlgabraic, getRank, getSinglePieceMoveFromBoardStates, h8, initBoard, isABCtoFGHwraparound, isAtoHwraparound, isLegalBishopMove, isLegalKingMove, isLegalKnightMove, isLegalMove, isLegalPawnMove, isLegalQueenMove, isLegalRookMove, isLongCastleRouteBlocked, isMyKingInCheck, isOccupied, isOccupiedComposite, isOnStartingRank, isOpponentChecked, isOpponentCheckedMemo, isShortCastleRouteBlocked, kingCastlingNodes, kingNodes, knightMoveOffsets, knightNodes, maxMove, memoize, movePiece, moveSlidingPiece, numberOfTiles, occupiedBy, orthagonalOffsets, outputEvalLogs, outputEvalLogsHtml, outputSingleBitboardHtml, outputSinglePiecePositions, pieceImages, pieceValues, pushNewNode, queenNodes, rookNodes, scoredMove, slidingPieces, unicodePieceMap, whiteKingLongCastleDestination, whiteKingLongCastleRookDestination, whiteKingLongCastleRoute, whiteKingLongRook, whiteKingShortCastleDestination, whiteKingShortCastleRookDestination, whiteKingShortCastleRoute, whiteKingShortRook, whiteKingsPawn, whitePawnCaptureNodes, whitePawnChain_NoChains, whitePawnChain_Pyramid, whitePawnChain_ThreeIslands, whitePawnLongGuards, whitePawnNodes, whitePawnShortGuards, whiteStartingRank, xOrYTileLength };
+export { AllBishopMoves, AllBlackPawnCaptures, AllBlackPawnMovesComposite, AllBlackPawnMovesOneSquare, AllBlackPawnMovesTwoSquare, AllCompiledMoves, AllKingMoves, AllKnightMoves, AllQueenMoves, AllRookMoves, AllWhitePawnCaptures, AllWhitePawnMovesComposite, AllWhitePawnMovesOneSquare, AllWhitePawnMovesTwoSquare, type BitBoard, type BitMove, BlackAdvantageBoard, BlackLongCastledGameBoard, BlackPawnCaptures, BlackPawnMovesComposite, BlackPawnMovesOneSquare, BlackShortCastledGameBoard, BoardArrangements, BoardArray, type BoardMove, type BoardUpdateResponse, CastleForBlackAfterGameBoard, CastleForBlackGameBoard, CastleForBlackGameLongBoard, type CastleStatus, CentralDominanceWeightings, type CheckStatus, type ChessboardArray, DuellingPawnsBoard, EmptyBoard, EndGameBoard, type EvalLayer, type EvalLogs, EvalWeightings, FindBestMoveMiniMax, FindBestMoves, type GameNode, type GameStatus, InitialGameStatus, type LegalityResponse, LogBoardPositionsHTML, LogLevels, LoggerConfig, MateInOneForBlackGameBoard, MateInOneForWhiteGameBoard, MiddleGameBoard, MiniMaxTestBoardOne, type MinotaurConfig, MultiLog, NodeFactory, type Piece, type PieceImages, RankWeightings, type Score, type ScoreArray, StartingBoard, StartingNode, WhitePawnCaptures, WhitePawnMovesComposite, a1, aTogFilesOnly, allBlackPositions, allOnes, allPositions, allWhitePositions, applyMove, bTohFilesOnly, bigIntToBinaryString, binaryMask64, bishopNodes, bitBoardsReadable, bitCount, bitMoveToBoardMove, blackKingLongCastleDestination, blackKingLongCastleRookDestination, blackKingLongCastleRoute, blackKingLongRook, blackKingShortCastleDestination, blackKingShortCastleRookDestination, blackKingShortCastleRoute, blackKingShortRook, blackPawnCaptureNodes, blackPawnChain_NoChains, blackPawnChain_Pyramid, blackPawnChain_ThreeIslands, blackPawnLongGuards, blackPawnNodes, blackPawnShortGuards, blackPawnTwoSquareNodes, blackStartingRank, clearPosition, createEvalLogs, diagonalOffsets, evalLoggingOff, evalLoggingOn, evaluateBoard, evaluateCentralDominanceAdvantages, evaluateFreedomToMove, evaluateKingSafety, evaluateMaterialAdvantages, evaluatePawnChains, evaluatePieceDevelopment, evaluatePositionalAdvantages, evaluatePromotionalPossibilities, files, findBitPosition, findBitPositionReverse, findBitPositions, fullBitMask, generateLegalMoves, generateNodeId, getBeforeAndAfterPositions, getBitBoardPosition, getCastleStatus, getCastledMoveFromBoardStates, getFile, getFileAndRank, getMoveFromBoardStates, getPathAlgabraic, getRank, getSinglePieceMoveFromBoardStates, h8, handleCastleMove, initBoard, isABCtoFGHwraparound, isAtoHwraparound, isLegalBishopMove, isLegalKingMove, isLegalKnightMove, isLegalMove, isLegalPawnMove, isLegalQueenMove, isLegalRookMove, isLongCastleRouteBlocked, isMyKingInCheck, isOccupied, isOccupiedComposite, isOnStartingRank, isOpponentChecked, isOpponentCheckedMemo, isShortCastleRouteBlocked, kingCastlingNodes, kingNodes, knightMoveOffsets, knightNodes, maxMove, memoize, moveAnyPiece, movePiece, numberOfTiles, occupiedBy, orthagonalOffsets, outputEvalLogs, outputEvalLogsHtml, outputSingleBitboardHtml, outputSinglePiecePositions, pieceImages, pieceValues, pushNewNode, queenNodes, rookNodes, scoredMove, slidingPieces, unicodePieceMap, whiteKingLongCastleDestination, whiteKingLongCastleRookDestination, whiteKingLongCastleRoute, whiteKingLongRook, whiteKingShortCastleDestination, whiteKingShortCastleRookDestination, whiteKingShortCastleRoute, whiteKingShortRook, whiteKingsPawn, whitePawnCaptureNodes, whitePawnChain_NoChains, whitePawnChain_Pyramid, whitePawnChain_ThreeIslands, whitePawnLongGuards, whitePawnNodes, whitePawnShortGuards, whiteStartingRank, xOrYTileLength };

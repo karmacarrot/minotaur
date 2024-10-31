@@ -23,7 +23,16 @@ import {
   MiniMaxTestBoardOne,
 } from './referee/mockBoardStates';
 import { isLegalMove } from './referee/referee';
-import { BitBoard, BitMove, BoardMove, BoardUpdateResponse, ChessboardArray, Piece } from './types';
+import {
+  BitBoard,
+  BitMove,
+  BoardMove,
+  BoardUpdateResponse,
+  CastleStatus,
+  ChessboardArray,
+  GameStatus,
+  Piece,
+} from './types';
 
 export function initBoard(arrangement: BoardArrangements): BitBoard {
   switch (arrangement) {
@@ -77,6 +86,47 @@ export function BoardArray(currentBitBoard: BitBoard) {
   return board;
 }
 
+export function getCastleStatus(pieceType: Piece, rankFrom: number): CastleStatus {
+  let castleLongLost = false;
+  let castleShortLost = false;
+
+  if (pieceType === 'blackKing' || pieceType === 'whiteKing') {
+    castleLongLost = false;
+    castleShortLost = false;
+  }
+
+  if ((pieceType === 'blackRook' || pieceType === 'whiteRook') && rankFrom === 1) {
+    castleLongLost = true;
+  }
+
+  if ((pieceType === 'blackRook' || pieceType === 'whiteRook') && rankFrom === 8) {
+    castleShortLost = true;
+  }
+
+  return { castleLongLost, castleShortLost };
+}
+
+export function handleCastleMove(
+  boardState: BitBoard,
+  pieceType: Piece,
+  fileFrom: string,
+  fileTo: string
+): BitBoard {
+  if (pieceType === 'blackKing' && fileFrom === 'e' && fileTo === 'g') {
+    return moveAnyPiece(boardState, 8, 'h', 8, 'f', 'blackRook');
+  }
+  if (pieceType === 'blackKing' && fileFrom === 'e' && fileTo === 'c') {
+    return moveAnyPiece(boardState, 8, 'a', 8, 'd', 'blackRook');
+  }
+  if (pieceType === 'whiteKing' && fileFrom === 'e' && fileTo === 'g') {
+    return moveAnyPiece(boardState, 1, 'h', 1, 'f', 'whiteRook');
+  }
+  if (pieceType === 'whiteKing' && fileFrom === 'e' && fileTo === 'c') {
+    return moveAnyPiece(boardState, 1, 'a', 1, 'd', 'whiteRook');
+  }
+  return boardState;
+}
+
 //used to evaluate the weak fleshy human moves
 export function movePiece(
   currentBitBoard: BitBoard,
@@ -84,7 +134,8 @@ export function movePiece(
   rankFrom: number,
   fileFrom: string,
   rankTo: number,
-  fileTo: string
+  fileTo: string,
+  gameState: GameStatus
 ): BoardUpdateResponse {
   MultiLog(
     LogLevels.info,
@@ -102,8 +153,10 @@ export function movePiece(
     isLegal: false,
     PieceMoved: pieceType,
     PieceTaken: null,
+    CastleRookFrom: '',
+    CastleRookTo: '',
   };
-  const newState = moveSlidingPiece(
+  let newState = moveAnyPiece(
     currentBitBoard,
     rankFrom,
     fileFrom,
@@ -111,15 +164,24 @@ export function movePiece(
     fileTo,
     pieceType != null ? pieceType : 'whitePawn'
   );
-  const isLegal = isLegalMove(moveAttempted, currentBitBoard, newState);
+
+  if (pieceType === 'blackKing' || pieceType === 'whiteKing') {
+    newState = handleCastleMove(newState, pieceType, fileFrom, fileTo);
+  }
+
+  const isLegal = isLegalMove(moveAttempted, currentBitBoard, newState, gameState);
   moveAttempted.isLegal = isLegal.isLegal;
 
   if (!fileFrom || !fileTo || !isLegal) {
     return {
       BoardState: currentBitBoard,
       MoveAttempted: moveAttempted,
+      CastleLongLost: false,
+      CastleShortLost: false,
     };
   }
+
+  const castleStatus = getCastleStatus(pieceType, rankFrom);
 
   if (isLegal) {
     MultiLog(LogLevels.info, "It's a legal move", LoggerConfig.verbosity);
@@ -135,7 +197,11 @@ export function movePiece(
         isLegal: isLegal.isLegal,
         PieceMoved: pieceType,
         PieceTaken: null,
+        CastleRookFrom: '',
+        CastleRookTo: '',
       },
+      CastleLongLost: castleStatus.castleLongLost,
+      CastleShortLost: castleStatus.castleShortLost,
     };
   }
 
@@ -149,7 +215,11 @@ export function movePiece(
       isLegal: isLegal.isLegal,
       PieceMoved: pieceType,
       PieceTaken: null,
+      CastleRookFrom: '',
+      CastleRookTo: '',
     },
+    CastleLongLost: castleStatus.castleLongLost,
+    CastleShortLost: castleStatus.castleShortLost,
   };
 }
 
@@ -169,7 +239,7 @@ export function getRank(y: number, boardHeight: number, yOffset: number) {
   return rank;
 }
 
-export function moveSlidingPiece(
+export function moveAnyPiece(
   currentBitBoard: BitBoard,
   rankFrom: number,
   fileFrom: string,
@@ -239,7 +309,7 @@ export function bitMoveToBoardMove(bitMove: BitMove) {
     RankFrom: boardMoveFrom.rank,
     RankTo: boardMoveTo.rank,
     isLegal: true,
-    castleRookFrom: castleRookMoveFrom,
-    castleRookTo: castleRookMoveTo,
+    CastleRookFrom: castleRookMoveFrom,
+    CastleRookTo: castleRookMoveTo,
   } as BoardMove;
 }

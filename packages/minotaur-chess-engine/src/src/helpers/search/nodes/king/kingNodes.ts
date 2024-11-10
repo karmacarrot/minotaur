@@ -14,14 +14,18 @@ import {
 import {
   blackKingLongCastleDestination,
   blackKingLongCastleRookDestination,
+  blackKingLongRook,
   blackKingShortCastleDestination,
   blackKingShortCastleRookDestination,
+  blackKingShortRook,
   diagonalOffsets,
   orthagonalOffsets,
   whiteKingLongCastleDestination,
   whiteKingLongCastleRookDestination,
+  whiteKingLongRook,
   whiteKingShortCastleDestination,
   whiteKingShortCastleRookDestination,
+  whiteKingShortRook,
 } from '../../../definitions';
 import { NodeFactory } from '../nodeGenerators';
 
@@ -83,6 +87,19 @@ export function kingCastlingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[
     return possibleNodes;
   }
   //TODO: check we aren't moving through or into check
+
+  if (isWhitesTurn && (node.boardState.whiteRook & whiteKingLongRook) === BigInt(0)) {
+    kingCanLong = false;
+  }
+  if (isWhitesTurn && (node.boardState.whiteRook & whiteKingShortRook) === BigInt(0)) {
+    kingCanShort = false;
+  }
+  if (!isWhitesTurn && (node.boardState.blackRook & blackKingLongRook) === BigInt(0)) {
+    kingCanLong = false;
+  }
+  if (!isWhitesTurn && (node.boardState.blackRook & blackKingShortRook) === BigInt(0)) {
+    kingCanShort = false;
+  }
 
   if (kingCanShort) {
     const isShortPathOccupied = isShortCastleRouteBlocked(node.boardState, isWhitesTurn);

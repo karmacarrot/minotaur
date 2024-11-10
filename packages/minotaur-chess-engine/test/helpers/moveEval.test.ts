@@ -36,6 +36,10 @@ import {
   CastleForBlackGameBoard,
   blackKingShortCastleDestination,
   blackKingShortCastleRookDestination,
+  AllBlackPawnCaptures,
+  allOnes,
+  EmptyBoard,
+  StartingNode,
 } from '@karmacarrot/minotaur-chess-engine';
 import { LogBoardPositions } from './testHelper';
 
@@ -55,6 +59,8 @@ import { LogBoardPositions } from './testHelper';
 //     expect(bestMoves[0].move.to).toBeGreaterThanOrEqual(32);
 //   });
 // });
+
+const startingNode = StartingNode();
 
 describe('FindBestMoveMiniMax', () => {
   it('makes a legal move on opening for white', async () => {
@@ -109,6 +115,21 @@ describe('FindBestMoveMiniMax', () => {
       score: -8.95,
       to: 63,
     });
+  });
+});
+
+describe('AllBlackPawnCaptures', () => {
+  it('shows the 6th rank as all being potential captures from a starting board', () => {
+    const startingBoard = { ...StartingBoard };
+    const potentialBlackPawnCaptures = AllBlackPawnCaptures(startingBoard, allOnes);
+    const expectedCaptures = BigInt(
+      '0b0000000000000000000000000000000000000000111111110000000000000000'
+    );
+    const emptyBoard = { ...EmptyBoard };
+    emptyBoard.blackPawn = potentialBlackPawnCaptures;
+    LogBoardPositions(emptyBoard);
+
+    expect(potentialBlackPawnCaptures).toBe(expectedCaptures);
   });
 });
 
@@ -526,7 +547,15 @@ describe('AllKnightMoves', () => {
   });
   it('after Nd3 finds 7 possible moves for white', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'whiteKnight', 1, 'b', 3, 'c');
+    const newPositions = movePiece(
+      startingBoard,
+      'whiteKnight',
+      1,
+      'b',
+      3,
+      'c',
+      startingNode.gameState
+    );
     const friendlyPositions = allWhitePositions(newPositions.BoardState);
     const allKnightMoves = AllKnightMoves(newPositions.BoardState, friendlyPositions, true);
     // outputSingleBitboardHtml(
@@ -552,7 +581,15 @@ describe('AllKnightMoves', () => {
 describe('AllBishopMoves', () => {
   it('returns all legal white queen moves after moving d and e pawns', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'whitePawn', 2, 'e', 4, 'e');
+    const newPositions = movePiece(
+      startingBoard,
+      'whitePawn',
+      2,
+      'e',
+      4,
+      'e',
+      startingNode.gameState
+    );
 
     const friendlyPositions = allWhitePositions(newPositions.BoardState);
     const enemyPositions = allBlackPositions(newPositions.BoardState);
@@ -573,7 +610,15 @@ describe('AllBishopMoves', () => {
 
     expect(bitCount(allBishopMoves)).toBe(5);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'whitePawn', 2, 'd', 4, 'd');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'whitePawn',
+      2,
+      'd',
+      4,
+      'd',
+      startingNode.gameState
+    );
     const secondFriendlyPositions = allWhitePositions(secondPositions.BoardState);
     const secondBishopPositions = AllBishopMoves(
       secondPositions.BoardState,
@@ -593,7 +638,15 @@ describe('AllBishopMoves', () => {
 
   it('returns all legal black bishop moves after moving d and e pawns', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'blackPawn', 7, 'e', 5, 'e');
+    const newPositions = movePiece(
+      startingBoard,
+      'blackPawn',
+      7,
+      'e',
+      5,
+      'e',
+      startingNode.gameState
+    );
 
     const friendlyPositions = allBlackPositions(newPositions.BoardState);
     const enemyPositions = allWhitePositions(newPositions.BoardState);
@@ -614,7 +667,15 @@ describe('AllBishopMoves', () => {
 
     expect(bitCount(allBishopMoves)).toBe(5);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'blackPawn', 7, 'd', 5, 'd');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'blackPawn',
+      7,
+      'd',
+      5,
+      'd',
+      startingNode.gameState
+    );
     const secondFriendlyPositions = allBlackPositions(secondPositions.BoardState);
     const secondBishopPositions = AllBishopMoves(
       secondPositions.BoardState,
@@ -636,7 +697,15 @@ describe('AllBishopMoves', () => {
 describe('AllRookMoves', () => {
   it('returns all legal white rook moves after moving a pawn and a rook', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'whitePawn', 2, 'a', 4, 'a');
+    const newPositions = movePiece(
+      startingBoard,
+      'whitePawn',
+      2,
+      'a',
+      4,
+      'a',
+      startingNode.gameState
+    );
 
     const friendlyPositions = allWhitePositions(newPositions.BoardState);
     const enemyPositions = allBlackPositions(newPositions.BoardState);
@@ -657,7 +726,15 @@ describe('AllRookMoves', () => {
 
     expect(bitCount(allRookMoves)).toBe(2);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'whiteRook', 1, 'a', 3, 'a');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'whiteRook',
+      1,
+      'a',
+      3,
+      'a',
+      startingNode.gameState
+    );
     const secondFriendlyPositions = allWhitePositions(secondPositions.BoardState);
     const secondRookPositions = AllRookMoves(
       secondPositions.BoardState,
@@ -677,7 +754,15 @@ describe('AllRookMoves', () => {
 
   it('returns all legal black rook moves after moving a pawn and a rook', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'blackPawn', 7, 'a', 5, 'a');
+    const newPositions = movePiece(
+      startingBoard,
+      'blackPawn',
+      7,
+      'a',
+      5,
+      'a',
+      startingNode.gameState
+    );
 
     const friendlyPositions = allBlackPositions(newPositions.BoardState);
     const enemyPositions = allWhitePositions(newPositions.BoardState);
@@ -698,7 +783,15 @@ describe('AllRookMoves', () => {
 
     expect(bitCount(allRookMoves)).toBe(2);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'blackRook', 8, 'a', 6, 'a');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'blackRook',
+      8,
+      'a',
+      6,
+      'a',
+      startingNode.gameState
+    );
     const secondFriendlyPositions = allBlackPositions(secondPositions.BoardState);
     const secondRookPositions = AllRookMoves(
       secondPositions.BoardState,
@@ -723,7 +816,15 @@ describe('AllRookMoves', () => {
 describe('AllKingMoves', () => {
   it('returns all legal white king moves after a bong cloud opening', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'whitePawn', 2, 'e', 4, 'e');
+    const newPositions = movePiece(
+      startingBoard,
+      'whitePawn',
+      2,
+      'e',
+      4,
+      'e',
+      startingNode.gameState
+    );
     const friendlyPositions = allWhitePositions(newPositions.BoardState);
 
     const allKingMoves = AllKingMoves(newPositions.BoardState, friendlyPositions, true);
@@ -737,7 +838,15 @@ describe('AllKingMoves', () => {
 
     expect(bitCount(allKingMoves)).toBe(1);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'whiteKing', 1, 'e', 2, 'e');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'whiteKing',
+      1,
+      'e',
+      2,
+      'e',
+      startingNode.gameState
+    );
     const secondFriendlyPositions = allWhitePositions(secondPositions.BoardState);
     const secondKingPositions = AllKingMoves(
       secondPositions.BoardState,
@@ -756,7 +865,15 @@ describe('AllKingMoves', () => {
 
   it('returns all legal black king moves after moving a pawn and a king', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'blackPawn', 7, 'e', 5, 'e');
+    const newPositions = movePiece(
+      startingBoard,
+      'blackPawn',
+      7,
+      'e',
+      5,
+      'e',
+      startingNode.gameState
+    );
     const friendlyPositions = allBlackPositions(newPositions.BoardState);
 
     const allKingMoves = AllKingMoves(newPositions.BoardState, friendlyPositions, false);
@@ -770,7 +887,15 @@ describe('AllKingMoves', () => {
 
     expect(bitCount(allKingMoves)).toBe(1);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'blackKing', 8, 'e', 7, 'e');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'blackKing',
+      8,
+      'e',
+      7,
+      'e',
+      startingNode.gameState
+    );
     const secondFriendlyPositions = allBlackPositions(secondPositions.BoardState);
     const secondKingPositions = AllKingMoves(
       secondPositions.BoardState,
@@ -794,7 +919,15 @@ describe('AllKingMoves', () => {
 describe('AllQueenMoves', () => {
   it('returns all legal white queen moves after moving d pawn and queen', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'whitePawn', 2, 'd', 4, 'd');
+    const newPositions = movePiece(
+      startingBoard,
+      'whitePawn',
+      2,
+      'd',
+      4,
+      'd',
+      startingNode.gameState
+    );
 
     const friendlyPositions = allWhitePositions(newPositions.BoardState);
     const enemyPositions = allBlackPositions(newPositions.BoardState);
@@ -815,7 +948,15 @@ describe('AllQueenMoves', () => {
 
     expect(bitCount(allQueenMoves)).toBe(2);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'whiteQueen', 1, 'd', 3, 'd');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'whiteQueen',
+      1,
+      'd',
+      3,
+      'd',
+      startingNode.gameState
+    );
     const secondFriendlyPositions = allWhitePositions(secondPositions.BoardState);
     const secondQueenPositions = AllQueenMoves(
       secondPositions.BoardState,
@@ -835,7 +976,15 @@ describe('AllQueenMoves', () => {
 
   it('returns all legal black queen moves after moving d pawn and queen', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'blackPawn', 7, 'd', 5, 'd');
+    const newPositions = movePiece(
+      startingBoard,
+      'blackPawn',
+      7,
+      'd',
+      5,
+      'd',
+      startingNode.gameState
+    );
 
     const friendlyPositions = allBlackPositions(newPositions.BoardState);
     const enemyPositions = allWhitePositions(newPositions.BoardState);
@@ -856,7 +1005,15 @@ describe('AllQueenMoves', () => {
 
     expect(bitCount(allQueenMoves)).toBe(2);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'blackQueen', 8, 'd', 6, 'd');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'blackQueen',
+      8,
+      'd',
+      6,
+      'd',
+      startingNode.gameState
+    );
     const secondFriendlyPositions = allBlackPositions(secondPositions.BoardState);
     const secondQueenPositions = AllQueenMoves(
       secondPositions.BoardState,

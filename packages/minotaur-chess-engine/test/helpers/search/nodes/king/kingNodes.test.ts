@@ -52,7 +52,15 @@ describe('kingNodes', () => {
 
     expect(potentialMoves.length).toBe(1);
 
-    const secondPositions = movePiece(currentNode.boardState, 'whiteKing', 1, 'e', 2, 'e');
+    const secondPositions = movePiece(
+      currentNode.boardState,
+      'whiteKing',
+      1,
+      'e',
+      2,
+      'e',
+      startStatus
+    );
 
     currentNode.boardState = secondPositions.BoardState;
     const secondKingPositions = kingNodes(currentNode, evalLogs);
@@ -61,9 +69,9 @@ describe('kingNodes', () => {
 
   it('returns all legal black king nodes after executing a bong cloud', () => {
     const startingBoard = { ...StartingBoard };
-    const newPositions = movePiece(startingBoard, 'blackPawn', 7, 'e', 5, 'e');
-
     const startNode = StartingNode();
+    const newPositions = movePiece(startingBoard, 'blackPawn', 7, 'e', 5, 'e', startNode.gameState);
+
     startNode.boardState = newPositions.BoardState;
     startNode.gameState.isWhitesTurn = false;
     const evalLogs = createEvalLogs();
@@ -71,7 +79,15 @@ describe('kingNodes', () => {
 
     expect(potentialMoves.length).toBe(1);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'blackKing', 8, 'e', 7, 'e');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'blackKing',
+      8,
+      'e',
+      7,
+      'e',
+      startNode.gameState
+    );
 
     startNode.boardState = secondPositions.BoardState;
     const secondKingPositions = kingNodes(startNode, evalLogs);
@@ -80,9 +96,17 @@ describe('kingNodes', () => {
 
   it('does not make the black King charge the white Queen when checked(!!)', () => {
     const startingBoard = { ...EndGameBoard };
-    const newPositions = movePiece(startingBoard, 'whiteQueen', 1, 'd', 2, 'e');
-
     const startNode = StartingNode();
+    const newPositions = movePiece(
+      startingBoard,
+      'whiteQueen',
+      1,
+      'd',
+      2,
+      'e',
+      startNode.gameState
+    );
+
     startNode.boardState = newPositions.BoardState;
     startNode.gameState.isWhitesTurn = false;
     const evalLogs = createEvalLogs();
@@ -90,9 +114,25 @@ describe('kingNodes', () => {
 
     expect(potentialMoves.length).toBe(3);
 
-    const secondPositions = movePiece(newPositions.BoardState, 'blackKing', 8, 'e', 7, 'd');
+    const secondPositions = movePiece(
+      newPositions.BoardState,
+      'blackKing',
+      8,
+      'e',
+      7,
+      'd',
+      startNode.gameState
+    );
 
-    const thirdPositions = movePiece(secondPositions.BoardState, 'whiteQueen', 2, 'e', 2, 'd');
+    const thirdPositions = movePiece(
+      secondPositions.BoardState,
+      'whiteQueen',
+      2,
+      'e',
+      2,
+      'd',
+      startNode.gameState
+    );
 
     startNode.boardState = thirdPositions.BoardState;
     const secondKingPositions = kingNodes(startNode, evalLogs);
@@ -118,6 +158,39 @@ describe('kingCastlingNodes', () => {
 
     LogBoardPositions(startingBoard);
     LogBoardPositions(potentialMoves[0].boardState);
+  });
+  it("doesn't generates a move when castling would move the king through check", () => {
+    let startingBoard = { ...CastleForBlackGameBoard };
+    const startNode = StartingNode();
+    startingBoard = movePiece(
+      startingBoard,
+      'blackPawn',
+      7,
+      'g',
+      6,
+      'f',
+      startNode.gameState
+    ).BoardState;
+    startingBoard = movePiece(
+      startingBoard,
+      'whiteQueen',
+      1,
+      'd',
+      1,
+      'g',
+      startNode.gameState
+    ).BoardState;
+
+    LogBoardPositions(startingBoard);
+
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+    const evalLogs = createEvalLogs();
+    const potentialMoves = kingCastlingNodes(startNode, evalLogs);
+
+    LogBoardPositions(potentialMoves[0].boardState);
+    LogBoardPositions(potentialMoves[1].boardState);
+    expect(potentialMoves.length).toBe(0);
   });
   it('moves the king and rook to the correct positions when castling short', () => {
     const startingBoard = { ...CastleForBlackGameBoard };

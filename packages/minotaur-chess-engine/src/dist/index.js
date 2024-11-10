@@ -36,8 +36,8 @@ __export(src_exports, {
   AllWhitePawnMovesTwoSquare: () => AllWhitePawnMovesTwoSquare,
   BlackAdvantageBoard: () => BlackAdvantageBoard,
   BlackLongCastledGameBoard: () => BlackLongCastledGameBoard,
-  BlackPawnCaptures: () => BlackPawnCaptures,
-  BlackPawnMovesComposite: () => BlackPawnMovesComposite,
+  BlackPawnCaptures: () => BlackPawnCaptures2,
+  BlackPawnMovesComposite: () => BlackPawnMovesComposite2,
   BlackPawnMovesOneSquare: () => BlackPawnMovesOneSquare,
   BlackShortCastledGameBoard: () => BlackShortCastledGameBoard,
   BoardArrangements: () => BoardArrangements,
@@ -65,8 +65,8 @@ __export(src_exports, {
   RankWeightings: () => RankWeightings,
   StartingBoard: () => StartingBoard,
   StartingNode: () => StartingNode,
-  WhitePawnCaptures: () => WhitePawnCaptures,
-  WhitePawnMovesComposite: () => WhitePawnMovesComposite,
+  WhitePawnCaptures: () => WhitePawnCaptures2,
+  WhitePawnMovesComposite: () => WhitePawnMovesComposite2,
   a1: () => a1,
   aTogFilesOnly: () => aTogFilesOnly,
   allBlackPositions: () => allBlackPositions,
@@ -112,6 +112,7 @@ __export(src_exports, {
   evaluatePieceDevelopment: () => evaluatePieceDevelopment,
   evaluatePositionalAdvantages: () => evaluatePositionalAdvantages,
   evaluatePromotionalPossibilities: () => evaluatePromotionalPossibilities,
+  evaluateSquareControl: () => evaluateSquareControl,
   files: () => files,
   findBitPosition: () => findBitPosition,
   findBitPositionReverse: () => findBitPositionReverse,
@@ -1107,27 +1108,37 @@ function evaluateFreedomToMove(currentBoard, evaluateForWhite) {
   let freedomToMove = 0;
   const friendlyPieces = evaluateForWhite ? allWhitePositions(currentBoard) : allBlackPositions(currentBoard);
   const enemyPieces = evaluateForWhite ? allBlackPositions(currentBoard) : allWhitePositions(currentBoard);
-  const knightMoves = AllKnightMoves(
-    currentBoard,
-    friendlyPieces,
-    evaluateForWhite
-  );
-  const bishopMoves = AllBishopMoves(
-    currentBoard,
-    friendlyPieces,
-    enemyPieces,
-    evaluateForWhite
-  );
-  const rookMoves = AllRookMoves(
-    currentBoard,
-    friendlyPieces,
-    enemyPieces,
-    evaluateForWhite
-  );
+  const knightMoves = AllKnightMoves(currentBoard, friendlyPieces, evaluateForWhite);
+  const bishopMoves = AllBishopMoves(currentBoard, friendlyPieces, enemyPieces, evaluateForWhite);
+  const rookMoves = AllRookMoves(currentBoard, friendlyPieces, enemyPieces, evaluateForWhite);
+  const queenMoves = AllQueenMoves(currentBoard, friendlyPieces, enemyPieces, evaluateForWhite);
+  const kingMoves = AllKingMoves(currentBoard, friendlyPieces, evaluateForWhite);
+  const pawnMoves = evaluateForWhite ? AllBlackPawnMovesComposite(currentBoard).blackPawn : AllWhitePawnMovesComposite(currentBoard).whitePawn;
   freedomToMove += EvalWeightings.freedomToMove * bitCount(knightMoves);
   freedomToMove += EvalWeightings.freedomToMove * bitCount(bishopMoves);
   freedomToMove += EvalWeightings.freedomToMove * bitCount(rookMoves);
+  freedomToMove += EvalWeightings.freedomToMove * bitCount(queenMoves);
+  freedomToMove += EvalWeightings.freedomToMove * bitCount(kingMoves);
+  freedomToMove += EvalWeightings.freedomToMove * bitCount(pawnMoves);
   return freedomToMove;
+}
+function evaluateSquareControl(currentBoard, evaluateForWhite) {
+  let controlledSquares = BigInt(0);
+  const friendlyPieces = evaluateForWhite ? allWhitePositions(currentBoard) : allBlackPositions(currentBoard);
+  const enemyPieces = evaluateForWhite ? allBlackPositions(currentBoard) : allWhitePositions(currentBoard);
+  const knightMoves = AllKnightMoves(currentBoard, friendlyPieces, evaluateForWhite);
+  const bishopMoves = AllBishopMoves(currentBoard, friendlyPieces, enemyPieces, evaluateForWhite);
+  const rookMoves = AllRookMoves(currentBoard, friendlyPieces, enemyPieces, evaluateForWhite);
+  const queenMoves = AllQueenMoves(currentBoard, friendlyPieces, enemyPieces, evaluateForWhite);
+  const kingMoves = AllKingMoves(currentBoard, friendlyPieces, evaluateForWhite);
+  const pawnMoves = evaluateForWhite ? AllWhitePawnCaptures(currentBoard, allOnes) : AllBlackPawnCaptures(currentBoard, allOnes);
+  controlledSquares |= knightMoves;
+  controlledSquares |= bishopMoves;
+  controlledSquares |= rookMoves;
+  controlledSquares |= queenMoves;
+  controlledSquares |= kingMoves;
+  controlledSquares |= pawnMoves;
+  return controlledSquares;
 }
 function evaluateKingSafety(currentBoard, evaluateForWhite) {
   if (evaluateForWhite) {
@@ -1234,6 +1245,18 @@ function kingCastlingNodes(node, evalLogs) {
   let kingCanShort = isWhitesTurn ? node.gameState.whiteKingCanCastleShort : node.gameState.blackKingCanCastleShort;
   if (!kingCanLong && !kingCanShort) {
     return possibleNodes;
+  }
+  if (isWhitesTurn && (node.boardState.whiteRook & whiteKingLongRook) === BigInt(0)) {
+    kingCanLong = false;
+  }
+  if (isWhitesTurn && (node.boardState.whiteRook & whiteKingShortRook) === BigInt(0)) {
+    kingCanShort = false;
+  }
+  if (!isWhitesTurn && (node.boardState.blackRook & blackKingLongRook) === BigInt(0)) {
+    kingCanLong = false;
+  }
+  if (!isWhitesTurn && (node.boardState.blackRook & blackKingShortRook) === BigInt(0)) {
+    kingCanShort = false;
   }
   if (kingCanShort) {
     const isShortPathOccupied = isShortCastleRouteBlocked(node.boardState, isWhitesTurn);
@@ -1795,10 +1818,10 @@ async function FindBestMoveMiniMax(currentBoard, currentGameState, engineDepth) 
 }
 function generateLegalMoves2(currentBoard, isWhitesTurn) {
   if (isWhitesTurn) {
-    const whitePawns = WhitePawnMovesComposite(currentBoard);
+    const whitePawns = WhitePawnMovesComposite2(currentBoard);
     return whitePawns;
   }
-  const blackPawns = BlackPawnMovesComposite(currentBoard);
+  const blackPawns = BlackPawnMovesComposite2(currentBoard);
   return blackPawns;
 }
 function evaluateMove(currentBoard, move, evaluateForWhite) {
@@ -1854,7 +1877,7 @@ function WhitePawnMovesTwoSquare(boardState, allOccupiedPositions) {
   }
   return moves;
 }
-function WhitePawnCaptures(boardState, allOccupiedBlackPositions) {
+function WhitePawnCaptures2(boardState, allOccupiedBlackPositions) {
   const moves = [];
   const leftCapturePositions = (boardState.whitePawn & ~bTohFilesOnly) >> BigInt(7);
   const rightCapturePositions = (boardState.whitePawn & ~aTogFilesOnly) >> BigInt(9);
@@ -1891,12 +1914,12 @@ function WhitePawnCaptures(boardState, allOccupiedBlackPositions) {
   }
   return moves;
 }
-function WhitePawnMovesComposite(boardState) {
+function WhitePawnMovesComposite2(boardState) {
   const allOccupiedPositions = allPositions(boardState);
   const allOccupiedBlackPositions = allBlackPositions(boardState);
   const singleStepMoves = WhitePawnMovesOneSquare(boardState, allOccupiedPositions);
   const doubleStepMoves = WhitePawnMovesTwoSquare(boardState, allOccupiedPositions);
-  const captures = WhitePawnCaptures(boardState, allOccupiedBlackPositions);
+  const captures = WhitePawnCaptures2(boardState, allOccupiedBlackPositions);
   const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures];
   return allMoves;
 }
@@ -1975,7 +1998,7 @@ function BlackPawnMovesTwoSquare(boardState, allOccupiedPositions) {
   }
   return moves;
 }
-function BlackPawnCaptures(boardState, allOccupiedWhitePositions) {
+function BlackPawnCaptures2(boardState, allOccupiedWhitePositions) {
   const moves = [];
   const leftCapturePositions = (boardState.blackPawn & ~bTohFilesOnly) << BigInt(9);
   const rightCapturePositions = (boardState.blackPawn & ~aTogFilesOnly) << BigInt(7);
@@ -2012,12 +2035,12 @@ function BlackPawnCaptures(boardState, allOccupiedWhitePositions) {
   }
   return moves;
 }
-function BlackPawnMovesComposite(boardState) {
+function BlackPawnMovesComposite2(boardState) {
   const allOccupiedPositions = allPositions(boardState);
   const allOccupiedWhitePositions = allWhitePositions(boardState);
   const singleStepMoves = BlackPawnMovesOneSquare(boardState, allOccupiedPositions);
   const doubleStepMoves = BlackPawnMovesTwoSquare(boardState, allOccupiedPositions);
-  const captures = BlackPawnCaptures(boardState, allOccupiedWhitePositions);
+  const captures = BlackPawnCaptures2(boardState, allOccupiedWhitePositions);
   const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures];
   return allMoves;
 }
@@ -2959,6 +2982,7 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   evaluatePieceDevelopment,
   evaluatePositionalAdvantages,
   evaluatePromotionalPossibilities,
+  evaluateSquareControl,
   files,
   findBitPosition,
   findBitPositionReverse,

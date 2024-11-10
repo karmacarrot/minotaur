@@ -27,7 +27,23 @@ import {
   BlackLongCastledGameBoard,
   evaluateKingSafety,
   BlackShortCastledGameBoard,
+  evaluateSquareControl,
+  StartingNode,
 } from '@karmacarrot/minotaur-chess-engine';
+import { LogBoardPositions } from '../testHelper';
+
+describe('evaluateSquareControl', () => {
+  it('correctly identifies controlled squares from starting positions', () => {
+    const startingBoard = { ...StartingBoard };
+    const controlledWhiteSquares = evaluateSquareControl(startingBoard, true);
+
+    const emptyBoard = { ...EmptyBoard };
+    emptyBoard.whitePawn = controlledWhiteSquares;
+    LogBoardPositions(emptyBoard);
+
+    expect(controlledWhiteSquares).toBe(0);
+  });
+});
 
 describe('evaluateBoard', () => {
   it.each([[StartingBoard, 0]])(
@@ -130,7 +146,8 @@ describe('evaluatePromotionalPossibilities', () => {
 describe('evaluateCentralDominanceAdvantages', () => {
   it('should favour central control for white', () => {
     const startBoard = { ...StartingBoard };
-    const newPositions = movePiece(startBoard, 'whitePawn', 2, 'e', 4, 'e');
+    const startNode = StartingNode();
+    const newPositions = movePiece(startBoard, 'whitePawn', 2, 'e', 4, 'e', startNode.gameState);
 
     const beforeScore = evaluateCentralDominanceAdvantages(startBoard.whitePawn, true, 'whitePawn');
     const afterScore = evaluateCentralDominanceAdvantages(
@@ -188,8 +205,8 @@ describe('evaluatePieceDevelopment', () => {
     const startBoard = StartingBoard;
     const startingScore = evaluatePieceDevelopment(startBoard, true);
     expect(startingScore).toBe(0);
-
-    const newPositions = movePiece(startBoard, 'whiteKnight', 2, 'b', 3, 'd');
+    const startNode = StartingNode();
+    const newPositions = movePiece(startBoard, 'whiteKnight', 2, 'b', 3, 'd', startNode.gameState);
     const movedKnightScore = evaluatePieceDevelopment(newPositions.BoardState, true);
     expect(movedKnightScore).toBe(EvalWeightings.developedBishopKnight);
   });
@@ -200,8 +217,8 @@ describe('evaluateFreedomToMove', () => {
     const startBoard = StartingBoard;
     const startingScore = evaluateFreedomToMove(startBoard, true);
     // expect(startingScore).toBe(4 * EvalWeightings.freedomToMove);
-
-    const newPositions = movePiece(startBoard, 'whiteKnight', 2, 'b', 3, 'd');
+    const startNode = StartingNode();
+    const newPositions = movePiece(startBoard, 'whiteKnight', 2, 'b', 3, 'd', startNode.gameState);
     const movedKnightScore = evaluatePieceDevelopment(newPositions.BoardState, true);
     expect(movedKnightScore).toBe(7 * EvalWeightings.freedomToMove);
   });

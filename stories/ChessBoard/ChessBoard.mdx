@@ -1,0 +1,28 @@
+import { Meta, Story, Preview, ArgsTable } from '@storybook/addon-docs';
+import { ChessBoard } from '../../packages/minotaur-chess-react/src/src/components/ChessBoard/ChessBoard';
+import * as ChessBoardStories from './ChessBoard.stories';
+import { Title, Primary, Controls } from '@storybook/blocks';
+
+<Meta of={ChessBoardStories} title="Minotaur/ChessBoard" component={ChessBoard} />
+
+# ChessBoard Component
+
+The `ChessBoard` component displays a chessboard and manages chess piece interactions for the Minotaur chess application. It leverages the Minotaur chess engine and offers support for checked state and piece movement.
+
+## Usage
+
+The `ChessBoard` component requires a `boardArray` and a `movePiece` handler as inputs. It also accepts configurations for custom behavior, such as setting specific pieces in check.
+
+```tsx
+<ChessBoard
+  boardArray={emptyBoard}
+  blackKingCheck={false}
+  whiteKingCheck={true} // White king in check state
+  movePiece={(piece, xFrom, yFrom, xTo, yTo) =>
+    console.log(`Moving piece ${piece} from (${xFrom}, ${yFrom}) to (${xTo}, ${yTo})`)
+  }
+  config={minotaurConfig}
+/>
+```
+
+<Primary />

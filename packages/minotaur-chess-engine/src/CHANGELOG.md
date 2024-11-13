@@ -1,3 +1,10 @@
+## [1.4.5](https://github.com/karmacarrot/minotaur/compare/v1.4.4...v1.4.5) (2024-11-10)
+
+
+### Bug Fixes
+
+* working through some failing tests and adding extra coverage in order to add checks against castling through check ([a6062ac](https://github.com/karmacarrot/minotaur/commit/a6062aca1a30638c57abee9ae92b8d2a414fad15))
+
 ## [1.4.4](https://github.com/karmacarrot/minotaur/compare/v1.4.3...v1.4.4) (2024-10-27)
 
 

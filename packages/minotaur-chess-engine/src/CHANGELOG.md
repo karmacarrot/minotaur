@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/karmacarrot/minotaur/compare/v1.4.5...v1.5.0) (2024-11-13)
+
+
+### Features
+
+* adding storybook ([e50e30e](https://github.com/karmacarrot/minotaur/commit/e50e30e9fec26b8e6d594b5d856fc36afd874965))
+
 ## [1.4.5](https://github.com/karmacarrot/minotaur/compare/v1.4.4...v1.4.5) (2024-11-10)
 
 

@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/karmacarrot/minotaur/compare/v1.5.0...v1.5.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* resolving piece imagery and styling in storybook ([978a8dc](https://github.com/karmacarrot/minotaur/commit/978a8dc686ba3d3990116b52ce8e016e613c3cd7))
+
 # [1.5.0](https://github.com/karmacarrot/minotaur/compare/v1.4.5...v1.5.0) (2024-11-13)
 
 

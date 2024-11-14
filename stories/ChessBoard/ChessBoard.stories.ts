@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ChessBoard } from '../../packages/minotaur-chess-react/src/src/components/ChessBoard/ChessBoard';
 import { Piece } from '@karmacarrot/minotaur-chess-engine';
-import { emptyBoard, minotaurConfig, getCheckedStateBoard } from './ChessBoard.mocks';
+import { emptyBoard, minotaurConfig, getCheckedStateBoard, fullBoard } from './ChessBoard.mocks';
 
 const meta = {
   title: 'Minotaur/ChessBoard',
@@ -12,7 +12,7 @@ const meta = {
   args: {
     boardArray: emptyBoard,
     blackKingCheck: false,
-    whiteKingCheck: true,
+    whiteKingCheck: false,
     movePiece: (piece: Piece, xFrom: number, yFrom: number, xTo: number, yTo: number) => {
       console.log(`Moving piece ${piece} from (${xFrom}, ${yFrom}) to (${xTo}, ${yTo})`);
     },
@@ -23,7 +23,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = { args: { boardArray: fullBoard } };
 
 export const WhiteKingInCheck: Story = {
   args: {

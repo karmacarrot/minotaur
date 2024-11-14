@@ -7,7 +7,7 @@ import { Title, Primary, Controls } from '@storybook/blocks';
 
 # ChessBoard Component
 
-The `ChessBoard` component displays a chessboard and manages chess piece interactions for the Minotaur chess application. It leverages the Minotaur chess engine and offers support for checked state and piece movement.
+The `ChessBoard` component displays a chessboard and pieces. It is agnostic of chess game logic so you will need to pass a movePiece callback where you can use your own game logic or the useMinotaur React hook. A component that does the integration for you is `ChessGame`.
 
 ## Usage
 
@@ -23,6 +23,27 @@ The `ChessBoard` component requires a `boardArray` and a `movePiece` handler as 
   }
   config={minotaurConfig}
 />
+```
+
+You need to pass it a config with the images defined that your app will be serving:
+
+```tsx
+export const minotaurConfig: MinotaurConfig = {
+  pieceImages: {
+    blackPawn: '/chess-pieces/pawn_b.png',
+    blackRook: '/chess-pieces/rook_b.png',
+    blackKnight: '/chess-pieces/knight_b.png',
+    blackBishop: '/chess-pieces/bishop_b.png',
+    blackQueen: '/chess-pieces/queen_b.png',
+    blackKing: '/chess-pieces/king_b.png',
+    whitePawn: '/chess-pieces/pawn_w.png',
+    whiteRook: '/chess-pieces/rook_w.png',
+    whiteKnight: '/chess-pieces/knight_w.png',
+    whiteBishop: '/chess-pieces/bishop_w.png',
+    whiteQueen: '/chess-pieces/queen_w.png',
+    whiteKing: '/chess-pieces/king_w.png',
+  },
+};
 ```
 
 <Primary />

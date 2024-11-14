@@ -1,5 +1,7 @@
 import type { Preview } from '@storybook/react';
 import { withThemeByClassName } from '@storybook/addon-themes';
+import '../apps/web/app/globals.css';
+
 const preview: Preview = {
   parameters: {
     controls: {

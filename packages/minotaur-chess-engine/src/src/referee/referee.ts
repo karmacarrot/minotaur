@@ -68,7 +68,12 @@ export function isLegalMove(
     moveAttempted.FileFrom === 'e' &&
     moveAttempted.FileTo === 'g'
   ) {
-    const isLegalCastle = canCastle(boardState, gameState.blackKingCanCastleShort, false, true);
+    const isLegalCastle = canCastle(
+      boardState,
+      gameState.blackKingCanCastleShort && !gameState.blackKingChecked,
+      false,
+      true
+    );
     return { isLegal: isLegalCastle, reason: 'castling rules checked' };
   }
   if (
@@ -76,7 +81,12 @@ export function isLegalMove(
     moveAttempted.FileFrom === 'e' &&
     moveAttempted.FileTo === 'c'
   ) {
-    const isLegalCastle = canCastle(boardState, gameState.blackKingCanCastleLong, false, false);
+    const isLegalCastle = canCastle(
+      boardState,
+      gameState.blackKingCanCastleLong && !gameState.blackKingChecked,
+      false,
+      false
+    );
     return { isLegal: isLegalCastle, reason: 'castling rules checked' };
   }
   if (
@@ -84,7 +94,12 @@ export function isLegalMove(
     moveAttempted.FileFrom === 'e' &&
     moveAttempted.FileTo === 'g'
   ) {
-    const isLegalCastle = canCastle(boardState, gameState.whiteKingCanCastleShort, true, true);
+    const isLegalCastle = canCastle(
+      boardState,
+      gameState.whiteKingCanCastleShort && !gameState.whiteKingChecked,
+      true,
+      true
+    );
     return { isLegal: isLegalCastle, reason: 'castling rules checked' };
   }
   if (
@@ -92,7 +107,12 @@ export function isLegalMove(
     moveAttempted.FileFrom === 'e' &&
     moveAttempted.FileTo === 'c'
   ) {
-    const isLegalCastle = canCastle(boardState, gameState.whiteKingCanCastleLong, true, false);
+    const isLegalCastle = canCastle(
+      boardState,
+      gameState.whiteKingCanCastleLong && !gameState.whiteKingChecked,
+      true,
+      false
+    );
     return { isLegal: isLegalCastle, reason: 'castling rules checked' };
   }
 

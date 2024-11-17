@@ -11,6 +11,7 @@ import {
   isOccupiedComposite,
   isShortCastleRouteBlocked,
 } from '../../../bitboards';
+import { evaluateSquareControl } from '../../../boardevaluation/boardEval';
 import {
   blackKingLongCastleDestination,
   blackKingLongCastleRookDestination,
@@ -77,16 +78,18 @@ export function kingCastlingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[
   const isWhitesTurn = node.gameState.isWhitesTurn;
 
   let kingCanLong = isWhitesTurn
-    ? node.gameState.whiteKingCanCastleLong
-    : node.gameState.blackKingCanCastleLong;
+    ? node.gameState.whiteKingCanCastleLong && !node.gameState.whiteKingChecked
+    : node.gameState.blackKingCanCastleLong && !node.gameState.blackKingChecked;
   let kingCanShort = isWhitesTurn
-    ? node.gameState.whiteKingCanCastleShort
-    : node.gameState.blackKingCanCastleShort;
+    ? node.gameState.whiteKingCanCastleShort && !node.gameState.whiteKingChecked
+    : node.gameState.blackKingCanCastleShort && !node.gameState.blackKingChecked;
 
   if (!kingCanLong && !kingCanShort) {
     return possibleNodes;
   }
   //TODO: check we aren't moving through or into check
+
+  const enemyControlledSquares = evaluateSquareControl(node.boardState, !isWhitesTurn);
 
   if (isWhitesTurn && (node.boardState.whiteRook & whiteKingLongRook) === BigInt(0)) {
     kingCanLong = false;
@@ -102,7 +105,11 @@ export function kingCastlingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[
   }
 
   if (kingCanShort) {
-    const isShortPathOccupied = isShortCastleRouteBlocked(node.boardState, isWhitesTurn);
+    const isShortPathOccupied = isShortCastleRouteBlocked(
+      node.boardState,
+      isWhitesTurn,
+      enemyControlledSquares
+    );
     if (!isShortPathOccupied) {
       const newBoard = { ...node.boardState };
       if (isWhitesTurn) {
@@ -125,7 +132,11 @@ export function kingCastlingNodes(node: GameNode, evalLogs: EvalLogs): GameNode[
   }
 
   if (kingCanLong) {
-    const isLongPathOccupied = isLongCastleRouteBlocked(node.boardState, isWhitesTurn);
+    const isLongPathOccupied = isLongCastleRouteBlocked(
+      node.boardState,
+      isWhitesTurn,
+      enemyControlledSquares
+    );
     if (!isLongPathOccupied) {
       const newBoard = { ...node.boardState };
       if (isWhitesTurn) {

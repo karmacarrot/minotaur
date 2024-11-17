@@ -1,3 +1,4 @@
+import { LogBoardPositions } from '../../../test/helpers/testHelper';
 import { LogLevels } from '../logging/definitions';
 import { MultiLog } from '../logging/logger';
 
@@ -379,15 +380,24 @@ export function bitBoardsReadable(bitBoard: BitBoard) {
   };
 }
 
-export function isShortCastleRouteBlocked(board: BitBoard, isWhitesTurn: boolean) {
-  const compositePositions = allPositions(board);
+export function isShortCastleRouteBlocked(
+  board: BitBoard,
+  isWhitesTurn: boolean,
+  enemyControlledSquares: bigint
+) {
+  const compositePositions = allPositions(board) | enemyControlledSquares;
   return !!(
     compositePositions & (isWhitesTurn ? whiteKingShortCastleRoute : blackKingShortCastleRoute)
   );
 }
 
-export function isLongCastleRouteBlocked(board: BitBoard, isWhitesTurn: boolean): boolean {
-  const compositePositions = allPositions(board);
+export function isLongCastleRouteBlocked(
+  board: BitBoard,
+  isWhitesTurn: boolean,
+  enemyControlledSquares: bigint
+): boolean {
+  const compositePositions = allPositions(board) | enemyControlledSquares;
   const pathBlockingPositions = isWhitesTurn ? whiteKingLongCastleRoute : blackKingLongCastleRoute;
+
   return !!(compositePositions & pathBlockingPositions);
 }

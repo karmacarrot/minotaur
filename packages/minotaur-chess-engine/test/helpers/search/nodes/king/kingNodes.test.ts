@@ -27,6 +27,7 @@ import {
   blackKingLongCastleRookDestination,
   bitCount,
   bigIntToBinaryString,
+  boardMapping,
 } from '@karmacarrot/minotaur-chess-engine';
 import { LogBoardPositions } from '../../../testHelper';
 
@@ -159,37 +160,42 @@ describe('kingCastlingNodes', () => {
     LogBoardPositions(startingBoard);
     LogBoardPositions(potentialMoves[0].boardState);
   });
+
+  it("doesn't generate a move when it's possible to castle short except that the king is checked", () => {
+    const startingBoard = { ...CastleForBlackGameBoard };
+    const startNode = StartingNode();
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+    startNode.gameState.blackKingChecked = true;
+    const evalLogs = createEvalLogs();
+    const potentialMoves = kingCastlingNodes(startNode, evalLogs);
+
+    expect(potentialMoves.length).toBe(0);
+  });
+
+  it("doesn't generate a move when it looks possible to castle short but the calling function tells us it no longer is", () => {
+    const startingBoard = { ...CastleForBlackGameBoard };
+    const startNode = StartingNode();
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+    startNode.gameState.blackKingCanCastleShort = false;
+    const evalLogs = createEvalLogs();
+    const potentialMoves = kingCastlingNodes(startNode, evalLogs);
+
+    expect(potentialMoves.length).toBe(0);
+  });
+
   it("doesn't generates a move when castling would move the king through check", () => {
     let startingBoard = { ...CastleForBlackGameBoard };
     const startNode = StartingNode();
-    startingBoard = movePiece(
-      startingBoard,
-      'blackPawn',
-      7,
-      'g',
-      6,
-      'f',
-      startNode.gameState
-    ).BoardState;
-    startingBoard = movePiece(
-      startingBoard,
-      'whiteQueen',
-      1,
-      'd',
-      1,
-      'g',
-      startNode.gameState
-    ).BoardState;
-
-    LogBoardPositions(startingBoard);
 
     startNode.boardState = startingBoard;
+    startNode.boardState.whiteQueen = BigInt(boardMapping.f1);
+    startNode.boardState.blackPawn = BigInt(0);
     startNode.gameState.isWhitesTurn = false;
     const evalLogs = createEvalLogs();
     const potentialMoves = kingCastlingNodes(startNode, evalLogs);
 
-    LogBoardPositions(potentialMoves[0].boardState);
-    LogBoardPositions(potentialMoves[1].boardState);
     expect(potentialMoves.length).toBe(0);
   });
   it('moves the king and rook to the correct positions when castling short', () => {
@@ -224,6 +230,20 @@ describe('kingCastlingNodes', () => {
 
     LogBoardPositions(startingBoard);
     LogBoardPositions(potentialMoves[0].boardState);
+  });
+
+  it("doesn't generate a move when it seems possible to castle long but the caller is saying it no longer is possible", () => {
+    const startingBoard = { ...CastleForBlackGameLongBoard };
+    const startNode = StartingNode();
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+    startNode.gameState.blackKingCanCastleShort = false;
+    startNode.gameState.blackKingCanCastleLong = false;
+
+    const evalLogs = createEvalLogs();
+    const potentialMoves = kingCastlingNodes(startNode, evalLogs);
+
+    expect(potentialMoves.length).toBe(0);
   });
 
   it('moves the king and rook to the correct positions when castling long', () => {

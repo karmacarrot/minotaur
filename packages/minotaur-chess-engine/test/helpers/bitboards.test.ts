@@ -30,7 +30,9 @@ import {
   isShortCastleRouteBlocked,
   occupiedBy,
 } from '../../src/src/helpers/bitboards';
-import { StartingBoard, a1, h8 } from '../../src/src/helpers/definitions';
+import { StartingBoard, a1, boardMapping, h8 } from '../../src/src/helpers/definitions';
+import { evaluateSquareControl } from '@karmacarrot/minotaur-chess-engine/src/helpers/boardevaluation/boardEval';
+import { LogBoardPositions } from './testHelper';
 
 describe('applyMove', () => {
   it('correctly moves a white pawn when capturing and removes the captured black pawn', () => {
@@ -408,43 +410,112 @@ describe('isABCtoFGHwraparound', () => {
 });
 
 describe('isShortCastleRouteBlocked', () => {
+  const noControlledSquares = BigInt(0);
+
   it('should return true when the short castle path is blocked for the white and black king', () => {
-    const board = StartingBoard;
-    const isShortCastleBlockedForWhite = isShortCastleRouteBlocked(board, true);
-    const isShortCastleBlockedForBlack = isShortCastleRouteBlocked(board, false);
+    const board = { ...StartingBoard };
+    const isShortCastleBlockedForWhite = isShortCastleRouteBlocked(
+      board,
+      true,
+      noControlledSquares
+    );
+    const isShortCastleBlockedForBlack = isShortCastleRouteBlocked(
+      board,
+      false,
+      noControlledSquares
+    );
 
     expect(isShortCastleBlockedForBlack).toBe(true);
     expect(isShortCastleBlockedForWhite).toBe(true);
   });
   it('should return false when the short castle path is clear for the white and black king', () => {
-    const board = EndGameBoard;
-    const isShortCastleBlockedForWhite = isShortCastleRouteBlocked(board, true);
-    const isShortCastleBlockedForBlack = isShortCastleRouteBlocked(board, false);
+    const board = { ...EndGameBoard };
+    const isShortCastleBlockedForWhite = isShortCastleRouteBlocked(
+      board,
+      true,
+      noControlledSquares
+    );
+    const isShortCastleBlockedForBlack = isShortCastleRouteBlocked(
+      board,
+      false,
+      noControlledSquares
+    );
 
     expect(isShortCastleBlockedForBlack).toBe(false);
     expect(isShortCastleBlockedForWhite).toBe(false);
   });
+  it('should return false for black when the short castle path is controlled by the enemy', () => {
+    const board = { ...EndGameBoard };
+
+    board.whiteQueen = BigInt(boardMapping.f1);
+    const enemyControlledSquares = evaluateSquareControl(board, true);
+    const isShortCastleBlockedForBlack = isShortCastleRouteBlocked(
+      board,
+      false,
+      enemyControlledSquares
+    );
+    board.whitePawn = enemyControlledSquares;
+    LogBoardPositions(board);
+    expect(isShortCastleBlockedForBlack).toBe(true);
+  });
+  it('should return false for white when the short castle path is controlled by the enemy', () => {
+    const board = { ...EndGameBoard };
+    board.blackQueen = BigInt(boardMapping.f8);
+
+    const enemyControlledSquares = evaluateSquareControl(board, false);
+    const isShortCastleBlockedForWhite = isShortCastleRouteBlocked(
+      board,
+      true,
+      enemyControlledSquares
+    );
+    expect(isShortCastleBlockedForWhite).toBe(true);
+  });
 });
 
 describe('isLongCastleRouteBlocked', () => {
+  const noControlledSquares = BigInt(0);
   it('should return true when the long castle path is blocked for the white and black king', () => {
-    const board = StartingBoard;
-    const isLongCastleBlockedForWhite = isLongCastleRouteBlocked(board, true);
-    const isLongCastleBlockedForBlack = isLongCastleRouteBlocked(board, false);
+    const board = { ...StartingBoard };
+    const isLongCastleBlockedForWhite = isLongCastleRouteBlocked(board, true, noControlledSquares);
+    const isLongCastleBlockedForBlack = isLongCastleRouteBlocked(board, false, noControlledSquares);
 
     expect(isLongCastleBlockedForBlack).toBe(true);
     expect(isLongCastleBlockedForWhite).toBe(true);
   });
   it('should return false when the long castle path is clear for the white and black king', () => {
-    const board = EndGameBoard;
+    const board = { ...EndGameBoard };
     board.whiteQueen = BigInt(0);
     board.blackQueen = BigInt(0);
 
-    const isLongCastleBlockedForWhite = isLongCastleRouteBlocked(board, true);
-    const isLongCastleBlockedForBlack = isLongCastleRouteBlocked(board, false);
+    const isLongCastleBlockedForWhite = isLongCastleRouteBlocked(board, true, noControlledSquares);
+    const isLongCastleBlockedForBlack = isLongCastleRouteBlocked(board, false, noControlledSquares);
 
     expect(isLongCastleBlockedForBlack).toBe(false);
     expect(isLongCastleBlockedForWhite).toBe(false);
+  });
+  it('should return false for black when the long castle path is controlled by the enemy', () => {
+    const board = { ...EndGameBoard };
+    board.blackQueen = BigInt(0);
+
+    const enemyControlledSquares = evaluateSquareControl(board, true);
+    const isLongCastleBlockedForBlack = isLongCastleRouteBlocked(
+      board,
+      false,
+      enemyControlledSquares
+    );
+    expect(isLongCastleBlockedForBlack).toBe(true);
+  });
+  it('should return false for white when the long castle path is controlled by the enemy', () => {
+    const board = { ...EndGameBoard };
+    board.whiteQueen = BigInt(0);
+
+    const enemyControlledSquares = evaluateSquareControl(board, false);
+    const isLongCastleBlockedForWhite = isLongCastleRouteBlocked(
+      board,
+      true,
+      enemyControlledSquares
+    );
+    expect(isLongCastleBlockedForWhite).toBe(true);
   });
 });
 

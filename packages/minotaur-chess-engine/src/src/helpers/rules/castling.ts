@@ -1,6 +1,6 @@
-
 import { BitBoard } from '../../types';
 import { clearPosition, isLongCastleRouteBlocked, isShortCastleRouteBlocked } from '../bitboards';
+import { evaluateSquareControl } from '../boardevaluation/boardEval';
 import {
   blackKingLongCastleDestination,
   blackKingLongCastleRookDestination,
@@ -22,9 +22,11 @@ export function canCastle(
     return false;
   }
 
+  const enemyControlledSquares = evaluateSquareControl(boardState, !isWhitesTurn);
+
   const isPathOccupied = isShortCastle
-    ? isShortCastleRouteBlocked(boardState, isWhitesTurn)
-    : isLongCastleRouteBlocked(boardState, isWhitesTurn);
+    ? isShortCastleRouteBlocked(boardState, isWhitesTurn, enemyControlledSquares)
+    : isLongCastleRouteBlocked(boardState, isWhitesTurn, enemyControlledSquares);
 
   if (isPathOccupied) {
     return false;

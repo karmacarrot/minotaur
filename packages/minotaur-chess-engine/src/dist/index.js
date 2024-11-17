@@ -98,6 +98,7 @@ __export(src_exports, {
   blackPawnShortGuards: () => blackPawnShortGuards,
   blackPawnTwoSquareNodes: () => blackPawnTwoSquareNodes,
   blackStartingRank: () => blackStartingRank,
+  boardMapping: () => boardMapping,
   clearPosition: () => clearPosition,
   createEvalLogs: () => createEvalLogs,
   diagonalOffsets: () => diagonalOffsets,
@@ -257,49 +258,21 @@ var aTogFilesOnly = BigInt(
 var bTohFilesOnly = BigInt(
   "0b1000000010000000100000001000000010000000100000001000000010000000"
 );
-var a1 = BigInt(
-  "0b1000000000000000000000000000000000000000000000000000000000000000"
-);
-var h8 = BigInt(
-  "0b0000000000000000000000000000000000000000000000000000000000000001"
-);
+var a1 = BigInt("0b1000000000000000000000000000000000000000000000000000000000000000");
+var h8 = BigInt("0b0000000000000000000000000000000000000000000000000000000000000001");
 var StartingBoard = {
-  whitePawn: BigInt(
-    "0b0000000011111111000000000000000000000000000000000000000000000000"
-  ),
-  whiteKnight: BigInt(
-    "0b0100001000000000000000000000000000000000000000000000000000000000"
-  ),
-  whiteBishop: BigInt(
-    "0b0010010000000000000000000000000000000000000000000000000000000000"
-  ),
-  whiteRook: BigInt(
-    "0b1000000100000000000000000000000000000000000000000000000000000000"
-  ),
-  whiteQueen: BigInt(
-    "0b0001000000000000000000000000000000000000000000000000000000000000"
-  ),
-  whiteKing: BigInt(
-    "0b0000100000000000000000000000000000000000000000000000000000000000"
-  ),
-  blackPawn: BigInt(
-    "0b0000000000000000000000000000000000000000000000001111111100000000"
-  ),
-  blackKnight: BigInt(
-    "0b0000000000000000000000000000000000000000000000000000000001000010"
-  ),
-  blackBishop: BigInt(
-    "0b0000000000000000000000000000000000000000000000000000000000100100"
-  ),
-  blackRook: BigInt(
-    "0b0000000000000000000000000000000000000000000000000000000010000001"
-  ),
-  blackQueen: BigInt(
-    "0b0000000000000000000000000000000000000000000000000000000000010000"
-  ),
-  blackKing: BigInt(
-    "0b0000000000000000000000000000000000000000000000000000000000001000"
-  ),
+  whitePawn: BigInt("0b0000000011111111000000000000000000000000000000000000000000000000"),
+  whiteKnight: BigInt("0b0100001000000000000000000000000000000000000000000000000000000000"),
+  whiteBishop: BigInt("0b0010010000000000000000000000000000000000000000000000000000000000"),
+  whiteRook: BigInt("0b1000000100000000000000000000000000000000000000000000000000000000"),
+  whiteQueen: BigInt("0b0001000000000000000000000000000000000000000000000000000000000000"),
+  whiteKing: BigInt("0b0000100000000000000000000000000000000000000000000000000000000000"),
+  blackPawn: BigInt("0b0000000000000000000000000000000000000000000000001111111100000000"),
+  blackKnight: BigInt("0b0000000000000000000000000000000000000000000000000000000001000010"),
+  blackBishop: BigInt("0b0000000000000000000000000000000000000000000000000000000000100100"),
+  blackRook: BigInt("0b0000000000000000000000000000000000000000000000000000000010000001"),
+  blackQueen: BigInt("0b0000000000000000000000000000000000000000000000000000000000010000"),
+  blackKing: BigInt("0b0000000000000000000000000000000000000000000000000000000000001000"),
   none: BigInt(0)
 };
 var EmptyBoard = {
@@ -317,9 +290,7 @@ var EmptyBoard = {
   blackKing: BigInt(0),
   none: BigInt(0)
 };
-var allOnes = BigInt(
-  "0b1111111111111111111111111111111111111111111111111111111111111111"
-);
+var allOnes = BigInt("0b1111111111111111111111111111111111111111111111111111111111111111");
 var BoardArrangements = /* @__PURE__ */ ((BoardArrangements2) => {
   BoardArrangements2[BoardArrangements2["StartingPositions"] = 0] = "StartingPositions";
   BoardArrangements2[BoardArrangements2["MiddleGame"] = 1] = "MiddleGame";
@@ -396,23 +367,13 @@ var pieceValues = {
   king: 20
 };
 var CentralDominanceWeightings = {
-  absoluteCentre: BigInt(
-    "0b0000000000000000000000000001100000011000000000000000000000000000"
-  ),
-  innerRing: BigInt(
-    "0b0000000000000000001111000010010000100100001111000000000000000000"
-  ),
-  outerRing: BigInt(
-    "0b0000000001111110010000100100001001000010010000100111111000000000"
-  )
+  absoluteCentre: BigInt("0b0000000000000000000000000001100000011000000000000000000000000000"),
+  innerRing: BigInt("0b0000000000000000001111000010010000100100001111000000000000000000"),
+  outerRing: BigInt("0b0000000001111110010000100100001001000010010000100111111000000000")
 };
 var RankWeightings = {
-  secondRank: BigInt(
-    "0b0000000011111111000000000000000000000000000000000000000000000000"
-  ),
-  seventhRank: BigInt(
-    "0b0000000000000000000000000000000000000000000000001111111100000000"
-  )
+  secondRank: BigInt("0b0000000011111111000000000000000000000000000000000000000000000000"),
+  seventhRank: BigInt("0b0000000000000000000000000000000000000000000000001111111100000000")
 };
 var EvalWeightings = {
   absoluteCentreWeight: 0.3,
@@ -504,6 +465,72 @@ var blackPawnLongGuards = BigInt(
 var blackPawnShortGuards = BigInt(
   "0b0000000000000000000000000000000000000000000000000000011100000000"
 );
+var boardMapping = {
+  a1: "0b1000000000000000000000000000000000000000000000000000000000000000",
+  b1: "0b0100000000000000000000000000000000000000000000000000000000000000",
+  c1: "0b0010000000000000000000000000000000000000000000000000000000000000",
+  d1: "0b0001000000000000000000000000000000000000000000000000000000000000",
+  e1: "0b0000100000000000000000000000000000000000000000000000000000000000",
+  f1: "0b0000010000000000000000000000000000000000000000000000000000000000",
+  g1: "0b0000001000000000000000000000000000000000000000000000000000000000",
+  h1: "0b0000000100000000000000000000000000000000000000000000000000000000",
+  a2: "0b0000000010000000000000000000000000000000000000000000000000000000",
+  b2: "0b0000000001000000000000000000000000000000000000000000000000000000",
+  c2: "0b0000000000100000000000000000000000000000000000000000000000000000",
+  d2: "0b0000000000010000000000000000000000000000000000000000000000000000",
+  e2: "0b0000000000001000000000000000000000000000000000000000000000000000",
+  f2: "0b0000000000000100000000000000000000000000000000000000000000000000",
+  g2: "0b0000000000000010000000000000000000000000000000000000000000000000",
+  h2: "0b0000000000000001000000000000000000000000000000000000000000000000",
+  a3: "0b0000000000000000100000000000000000000000000000000000000000000000",
+  b3: "0b0000000000000000010000000000000000000000000000000000000000000000",
+  c3: "0b0000000000000000001000000000000000000000000000000000000000000000",
+  d3: "0b0000000000000000000100000000000000000000000000000000000000000000",
+  e3: "0b0000000000000000000010000000000000000000000000000000000000000000",
+  f3: "0b0000000000000000000001000000000000000000000000000000000000000000",
+  g3: "0b0000000000000000000000100000000000000000000000000000000000000000",
+  h3: "0b0000000000000000000000010000000000000000000000000000000000000000",
+  a4: "0b0000000000000000000000001000000000000000000000000000000000000000",
+  b4: "0b0000000000000000000000000100000000000000000000000000000000000000",
+  c4: "0b0000000000000000000000000010000000000000000000000000000000000000",
+  d4: "0b0000000000000000000000000001000000000000000000000000000000000000",
+  e4: "0b0000000000000000000000000000100000000000000000000000000000000000",
+  f4: "0b0000000000000000000000000000010000000000000000000000000000000000",
+  g4: "0b0000000000000000000000000000001000000000000000000000000000000000",
+  h4: "0b0000000000000000000000000000000100000000000000000000000000000000",
+  a5: "0b0000000000000000000000000000000010000000000000000000000000000000",
+  b5: "0b0000000000000000000000000000000001000000000000000000000000000000",
+  c5: "0b0000000000000000000000000000000000100000000000000000000000000000",
+  d5: "0b0000000000000000000000000000000000010000000000000000000000000000",
+  e5: "0b0000000000000000000000000000000000001000000000000000000000000000",
+  f5: "0b0000000000000000000000000000000000000100000000000000000000000000",
+  g5: "0b0000000000000000000000000000000000000010000000000000000000000000",
+  h5: "0b0000000000000000000000000000000000000001000000000000000000000000",
+  a6: "0b0000000000000000000000000000000000000000100000000000000000000000",
+  b6: "0b0000000000000000000000000000000000000000010000000000000000000000",
+  c6: "0b0000000000000000000000000000000000000000001000000000000000000000",
+  d6: "0b0000000000000000000000000000000000000000000100000000000000000000",
+  e6: "0b0000000000000000000000000000000000000000000010000000000000000000",
+  f6: "0b0000000000000000000000000000000000000000000001000000000000000000",
+  g6: "0b0000000000000000000000000000000000000000000000100000000000000000",
+  h6: "0b0000000000000000000000000000000000000000000000010000000000000000",
+  a7: "0b0000000000000000000000000000000000000000000000001000000000000000",
+  b7: "0b0000000000000000000000000000000000000000000000000100000000000000",
+  c7: "0b0000000000000000000000000000000000000000000000000010000000000000",
+  d7: "0b0000000000000000000000000000000000000000000000000001000000000000",
+  e7: "0b0000000000000000000000000000000000000000000000000000100000000000",
+  f7: "0b0000000000000000000000000000000000000000000000000000010000000000",
+  g7: "0b0000000000000000000000000000000000000000000000000000001000000000",
+  h7: "0b0000000000000000000000000000000000000000000000000000000100000000",
+  a8: "0b0000000000000000000000000000000000000000000000000000000010000000",
+  b8: "0b0000000000000000000000000000000000000000000000000000000001000000",
+  c8: "0b0000000000000000000000000000000000000000000000000000000000100000",
+  d8: "0b0000000000000000000000000000000000000000000000000000000000010000",
+  e8: "0b0000000000000000000000000000000000000000000000000000000000001000",
+  f8: "0b0000000000000000000000000000000000000000000000000000000000000100",
+  g8: "0b0000000000000000000000000000000000000000000000000000000000000010",
+  h8: "0b0000000000000000000000000000000000000000000000000000000000000001"
+};
 BigInt.prototype.toJSON = function() {
   return this.toString();
 };
@@ -786,12 +813,12 @@ function bitBoardsReadable(bitBoard) {
     none: bigIntToBinaryString(bitBoard.none)
   };
 }
-function isShortCastleRouteBlocked(board, isWhitesTurn) {
-  const compositePositions = allPositions(board);
+function isShortCastleRouteBlocked(board, isWhitesTurn, enemyControlledSquares) {
+  const compositePositions = allPositions(board) | enemyControlledSquares;
   return !!(compositePositions & (isWhitesTurn ? whiteKingShortCastleRoute : blackKingShortCastleRoute));
 }
-function isLongCastleRouteBlocked(board, isWhitesTurn) {
-  const compositePositions = allPositions(board);
+function isLongCastleRouteBlocked(board, isWhitesTurn, enemyControlledSquares) {
+  const compositePositions = allPositions(board) | enemyControlledSquares;
   const pathBlockingPositions = isWhitesTurn ? whiteKingLongCastleRoute : blackKingLongCastleRoute;
   return !!(compositePositions & pathBlockingPositions);
 }
@@ -1241,11 +1268,12 @@ function kingNodes(node, evalLogs) {
 function kingCastlingNodes(node, evalLogs) {
   let possibleNodes = [];
   const isWhitesTurn = node.gameState.isWhitesTurn;
-  let kingCanLong = isWhitesTurn ? node.gameState.whiteKingCanCastleLong : node.gameState.blackKingCanCastleLong;
-  let kingCanShort = isWhitesTurn ? node.gameState.whiteKingCanCastleShort : node.gameState.blackKingCanCastleShort;
+  let kingCanLong = isWhitesTurn ? node.gameState.whiteKingCanCastleLong && !node.gameState.whiteKingChecked : node.gameState.blackKingCanCastleLong && !node.gameState.blackKingChecked;
+  let kingCanShort = isWhitesTurn ? node.gameState.whiteKingCanCastleShort && !node.gameState.whiteKingChecked : node.gameState.blackKingCanCastleShort && !node.gameState.blackKingChecked;
   if (!kingCanLong && !kingCanShort) {
     return possibleNodes;
   }
+  const enemyControlledSquares = evaluateSquareControl(node.boardState, !isWhitesTurn);
   if (isWhitesTurn && (node.boardState.whiteRook & whiteKingLongRook) === BigInt(0)) {
     kingCanLong = false;
   }
@@ -1259,7 +1287,11 @@ function kingCastlingNodes(node, evalLogs) {
     kingCanShort = false;
   }
   if (kingCanShort) {
-    const isShortPathOccupied = isShortCastleRouteBlocked(node.boardState, isWhitesTurn);
+    const isShortPathOccupied = isShortCastleRouteBlocked(
+      node.boardState,
+      isWhitesTurn,
+      enemyControlledSquares
+    );
     if (!isShortPathOccupied) {
       const newBoard = { ...node.boardState };
       if (isWhitesTurn) {
@@ -1279,7 +1311,11 @@ function kingCastlingNodes(node, evalLogs) {
     }
   }
   if (kingCanLong) {
-    const isLongPathOccupied = isLongCastleRouteBlocked(node.boardState, isWhitesTurn);
+    const isLongPathOccupied = isLongCastleRouteBlocked(
+      node.boardState,
+      isWhitesTurn,
+      enemyControlledSquares
+    );
     if (!isLongPathOccupied) {
       const newBoard = { ...node.boardState };
       if (isWhitesTurn) {
@@ -2233,7 +2269,8 @@ function canCastle(boardState, kingCanCastle, isWhitesTurn, isShortCastle) {
   if (!kingCanCastle) {
     return false;
   }
-  const isPathOccupied = isShortCastle ? isShortCastleRouteBlocked(boardState, isWhitesTurn) : isLongCastleRouteBlocked(boardState, isWhitesTurn);
+  const enemyControlledSquares = evaluateSquareControl(boardState, !isWhitesTurn);
+  const isPathOccupied = isShortCastle ? isShortCastleRouteBlocked(boardState, isWhitesTurn, enemyControlledSquares) : isLongCastleRouteBlocked(boardState, isWhitesTurn, enemyControlledSquares);
   if (isPathOccupied) {
     return false;
   }
@@ -2290,19 +2327,39 @@ function isLegalMove(moveAttempted, boardState, proposedBoardState, gameState) {
     return { isLegal: false, reason: "can't take your own pieces" };
   }
   if (moveAttempted.PieceMoved === "blackKing" && moveAttempted.FileFrom === "e" && moveAttempted.FileTo === "g") {
-    const isLegalCastle = canCastle(boardState, gameState.blackKingCanCastleShort, false, true);
+    const isLegalCastle = canCastle(
+      boardState,
+      gameState.blackKingCanCastleShort && !gameState.blackKingChecked,
+      false,
+      true
+    );
     return { isLegal: isLegalCastle, reason: "castling rules checked" };
   }
   if (moveAttempted.PieceMoved === "blackKing" && moveAttempted.FileFrom === "e" && moveAttempted.FileTo === "c") {
-    const isLegalCastle = canCastle(boardState, gameState.blackKingCanCastleLong, false, false);
+    const isLegalCastle = canCastle(
+      boardState,
+      gameState.blackKingCanCastleLong && !gameState.blackKingChecked,
+      false,
+      false
+    );
     return { isLegal: isLegalCastle, reason: "castling rules checked" };
   }
   if (moveAttempted.PieceMoved === "whiteKing" && moveAttempted.FileFrom === "e" && moveAttempted.FileTo === "g") {
-    const isLegalCastle = canCastle(boardState, gameState.whiteKingCanCastleShort, true, true);
+    const isLegalCastle = canCastle(
+      boardState,
+      gameState.whiteKingCanCastleShort && !gameState.whiteKingChecked,
+      true,
+      true
+    );
     return { isLegal: isLegalCastle, reason: "castling rules checked" };
   }
   if (moveAttempted.PieceMoved === "whiteKing" && moveAttempted.FileFrom === "e" && moveAttempted.FileTo === "c") {
-    const isLegalCastle = canCastle(boardState, gameState.whiteKingCanCastleLong, true, false);
+    const isLegalCastle = canCastle(
+      boardState,
+      gameState.whiteKingCanCastleLong && !gameState.whiteKingChecked,
+      true,
+      false
+    );
     return { isLegal: isLegalCastle, reason: "castling rules checked" };
   }
   switch (moveAttempted.PieceMoved) {
@@ -2968,6 +3025,7 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   blackPawnShortGuards,
   blackPawnTwoSquareNodes,
   blackStartingRank,
+  boardMapping,
   clearPosition,
   createEvalLogs,
   diagonalOffsets,

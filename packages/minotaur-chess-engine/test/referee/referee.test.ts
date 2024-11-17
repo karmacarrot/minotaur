@@ -74,7 +74,7 @@ describe('isLegalMove', () => {
 
   it.each([
     ['blackKing', 'short', null, 'e', 'g', 8, 8, true],
-    ['blackKing', 'long', null, 'e', 'c', 8, 8, true],
+    ['blackKing', 'long', null, 'e', 'c', 8, 8, false],
   ])(
     'should let %s castle %s',
     (pieceMoved, rule, pieceTaken, fileFrom, fileTo, rankFrom, rankTo, expected) => {

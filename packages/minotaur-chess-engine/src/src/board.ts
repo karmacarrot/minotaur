@@ -145,7 +145,7 @@ export function movePiece(
   fileFrom = fileFrom.toLowerCase();
   fileTo = fileTo.toLowerCase();
 
-  const moveAttempted = {
+  const moveAttempted: BoardMove = {
     FileFrom: fileFrom,
     FileTo: fileTo,
     RankFrom: rankFrom,

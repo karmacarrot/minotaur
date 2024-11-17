@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/karmacarrot/minotaur/compare/v1.5.1...v1.6.0) (2024-11-17)
+
+
+### Features
+
+* finishing castling rules to not allow castling through or out of check ([42074ff](https://github.com/karmacarrot/minotaur/commit/42074ff847f0da916d2c31a565e098a172acdc14))
+
 ## [1.5.1](https://github.com/karmacarrot/minotaur/compare/v1.5.0...v1.5.1) (2024-11-14)
 
 

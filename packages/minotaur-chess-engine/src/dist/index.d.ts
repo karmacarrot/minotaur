@@ -512,7 +512,7 @@ declare function isLegalKingMove(moveAttempted: BoardMove, boardState: BitBoard,
 declare function isLegalRookMove(moveAttempted: BoardMove, boardState: BitBoard, evaluateForWhite: boolean, friendlyPositions: bigint, enemyPositions: bigint): boolean;
 declare function isLegalBishopMove(moveAttempted: BoardMove, boardState: BitBoard, evaluateForWhite: boolean, friendlyPositions: bigint, enemyPositions: bigint): boolean;
 declare function isLegalKnightMove(moveAttempted: BoardMove, boardState: BitBoard, evaluateForWhite: boolean, friendlyPositions: bigint, enemyPositions: bigint): boolean;
-declare function isLegalPawnMove(moveAttempted: BoardMove, boardState: BitBoard): boolean;
+declare function isLegalPawnMove(moveAttempted: BoardMove, boardState: BitBoard, gameState: GameStatus): boolean;
 declare function isOnStartingRank(moveAttempted: BoardMove): boolean;
 declare function isMyKingInCheck(currentBoard: BitBoard, evaluateForWhite: boolean): CheckStatus;
 declare function isOpponentChecked(currentBoard: BitBoard, evaluateForWhite: boolean): CheckStatus;

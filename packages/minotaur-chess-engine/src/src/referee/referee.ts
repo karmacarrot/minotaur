@@ -20,6 +20,7 @@ import {
 } from '../helpers/moveEval';
 import { memoize } from '../helpers/cache/cacheHelper';
 import { canCastle } from '../helpers/rules/castling';
+import { pawnsThatCanCaptureEnpassant } from '../helpers/rules/enpassant';
 
 export function isLegalMove(
   moveAttempted: BoardMove,
@@ -120,7 +121,7 @@ export function isLegalMove(
     case 'whitePawn':
     case 'blackPawn':
       return {
-        isLegal: isLegalPawnMove(moveAttempted, boardState),
+        isLegal: isLegalPawnMove(moveAttempted, boardState, gameState),
         reason: 'piece move rules evaluation',
       };
     case 'whiteQueen':
@@ -300,7 +301,11 @@ export function isLegalKnightMove(
   return (allPossibleKnightMoves & destinationMask) > BigInt(0);
 }
 
-export function isLegalPawnMove(moveAttempted: BoardMove, boardState: BitBoard) {
+export function isLegalPawnMove(
+  moveAttempted: BoardMove,
+  boardState: BitBoard,
+  gameState: GameStatus
+) {
   if (moveAttempted.PieceMoved === 'whitePawn' && moveAttempted.RankFrom >= moveAttempted.RankTo) {
     //TODO: user log output rule violation (can't move backwards)
     return false;
@@ -309,6 +314,7 @@ export function isLegalPawnMove(moveAttempted: BoardMove, boardState: BitBoard) 
     //TODO: user log output rule violation (can't move backwards)
     return false;
   }
+  const startPosition = getBitBoardPosition(moveAttempted.FileFrom, moveAttempted.RankFrom);
   const destinationPosition = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const ranksMoved = Math.abs(moveAttempted.RankFrom - moveAttempted.RankTo);
   const startingRank = isOnStartingRank(moveAttempted);
@@ -336,7 +342,11 @@ export function isLegalPawnMove(moveAttempted: BoardMove, boardState: BitBoard) 
       //it's an adjacent file
       //if it's adjacent, is there an enemy piece that isn't the king there?
       if (destinationOccupiedBy?.includes('King') || destinationOccupiedBy == null) {
-        return false;
+        const enPassantPawns = pawnsThatCanCaptureEnpassant(boardState, gameState);
+        const enPassantMask = binaryMask64(startPosition, 'all_zeroes_with_position_as_one');
+        const wasEnPassantPossible = (enPassantPawns & enPassantMask) > BigInt(0);
+
+        return wasEnPassantPossible;
       }
     }
   } else {

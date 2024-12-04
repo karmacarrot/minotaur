@@ -2123,6 +2123,29 @@ function canCastle(boardState, kingCanCastle, isWhitesTurn, isShortCastle) {
   }
 }
 
+// src/helpers/rules/enpassant.ts
+function pawnsThatCanCaptureEnpassant(board, gameState) {
+  if (!gameState.isWhitesTurn && (gameState.lastWhiteDoublePawnMove === null || gameState.lastWhiteDoublePawnMove === BigInt(0))) {
+    console.log("no black double pawn move");
+    return BigInt(0);
+  }
+  if (gameState.isWhitesTurn && (gameState.lastBlackDoublePawnMove === null || gameState.lastBlackDoublePawnMove === BigInt(0))) {
+    console.log("no white double pawn move");
+    return BigInt(0);
+  }
+  const lastMovedPawn = gameState.isWhitesTurn ? gameState.lastBlackDoublePawnMove : gameState.lastWhiteDoublePawnMove;
+  const canEnPassantPawnLeft = gameState.isWhitesTurn ? lastMovedPawn << BigInt(1) : lastMovedPawn >> BigInt(-1);
+  const canEnPassantPawnRight = gameState.isWhitesTurn ? lastMovedPawn << BigInt(-1) : lastMovedPawn >> BigInt(1);
+  const canEnPassantPawns = canEnPassantPawnLeft | canEnPassantPawnRight;
+  console.log(
+    "returning pawns that can capture enpassant",
+    bigIntToBinaryString(
+      canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn)
+    )
+  );
+  return canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn);
+}
+
 // src/referee/referee.ts
 function isLegalMove(moveAttempted, boardState, proposedBoardState, gameState) {
   if (moveAttempted.FileFrom === moveAttempted.FileTo && moveAttempted.RankFrom === moveAttempted.RankTo) {
@@ -2187,7 +2210,7 @@ function isLegalMove(moveAttempted, boardState, proposedBoardState, gameState) {
     case "whitePawn":
     case "blackPawn":
       return {
-        isLegal: isLegalPawnMove(moveAttempted, boardState),
+        isLegal: isLegalPawnMove(moveAttempted, boardState, gameState),
         reason: "piece move rules evaluation"
       };
     case "whiteQueen":
@@ -2319,13 +2342,14 @@ function isLegalKnightMove(moveAttempted, boardState, evaluateForWhite, friendly
   const allPossibleKnightMoves = AllKnightMoves(boardState, friendlyPositions, evaluateForWhite);
   return (allPossibleKnightMoves & destinationMask) > BigInt(0);
 }
-function isLegalPawnMove(moveAttempted, boardState) {
+function isLegalPawnMove(moveAttempted, boardState, gameState) {
   if (moveAttempted.PieceMoved === "whitePawn" && moveAttempted.RankFrom >= moveAttempted.RankTo) {
     return false;
   }
   if (moveAttempted.PieceMoved === "blackPawn" && moveAttempted.RankTo >= moveAttempted.RankFrom) {
     return false;
   }
+  const startPosition = getBitBoardPosition(moveAttempted.FileFrom, moveAttempted.RankFrom);
   const destinationPosition = getBitBoardPosition(moveAttempted.FileTo, moveAttempted.RankTo);
   const ranksMoved = Math.abs(moveAttempted.RankFrom - moveAttempted.RankTo);
   const startingRank = isOnStartingRank(moveAttempted);
@@ -2346,7 +2370,10 @@ function isLegalPawnMove(moveAttempted, boardState) {
     const indexOfFileTo = files.indexOf(moveAttempted.FileTo);
     if (indexOfFileTo === indexOfFileFrom - 1 || indexOfFileTo === indexOfFileFrom + 1) {
       if (destinationOccupiedBy?.includes("King") || destinationOccupiedBy == null) {
-        return false;
+        const enPassantPawns = pawnsThatCanCaptureEnpassant(boardState, gameState);
+        const enPassantMask = binaryMask64(startPosition, "all_zeroes_with_position_as_one");
+        const wasEnPassantPossible = (enPassantPawns & enPassantMask) > BigInt(0);
+        return wasEnPassantPossible;
       }
     }
   } else {
@@ -2768,29 +2795,6 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   const fileName = `logs\\eval_logs_${timestamp}.html`;
   console.log(fileName);
 };
-
-// src/helpers/rules/enpassant.ts
-function pawnsThatCanCaptureEnpassant(board, gameState) {
-  if (!gameState.isWhitesTurn && (gameState.lastWhiteDoublePawnMove === null || gameState.lastWhiteDoublePawnMove === BigInt(0))) {
-    console.log("no black double pawn move");
-    return BigInt(0);
-  }
-  if (gameState.isWhitesTurn && (gameState.lastBlackDoublePawnMove === null || gameState.lastBlackDoublePawnMove === BigInt(0))) {
-    console.log("no white double pawn move");
-    return BigInt(0);
-  }
-  const lastMovedPawn = gameState.isWhitesTurn ? gameState.lastBlackDoublePawnMove : gameState.lastWhiteDoublePawnMove;
-  const canEnPassantPawnLeft = gameState.isWhitesTurn ? lastMovedPawn << BigInt(1) : lastMovedPawn >> BigInt(-1);
-  const canEnPassantPawnRight = gameState.isWhitesTurn ? lastMovedPawn << BigInt(-1) : lastMovedPawn >> BigInt(1);
-  const canEnPassantPawns = canEnPassantPawnLeft | canEnPassantPawnRight;
-  console.log(
-    "returning pawns that can capture enpassant",
-    bigIntToBinaryString(
-      canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn)
-    )
-  );
-  return canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn);
-}
 export {
   AllBishopMoves,
   AllBlackPawnCaptures,

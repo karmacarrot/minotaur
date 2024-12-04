@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import {
   BoardArray,
   movePiece as movePieceOnBoard,
@@ -19,48 +19,44 @@ import {
 
 import JSConfetti from 'js-confetti';
 import { BoardOffset } from '../definitions';
+import { gameStatusReducer } from './useGameState';
 
 export const useMinotaur = (boardSideLength: number) => {
   const [currentBoard, setCurrentBoard] = useState(initBoard(BoardArrangements.StartingPositions));
-
-  const [gameStatus, setGameStatus] = useState(InitialGameStatus);
   const boardAsArray = BoardArray({ ...currentBoard });
   const [engineDepth, setEngineDepth] = useState(2);
+  const [gameStatus, dispatch] = useReducer(gameStatusReducer, InitialGameStatus);
 
   const resetGame = (boardArrangment: BoardArrangements) => {
-    setGameStatus(InitialGameStatus);
     setCurrentBoard(initBoard(boardArrangment));
   };
 
   const handleMoveHistoryUpdates = (move: BoardMove) => {
-    setGameStatus(function (prevStatus) {
-      let newMoveHistory = [...prevStatus.moveHistory];
-      newMoveHistory.push(move);
+    dispatch({ type: 'ADD_MOVE', move });
+  };
 
-      return {
-        moveHistory: newMoveHistory,
-        isGameOver: prevStatus.isGameOver,
-        isWhitesTurn: !prevStatus.isWhitesTurn,
-        positionEvaluation: 0,
-        blackComputerControl: prevStatus.blackComputerControl,
-        whiteComputerControl: prevStatus.whiteComputerControl,
-        whiteKingChecked: prevStatus.whiteKingChecked,
-        blackKingChecked: prevStatus.blackKingChecked,
-        blackKingCanCastleLong: prevStatus.blackKingCanCastleLong,
-        blackKingCanCastleShort: prevStatus.blackKingCanCastleShort,
-        whiteKingCanCastleLong: prevStatus.whiteKingCanCastleLong,
-        whiteKingCanCastleShort: prevStatus.whiteKingCanCastleShort,
-        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
-        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
-      };
-    });
+  const updateComputerControl = (color: 'white' | 'black', value: boolean) => {
+    dispatch({ type: 'SET_COMPUTER_CONTROL', color, value });
+  };
 
-    return;
+  const updateCheckStatus = (color: 'white' | 'black', value: boolean) => {
+    dispatch({ type: 'SET_CHECK', color, value });
+  };
+
+  const updateCastlingStatus = (
+    castling: 'blackLong' | 'blackShort' | 'whiteLong' | 'whiteShort',
+    value: boolean
+  ) => {
+    dispatch({ type: 'SET_CASTLING', castling, value });
+  };
+
+  const updateGameEndStatus = (value: boolean) => {
+    dispatch({ type: 'SET_GAME_OVER', value });
   };
 
   const checkMateCheck = useCallback((potentialMoves: number, isChecked: boolean) => {
     if (potentialMoves === 0) {
-      updateGameEndStatus('setGameOver', true);
+      updateGameEndStatus(true);
       const jsConfetti = new JSConfetti();
 
       if (isChecked) {
@@ -71,13 +67,13 @@ export const useMinotaur = (boardSideLength: number) => {
 
   const checkCheckStatus = useCallback(
     (newBoardState: BitBoard) => {
-      updateCheckStatus('setWhiteCheck', false);
-      updateCheckStatus('setBlackCheck', false);
+      updateCheckStatus('white', false);
+      updateCheckStatus('black', false);
       if (isOpponentCheckedMemo(newBoardState, gameStatus.isWhitesTurn).check) {
-        updateCheckStatus(gameStatus.isWhitesTurn ? 'setBlackCheck' : 'setWhiteCheck', true);
+        updateCheckStatus(gameStatus.isWhitesTurn ? 'black' : 'white', true);
       }
       if (isOpponentCheckedMemo(newBoardState, !gameStatus.isWhitesTurn).check) {
-        updateCheckStatus(!gameStatus.isWhitesTurn ? 'setBlackCheck' : 'setWhiteCheck', true);
+        updateCheckStatus(!gameStatus.isWhitesTurn ? 'black' : 'white', true);
       }
     },
     [gameStatus]
@@ -118,108 +114,12 @@ export const useMinotaur = (boardSideLength: number) => {
       handleMoveHistoryUpdates(moveResponse.MoveAttempted);
       checkCheckStatus(moveResponse.BoardState);
       if (moveResponse.CastleLongLost) {
-        updateCastlingStatus(gameStatus.isWhitesTurn ? 'setWhiteLong' : 'setBlackLong', false);
+        updateCastlingStatus(gameStatus.isWhitesTurn ? 'whiteLong' : 'blackLong', false);
       }
       if (moveResponse.CastleShortLost) {
-        updateCastlingStatus(gameStatus.isWhitesTurn ? 'setWhiteShort' : 'setBlackShort', false);
+        updateCastlingStatus(gameStatus.isWhitesTurn ? 'whiteShort' : 'blackShort', false);
       }
     }
-  };
-
-  const updateComputerControl = (
-    action: 'setBlackControl' | 'setWhiteControl',
-    payload: boolean
-  ) => {
-    setGameStatus(function (prevStatus) {
-      return {
-        isGameOver: prevStatus.isGameOver,
-        isWhitesTurn: prevStatus.isWhitesTurn,
-        moveHistory: prevStatus.moveHistory,
-        positionEvaluation: prevStatus.positionEvaluation,
-        blackComputerControl:
-          action === 'setBlackControl' ? payload : prevStatus.blackComputerControl,
-        whiteComputerControl:
-          action === 'setWhiteControl' ? payload : prevStatus.whiteComputerControl,
-        whiteKingChecked: prevStatus.whiteKingChecked,
-        blackKingChecked: prevStatus.blackKingChecked,
-        blackKingCanCastleLong: prevStatus.blackKingCanCastleLong,
-        blackKingCanCastleShort: prevStatus.blackKingCanCastleShort,
-        whiteKingCanCastleLong: prevStatus.whiteKingCanCastleLong,
-        whiteKingCanCastleShort: prevStatus.whiteKingCanCastleShort,
-        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
-        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
-      };
-    });
-  };
-
-  const updateCheckStatus = (action: 'setBlackCheck' | 'setWhiteCheck', payload: boolean) => {
-    setGameStatus(function (prevStatus) {
-      return {
-        isGameOver: prevStatus.isGameOver,
-        isWhitesTurn: prevStatus.isWhitesTurn,
-        moveHistory: prevStatus.moveHistory,
-        positionEvaluation: prevStatus.positionEvaluation,
-        blackKingChecked: action === 'setBlackCheck' ? payload : prevStatus.blackKingChecked,
-        whiteKingChecked: action === 'setWhiteCheck' ? payload : prevStatus.whiteKingChecked,
-        whiteComputerControl: prevStatus.whiteComputerControl,
-        blackComputerControl: prevStatus.blackComputerControl,
-        blackKingCanCastleLong: prevStatus.blackKingCanCastleLong,
-        blackKingCanCastleShort: prevStatus.blackKingCanCastleShort,
-        whiteKingCanCastleLong: prevStatus.whiteKingCanCastleLong,
-        whiteKingCanCastleShort: prevStatus.whiteKingCanCastleShort,
-        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
-        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
-      };
-    });
-  };
-
-  const updateCastlingStatus = (
-    action: 'setBlackLong' | 'setBlackShort' | 'setWhiteLong' | 'setWhiteShort',
-    payload: boolean
-  ) => {
-    setGameStatus(function (prevStatus) {
-      return {
-        isGameOver: prevStatus.isGameOver,
-        isWhitesTurn: prevStatus.isWhitesTurn,
-        moveHistory: prevStatus.moveHistory,
-        positionEvaluation: prevStatus.positionEvaluation,
-        blackKingChecked: prevStatus.blackKingChecked,
-        whiteKingChecked: prevStatus.whiteKingChecked,
-        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
-        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
-        whiteComputerControl: prevStatus.whiteComputerControl,
-        blackComputerControl: prevStatus.blackComputerControl,
-        blackKingCanCastleLong:
-          action === 'setBlackLong' ? payload : prevStatus.blackKingCanCastleLong,
-        blackKingCanCastleShort:
-          action === 'setBlackShort' ? payload : prevStatus.blackKingCanCastleShort,
-        whiteKingCanCastleLong:
-          action === 'setWhiteLong' ? payload : prevStatus.whiteKingCanCastleLong,
-        whiteKingCanCastleShort:
-          action === 'setWhiteShort' ? payload : prevStatus.whiteKingCanCastleShort,
-      };
-    });
-  };
-
-  const updateGameEndStatus = (action: 'setGameOver', payload: boolean) => {
-    setGameStatus(function (prevStatus) {
-      return {
-        isGameOver: action === 'setGameOver' ? payload : prevStatus.isGameOver,
-        isWhitesTurn: prevStatus.isWhitesTurn,
-        moveHistory: prevStatus.moveHistory,
-        positionEvaluation: prevStatus.positionEvaluation,
-        blackKingChecked: prevStatus.blackKingChecked,
-        whiteKingChecked: prevStatus.whiteKingChecked,
-        whiteComputerControl: prevStatus.whiteComputerControl,
-        blackComputerControl: prevStatus.blackComputerControl,
-        blackKingCanCastleLong: prevStatus.blackKingCanCastleLong,
-        blackKingCanCastleShort: prevStatus.blackKingCanCastleShort,
-        whiteKingCanCastleLong: prevStatus.whiteKingCanCastleLong,
-        whiteKingCanCastleShort: prevStatus.whiteKingCanCastleShort,
-        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
-        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
-      };
-    });
   };
 
   useEffect(() => {

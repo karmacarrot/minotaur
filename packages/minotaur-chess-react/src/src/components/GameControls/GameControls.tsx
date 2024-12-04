@@ -27,7 +27,7 @@ export function GameControls({
   setDepth,
 }: {
   resetGame: (boardArrangment: BoardArrangements) => void;
-  updateControl: (action: 'setBlackControl' | 'setWhiteControl', payload: boolean) => void;
+  updateControl: (action: 'black' | 'white', payload: boolean) => void;
   engineDepth: number;
   setDepth: (newDepth: number) => void;
 }) {
@@ -47,11 +47,11 @@ export function GameControls({
 
   const flipBlackControl = () => {
     setBlackComputerControlled(!blackComputerControlled);
-    updateControl('setBlackControl', !blackComputerControlled);
+    updateControl('black', !blackComputerControlled);
   };
   const flipWhiteControl = () => {
     setWhiteComputerControlled(!whiteComputerControlled);
-    updateControl('setWhiteControl', !whiteComputerControlled);
+    updateControl('white', !whiteComputerControlled);
   };
 
   return (

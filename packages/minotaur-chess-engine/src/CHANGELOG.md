@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/karmacarrot/minotaur/compare/v1.7.0...v1.8.0) (2024-12-04)
+
+
+### Features
+
+* allowing referee to understand en passant and refactoring useMinotaur to centralise game status management via useReducer ([340b3e5](https://github.com/karmacarrot/minotaur/commit/340b3e5486e0645947fcb2a658bc060a345426ce))
+
 # [1.7.0](https://github.com/karmacarrot/minotaur/compare/v1.6.0...v1.7.0) (2024-12-04)
 
 

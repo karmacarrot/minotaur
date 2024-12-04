@@ -17,6 +17,7 @@ import {
   CastleForBlackGameBoard,
   DuellingPawnsBoard,
   EndGameBoard,
+  EnPassantBoard,
   MateInOneForBlackGameBoard,
   MateInOneForWhiteGameBoard,
   MiddleGameBoard,
@@ -60,6 +61,8 @@ export function initBoard(arrangement: BoardArrangements): BitBoard {
       return BlackShortCastledGameBoard;
     case BoardArrangements.CastleForBlackAfter:
       return CastleForBlackAfterGameBoard;
+    case BoardArrangements.EnPassantBoard:
+      return EnPassantBoard;
     default:
       return StartingBoard;
   }

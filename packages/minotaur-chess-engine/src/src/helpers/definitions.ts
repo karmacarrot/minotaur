@@ -12,6 +12,8 @@ export const InitialGameStatus: GameStatus = {
   whiteKingCanCastleShort: true,
   blackKingCanCastleLong: true,
   blackKingCanCastleShort: true,
+  lastWhiteDoublePawnMove: BigInt(0),
+  lastBlackDoublePawnMove: BigInt(0),
 };
 export const numberOfTiles = 64;
 export const xOrYTileLength = 8;
@@ -75,6 +77,7 @@ export enum BoardArrangements {
   BlackLongCastledGameBoard,
   BlackShortCastledGameBoard,
   CastleForBlackAfter,
+  EnPassantBoard,
 }
 
 export const pieceImages: PieceImages = {

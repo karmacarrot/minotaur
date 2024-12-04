@@ -94,6 +94,8 @@ export interface GameStatus {
   whiteKingCanCastleShort: boolean;
   blackKingCanCastleLong: boolean;
   blackKingCanCastleShort: boolean;
+  lastWhiteDoublePawnMove: bigint;
+  lastBlackDoublePawnMove: bigint;
 }
 
 export interface CastleStatus {

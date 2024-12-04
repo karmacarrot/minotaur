@@ -50,6 +50,8 @@ export const useMinotaur = (boardSideLength: number) => {
         blackKingCanCastleShort: prevStatus.blackKingCanCastleShort,
         whiteKingCanCastleLong: prevStatus.whiteKingCanCastleLong,
         whiteKingCanCastleShort: prevStatus.whiteKingCanCastleShort,
+        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
+        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
       };
     });
 
@@ -144,6 +146,8 @@ export const useMinotaur = (boardSideLength: number) => {
         blackKingCanCastleShort: prevStatus.blackKingCanCastleShort,
         whiteKingCanCastleLong: prevStatus.whiteKingCanCastleLong,
         whiteKingCanCastleShort: prevStatus.whiteKingCanCastleShort,
+        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
+        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
       };
     });
   };
@@ -163,6 +167,8 @@ export const useMinotaur = (boardSideLength: number) => {
         blackKingCanCastleShort: prevStatus.blackKingCanCastleShort,
         whiteKingCanCastleLong: prevStatus.whiteKingCanCastleLong,
         whiteKingCanCastleShort: prevStatus.whiteKingCanCastleShort,
+        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
+        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
       };
     });
   };
@@ -179,6 +185,8 @@ export const useMinotaur = (boardSideLength: number) => {
         positionEvaluation: prevStatus.positionEvaluation,
         blackKingChecked: prevStatus.blackKingChecked,
         whiteKingChecked: prevStatus.whiteKingChecked,
+        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
+        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
         whiteComputerControl: prevStatus.whiteComputerControl,
         blackComputerControl: prevStatus.blackComputerControl,
         blackKingCanCastleLong:
@@ -208,6 +216,8 @@ export const useMinotaur = (boardSideLength: number) => {
         blackKingCanCastleShort: prevStatus.blackKingCanCastleShort,
         whiteKingCanCastleLong: prevStatus.whiteKingCanCastleLong,
         whiteKingCanCastleShort: prevStatus.whiteKingCanCastleShort,
+        lastWhiteDoublePawnMove: prevStatus.lastWhiteDoublePawnMove,
+        lastBlackDoublePawnMove: prevStatus.lastBlackDoublePawnMove,
       };
     });
   };

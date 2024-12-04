@@ -48,6 +48,7 @@ __export(src_exports, {
   CentralDominanceWeightings: () => CentralDominanceWeightings,
   DuellingPawnsBoard: () => DuellingPawnsBoard,
   EmptyBoard: () => EmptyBoard,
+  EnPassantBoard: () => EnPassantBoard,
   EndGameBoard: () => EndGameBoard,
   EvalWeightings: () => EvalWeightings,
   FindBestMoveMiniMax: () => FindBestMoveMiniMax,
@@ -166,6 +167,7 @@ __export(src_exports, {
   outputEvalLogsHtml: () => outputEvalLogsHtml,
   outputSingleBitboardHtml: () => outputSingleBitboardHtml,
   outputSinglePiecePositions: () => outputSinglePiecePositions,
+  pawnsThatCanCaptureEnpassant: () => pawnsThatCanCaptureEnpassant,
   pieceImages: () => pieceImages,
   pieceValues: () => pieceValues,
   pushNewNode: () => pushNewNode,
@@ -245,7 +247,9 @@ var InitialGameStatus = {
   whiteKingCanCastleLong: true,
   whiteKingCanCastleShort: true,
   blackKingCanCastleLong: true,
-  blackKingCanCastleShort: true
+  blackKingCanCastleShort: true,
+  lastWhiteDoublePawnMove: BigInt(0),
+  lastBlackDoublePawnMove: BigInt(0)
 };
 var numberOfTiles = 64;
 var xOrYTileLength = 8;
@@ -304,6 +308,7 @@ var BoardArrangements = /* @__PURE__ */ ((BoardArrangements2) => {
   BoardArrangements2[BoardArrangements2["BlackLongCastledGameBoard"] = 9] = "BlackLongCastledGameBoard";
   BoardArrangements2[BoardArrangements2["BlackShortCastledGameBoard"] = 10] = "BlackShortCastledGameBoard";
   BoardArrangements2[BoardArrangements2["CastleForBlackAfter"] = 11] = "CastleForBlackAfter";
+  BoardArrangements2[BoardArrangements2["EnPassantBoard"] = 12] = "EnPassantBoard";
   return BoardArrangements2;
 })(BoardArrangements || {});
 var pieceImages = {
@@ -1022,6 +1027,21 @@ var blackPawnChain_ThreeIslands = BigInt(
 var blackPawnChain_NoChains = BigInt(
   "0b0000000000000000000000000000000001010101000000001010101000000000"
 );
+var EnPassantBoard = {
+  whitePawn: BigInt("0b0000000000111111000000001000000000001010000000000000000000000000"),
+  blackPawn: BigInt("0b0000000000000000000000000101000000000100000000000000000100000000"),
+  whiteKnight: BigInt("0b0100001000000000000000000000000000000000000000000000000000000000"),
+  whiteBishop: BigInt("0b0010010000000000000000000000000000000000000000000000000000000000"),
+  whiteRook: BigInt("0b1000000100000000000000000000000000000000000000000000000000000000"),
+  whiteQueen: BigInt("0b0001000000000000000000000000000000000000000000000000000000000000"),
+  whiteKing: BigInt("0b0000100000000000000000000000000000000000000000000000000000000000"),
+  blackKnight: BigInt("0b0000000000000000000000000000000000000000000000000000000001000010"),
+  blackBishop: BigInt("0b0000000000000000000000000000000000000000000000000000000000100100"),
+  blackRook: BigInt("0b0000000000000000000000000000000000000000000000000000000010000001"),
+  blackQueen: BigInt("0b0000000000000000000000000000000000000000000000000000000000010000"),
+  blackKing: BigInt("0b0000000000000000000000000000000000000000000000000000000000001000"),
+  none: BigInt(0)
+};
 
 // src/helpers/boardevaluation/boardEval.ts
 function evaluateBoard(currentBoard, evaluateForWhite) {
@@ -2577,6 +2597,8 @@ function initBoard(arrangement) {
       return BlackShortCastledGameBoard;
     case 11 /* CastleForBlackAfter */:
       return CastleForBlackAfterGameBoard;
+    case 12 /* EnPassantBoard */:
+      return EnPassantBoard;
     default:
       return StartingBoard;
   }
@@ -2945,6 +2967,29 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   const fileName = `logs\\eval_logs_${timestamp}.html`;
   console.log(fileName);
 };
+
+// src/helpers/rules/enpassant.ts
+function pawnsThatCanCaptureEnpassant(board, gameState) {
+  if (!gameState.isWhitesTurn && (gameState.lastWhiteDoublePawnMove === null || gameState.lastWhiteDoublePawnMove === BigInt(0))) {
+    console.log("no black double pawn move");
+    return BigInt(0);
+  }
+  if (gameState.isWhitesTurn && (gameState.lastBlackDoublePawnMove === null || gameState.lastBlackDoublePawnMove === BigInt(0))) {
+    console.log("no white double pawn move");
+    return BigInt(0);
+  }
+  const lastMovedPawn = gameState.isWhitesTurn ? gameState.lastBlackDoublePawnMove : gameState.lastWhiteDoublePawnMove;
+  const canEnPassantPawnLeft = gameState.isWhitesTurn ? lastMovedPawn << BigInt(1) : lastMovedPawn >> BigInt(-1);
+  const canEnPassantPawnRight = gameState.isWhitesTurn ? lastMovedPawn << BigInt(-1) : lastMovedPawn >> BigInt(1);
+  const canEnPassantPawns = canEnPassantPawnLeft | canEnPassantPawnRight;
+  console.log(
+    "returning pawns that can capture enpassant",
+    bigIntToBinaryString(
+      canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn)
+    )
+  );
+  return canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn);
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   AllBishopMoves,
@@ -2975,6 +3020,7 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   CentralDominanceWeightings,
   DuellingPawnsBoard,
   EmptyBoard,
+  EnPassantBoard,
   EndGameBoard,
   EvalWeightings,
   FindBestMoveMiniMax,
@@ -3093,6 +3139,7 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   outputEvalLogsHtml,
   outputSingleBitboardHtml,
   outputSinglePiecePositions,
+  pawnsThatCanCaptureEnpassant,
   pieceImages,
   pieceValues,
   pushNewNode,

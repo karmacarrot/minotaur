@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/karmacarrot/minotaur/compare/v1.6.0...v1.7.0) (2024-12-04)
+
+
+### Features
+
+* en passant function added with tests but not yet used by game ([697c72b](https://github.com/karmacarrot/minotaur/commit/697c72b2d94b85c2fc221e17b86c674c849f303f))
+
 # [1.6.0](https://github.com/karmacarrot/minotaur/compare/v1.5.1...v1.6.0) (2024-11-17)
 
 

@@ -1,15 +1,14 @@
-"use client";
+'use client';
 
-import styled from "styled-components";
-import { useEffect, useRef } from "react";
-import { MinotaurConfig, Piece } from "@karmacarrot/minotaur-chess-engine";
+import styled from 'styled-components';
+import { useEffect, useRef } from 'react';
+import { MinotaurConfig, Piece } from '@karmacarrot/minotaur-chess-engine';
 
 const TileContainer = styled.div<{ tileType: string }>`
   height: 50px;
   width: 50px;
   display: grid;
-  background-color: ${({ tileType }) =>
-    tileType === "dark" ? "#975bba" : "#e6cdf3"};
+  background-color: ${({ tileType }) => (tileType === 'dark' ? '#975bba' : '#e6cdf3')};
 `;
 
 const PieceContainer = styled.div<{ threat: boolean; pieceImage: string }>`
@@ -51,11 +50,11 @@ export function Tile({
   threat: boolean;
   config: MinotaurConfig;
 }) {
-  const pieceImage =
-    piece && config.pieceImages[piece] ? config.pieceImages[piece] : "";
+  const pieceImage = piece && config.pieceImages[piece] ? config.pieceImages[piece] : '';
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleDragStart = (e: React.DragEvent) => {
+    console.log(`drag start: ${e.pageX}, ${e.pageY}`);
     pickUpPiece(piece, e.pageX, e.pageY);
   };
 
@@ -64,6 +63,7 @@ export function Tile({
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
+    console.log(`drag end: ${e.pageX}, ${e.pageY}`);
     putDownPiece(piece, e.pageX, e.pageY);
   };
 
@@ -89,20 +89,20 @@ export function Tile({
     const container = containerRef.current;
 
     if (container) {
-      container.addEventListener("touchstart", handleTouchStart, {
+      container.addEventListener('touchstart', handleTouchStart, {
         passive: false,
       });
-      container.addEventListener("touchmove", handleTouchMove, {
+      container.addEventListener('touchmove', handleTouchMove, {
         passive: false,
       });
-      container.addEventListener("touchend", handleTouchEnd, {
+      container.addEventListener('touchend', handleTouchEnd, {
         passive: false,
       });
 
       return () => {
-        container.removeEventListener("touchstart", handleTouchStart);
-        container.removeEventListener("touchmove", handleTouchMove);
-        container.removeEventListener("touchend", handleTouchEnd);
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchmove', handleTouchMove);
+        container.removeEventListener('touchend', handleTouchEnd);
       };
     }
   }, [piece, movePiece, pickUpPiece, putDownPiece]);
@@ -110,12 +110,7 @@ export function Tile({
   return (
     <TileContainer ref={containerRef} tileType={tiletype}>
       {piece && (
-        <div
-          draggable
-          onDragStart={handleDragStart}
-          onDrag={handleDrag}
-          onDragEnd={handleDragEnd}
-        >
+        <div draggable onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd}>
           <PieceContainer threat={threat} pieceImage={pieceImage} id={piece} />
         </div>
       )}

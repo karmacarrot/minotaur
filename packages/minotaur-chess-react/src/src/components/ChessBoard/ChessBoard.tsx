@@ -1,15 +1,11 @@
-"use client";
+'use client';
 
-import { Tile } from "./../Tile/Tile";
-import { useState } from "react";
-import {
-  xOrYTileLength,
-  ChessboardArray,
-  Piece,
-} from "@karmacarrot/minotaur-chess-engine";
-import { BoardOffset } from "./definitions";
-import { MinotaurConfig } from "@karmacarrot/minotaur-chess-engine";
-import styled from "styled-components";
+import { Tile } from './../Tile/Tile';
+import { useState } from 'react';
+import { xOrYTileLength, ChessboardArray, Piece } from '@karmacarrot/minotaur-chess-engine';
+import { BoardOffset } from './definitions';
+import { MinotaurConfig } from '@karmacarrot/minotaur-chess-engine';
+import styled from 'styled-components';
 
 const TileContainer = styled.div`
   width: 400px;
@@ -61,26 +57,17 @@ export function ChessBoard({
     movePiece(piece, movingFrom.x, movingFrom.y, x, y, boardOffset);
   };
 
-  for (
-    let columnCount = boardArray.length - 1;
-    columnCount >= 0;
-    columnCount--
-  ) {
+  for (let columnCount = boardArray.length - 1; columnCount >= 0; columnCount--) {
     const row = boardArray[columnCount];
-    for (
-      let rowCount = boardArray[columnCount]!.length - 1;
-      rowCount >= 0;
-      rowCount--
-    ) {
+    for (let rowCount = boardArray[columnCount]!.length - 1; rowCount >= 0; rowCount--) {
       let threat =
-        (blackKingCheck &&
-          boardArray[columnCount]![rowCount] === "blackKing") ||
-        (whiteKingCheck && boardArray[columnCount]![rowCount] === "whiteKing");
+        (blackKingCheck && boardArray[columnCount]![rowCount] === 'blackKing') ||
+        (whiteKingCheck && boardArray[columnCount]![rowCount] === 'whiteKing');
       tiles.push(
         useDark ? (
           <Tile
-            key={columnCount + "-" + rowCount}
-            tiletype='dark'
+            key={columnCount + '-' + rowCount}
+            tiletype="dark"
             piece={boardArray[columnCount]![rowCount]!}
             pickUpPiece={startDragPiece}
             putDownPiece={endDragPiece}
@@ -90,8 +77,8 @@ export function ChessBoard({
           />
         ) : (
           <Tile
-            key={columnCount + "-" + rowCount}
-            tiletype='light'
+            key={columnCount + '-' + rowCount}
+            tiletype="light"
             piece={boardArray[columnCount]![rowCount]!}
             pickUpPiece={startDragPiece}
             putDownPiece={endDragPiece}
@@ -115,6 +102,7 @@ export function ChessBoard({
           x: el.getBoundingClientRect().x,
           y: el.getBoundingClientRect().y,
         };
+        console.log(`offset ${boardOffset.x}, ${boardOffset.y}`);
       }}
     >
       {tiles}

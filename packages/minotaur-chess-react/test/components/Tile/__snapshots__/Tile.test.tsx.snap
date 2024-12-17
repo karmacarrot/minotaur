@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GameStatus should render with a piece 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-blHHSb czhOHk"
+    tiletype="light"
+  >
+    <div
+      draggable="true"
+    >
+      <div
+        class="sc-gtLWhw glOHZM"
+        id="blackBishop"
+        pieceimage="/chess-pieces/bishop_b.png"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`GameStatus should render without a piece 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-blHHSb fzjUMn"
+    tiletype="dark"
+  />
+</DocumentFragment>
+`;

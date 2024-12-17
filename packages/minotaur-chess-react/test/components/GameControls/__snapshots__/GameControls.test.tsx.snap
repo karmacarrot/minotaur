@@ -1,0 +1,179 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GameControls should render 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-dntaoT fQihMP"
+  >
+    <div
+      class="MuiStack-root css-pl8gqh-MuiStack-root"
+    >
+      <div
+        class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary css-1cprn2g-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+        style="background-color: rgb(230, 205, 243); color: rgb(255, 255, 255);"
+      >
+        <div
+          aria-controls=":r0:"
+          aria-expanded="false"
+          aria-haspopup="listbox"
+          aria-labelledby="board-state-select-label board-state-select"
+          class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-15k6ek6-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+          id="board-state-select"
+          role="combobox"
+          tabindex="0"
+        >
+          Start
+        </div>
+        <input
+          aria-hidden="true"
+          aria-invalid="false"
+          class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+          tabindex="-1"
+          value="0"
+        />
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1u6jos5-MuiSvgIcon-root-MuiSelect-icon"
+          data-testid="ArrowDropDownIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M7 10l5 5 5-5z"
+          />
+        </svg>
+        <fieldset
+          aria-hidden="true"
+          class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+        >
+          <legend
+            class="css-1pbc52w"
+          >
+            <span>
+              Setup
+            </span>
+          </legend>
+        </fieldset>
+      </div>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-142372x-MuiButtonBase-root-MuiButton-root"
+        style="background-color: rgb(151, 91, 186); color: rgb(255, 255, 255);"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+      </button>
+      <div
+        class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+      >
+        <label
+          class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+        >
+          <span
+            class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-1y5vrnu-MuiButtonBase-root-MuiCheckbox-root"
+          >
+            <input
+              checked=""
+              class="PrivateSwitchBase-input css-1m9pwf3"
+              data-indeterminate="false"
+              type="checkbox"
+            />
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-20bmp1-MuiSvgIcon-root"
+              data-testid="CheckBoxIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+              />
+            </svg>
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-1edfpdg-MuiTypography-root"
+          >
+            Black computer
+          </span>
+        </label>
+        <label
+          class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+        >
+          <span
+            class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-1y5vrnu-MuiButtonBase-root-MuiCheckbox-root"
+          >
+            <input
+              class="PrivateSwitchBase-input css-1m9pwf3"
+              data-indeterminate="false"
+              type="checkbox"
+            />
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-20bmp1-MuiSvgIcon-root"
+              data-testid="CheckBoxOutlineBlankIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+              />
+            </svg>
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-1edfpdg-MuiTypography-root"
+          >
+            White Computer
+          </span>
+        </label>
+      </div>
+      <div
+        class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary css-1cprn2g-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+        style="background-color: rgb(230, 205, 243); color: rgb(255, 255, 255);"
+      >
+        <div
+          aria-controls=":r1:"
+          aria-expanded="false"
+          aria-haspopup="listbox"
+          aria-labelledby="engine-depth engine-depth-select"
+          class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-15k6ek6-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+          id="engine-depth-select"
+          role="combobox"
+          tabindex="0"
+        >
+          2
+        </div>
+        <input
+          aria-hidden="true"
+          aria-invalid="false"
+          class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+          tabindex="-1"
+          value="2"
+        />
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1u6jos5-MuiSvgIcon-root-MuiSelect-icon"
+          data-testid="ArrowDropDownIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M7 10l5 5 5-5z"
+          />
+        </svg>
+        <fieldset
+          aria-hidden="true"
+          class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+        >
+          <legend
+            class="css-1pbc52w"
+          >
+            <span>
+              Depth
+            </span>
+          </legend>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

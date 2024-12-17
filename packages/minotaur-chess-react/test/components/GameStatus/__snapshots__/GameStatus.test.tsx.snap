@@ -1,0 +1,138 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GameStatus should render 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-fAUdSK fJTDnn"
+  >
+    <div
+      class="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-80"
+    >
+      <h2
+        class="text-2xl font-semibold mb-4 text-center"
+      >
+        Game Status
+      </h2>
+      <ul
+        class="space-y-3"
+      >
+        <li
+          class="flex justify-between items-center"
+        >
+          <span
+            class="text-gray-400"
+          >
+            Turn:
+          </span>
+          <span
+            class="text-lg font-medium"
+          >
+            White
+          </span>
+        </li>
+        <li
+          class="flex flex-col"
+        >
+          <span
+            class="text-gray-400"
+          >
+            History:
+          </span>
+          <div
+            class="text-sm font-light text-gray-300 mt-1 pl-2"
+          >
+            <ul />
+          </div>
+        </li>
+        <li
+          class="flex justify-between items-center"
+        >
+          <span
+            class="text-gray-400"
+          >
+            White Player:
+          </span>
+          <span
+            class="text-lg font-medium"
+          >
+            Human
+          </span>
+        </li>
+        <li
+          class="flex justify-between items-center"
+        >
+          <span
+            class="text-gray-400"
+          >
+            Black Player:
+          </span>
+          <span
+            class="text-lg font-medium"
+          >
+            Computer
+          </span>
+        </li>
+        <li
+          class="flex justify-between items-center"
+        >
+          <span
+            class="text-gray-400"
+          >
+            White Player Can Castle:
+          </span>
+          <span
+            class="text-lg font-medium"
+          >
+            Long | Short
+          </span>
+        </li>
+        <li
+          class="flex justify-between items-center"
+        >
+          <span
+            class="text-gray-400"
+          >
+            Black Player Can Castle:
+          </span>
+          <span
+            class="text-lg font-medium"
+          >
+            Long | Short
+          </span>
+        </li>
+        <li
+          class="flex justify-between items-center"
+        >
+          <span
+            class="text-gray-400"
+          >
+            White Last Double Pawn Move:
+          </span>
+          <span
+            class="text-lg font-medium"
+          >
+            0000000000000000000000000000000000000000000000000000000000000000
+          </span>
+        </li>
+        <li
+          class="flex justify-between items-center"
+        >
+          <span
+            class="text-gray-400"
+          >
+            Black Last Double Pawn Move:
+          </span>
+          <span
+            class="text-lg font-medium"
+          >
+            0000000000000000000000000000000000000000000000000000000000000000
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      Eval: 0.2
+    </div>
+  </div>
+</DocumentFragment>
+`;

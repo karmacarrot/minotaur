@@ -1,14 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import {
-  BoardOffset,
-  ChessBoard,
-  ChessGame,
-  MinotaurConfig,
-} from '@karmacarrot/minotaur-chess-react';
-import { Piece } from '@karmacarrot/minotaur-chess-engine';
-
+import { MinotaurConfig, Tile } from '@karmacarrot/minotaur-chess-react';
 const minotaurConfig: MinotaurConfig = {
   pieceImages: {
     blackPawn: '/chess-pieces/pawn_b.png',
@@ -25,26 +18,30 @@ const minotaurConfig: MinotaurConfig = {
     whiteKing: '/chess-pieces/king_w.png',
   },
 };
-
-describe('ChessBoard', () => {
-  it('should render', () => {
-    const movePiece = (
-      piece: Piece,
-      xFrom: number,
-      yFrom: number,
-      xTo: number,
-      yTo: number,
-      boardOffset: BoardOffset
-    ) => {
-      return;
-    };
-
+describe('GameStatus', () => {
+  it('should render with a piece', () => {
     const { asFragment } = render(
-      <ChessBoard
-        boardArray={[]}
-        blackKingCheck={false}
-        whiteKingCheck={false}
-        movePiece={movePiece}
+      <Tile
+        movePiece={() => {}}
+        pickUpPiece={() => {}}
+        putDownPiece={() => {}}
+        tiletype="light"
+        piece="blackBishop"
+        threat={false}
+        config={minotaurConfig}
+      />
+    );
+    expect(asFragment()).toMatchSnapshot();
+  });
+  it('should render without a piece', () => {
+    const { asFragment } = render(
+      <Tile
+        movePiece={() => {}}
+        pickUpPiece={() => {}}
+        putDownPiece={() => {}}
+        tiletype="dark"
+        piece={null}
+        threat={false}
         config={minotaurConfig}
       />
     );

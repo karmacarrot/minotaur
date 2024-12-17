@@ -1,13 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import {
-  BoardOffset,
-  ChessBoard,
-  ChessGame,
-  MinotaurConfig,
-} from '@karmacarrot/minotaur-chess-react';
-import { Piece } from '@karmacarrot/minotaur-chess-engine';
+import { ChessGame, MinotaurConfig } from '@karmacarrot/minotaur-chess-react';
 
 const minotaurConfig: MinotaurConfig = {
   pieceImages: {
@@ -26,28 +20,9 @@ const minotaurConfig: MinotaurConfig = {
   },
 };
 
-describe('ChessBoard', () => {
+describe('ChessGame', () => {
   it('should render', () => {
-    const movePiece = (
-      piece: Piece,
-      xFrom: number,
-      yFrom: number,
-      xTo: number,
-      yTo: number,
-      boardOffset: BoardOffset
-    ) => {
-      return;
-    };
-
-    const { asFragment } = render(
-      <ChessBoard
-        boardArray={[]}
-        blackKingCheck={false}
-        whiteKingCheck={false}
-        movePiece={movePiece}
-        config={minotaurConfig}
-      />
-    );
+    const { asFragment } = render(<ChessGame config={minotaurConfig} />);
     expect(asFragment()).toMatchSnapshot();
   });
 });

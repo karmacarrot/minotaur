@@ -12,7 +12,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Minotaur Chess',
+  title: 'Minotaur',
   description: '',
 };
 

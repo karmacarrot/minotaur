@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ChessBoard should render 1`] = `
+exports[`EvaluationBar should render 1`] = `
 <DocumentFragment>
-  <div
-    class="sc-egkSDF kYMACv"
-  />
+  <div>
+    Eval: 10
+  </div>
 </DocumentFragment>
 `;

@@ -15,6 +15,9 @@ import {
   applyMove,
   FindBestMoveMiniMax,
   isOpponentCheckedMemo,
+  getBitBoardPosition,
+  binaryMask64,
+  BoardUpdateResponse,
 } from '@karmacarrot/minotaur-chess-engine';
 
 import JSConfetti from 'js-confetti';
@@ -29,18 +32,26 @@ export const useMinotaur = (boardSideLength: number) => {
 
   const resetGame = (boardArrangment: BoardArrangements) => {
     setCurrentBoard(initBoard(boardArrangment));
+    dispatch({ type: 'RESET_GAME' });
   };
 
   const handleMoveHistoryUpdates = (move: BoardMove) => {
     dispatch({ type: 'ADD_MOVE', move });
   };
 
-  const updateComputerControl = (color: 'white' | 'black', value: boolean) => {
-    dispatch({ type: 'SET_COMPUTER_CONTROL', color, value });
+  const updateComputerControl = (colour: 'white' | 'black', value: boolean) => {
+    dispatch({ type: 'SET_COMPUTER_CONTROL', colour, value });
   };
 
-  const updateCheckStatus = (color: 'white' | 'black', value: boolean) => {
-    dispatch({ type: 'SET_CHECK', color, value });
+  const updateCheckStatus = (colour: 'white' | 'black', value: boolean) => {
+    dispatch({ type: 'SET_CHECK', colour, value });
+  };
+
+  const updateLastDoublePawnMove = (
+    colour: 'lastWhiteDoublePawnMove' | 'lastBlackDoublePawnMove',
+    value: bigint
+  ) => {
+    dispatch({ type: 'SET_LAST_PAWN_DOUBLE_MOVE', colour, value });
   };
 
   const updateCastlingStatus = (
@@ -86,12 +97,12 @@ export const useMinotaur = (boardSideLength: number) => {
     xTo: number,
     yTo: number,
     boardOffset: BoardOffset
-  ) => {
+  ): BoardUpdateResponse | null => {
     if (gameStatus.isWhitesTurn && !piece?.toLowerCase().includes('white')) {
-      return;
+      return null;
     }
     if (!gameStatus.isWhitesTurn && !piece?.toLowerCase().includes('black')) {
-      return;
+      return null;
     }
 
     const toRank = getRank(yTo, boardSideLength, boardOffset.y);
@@ -110,6 +121,25 @@ export const useMinotaur = (boardSideLength: number) => {
     );
 
     if (moveResponse.MoveAttempted.isLegal) {
+      if (
+        (piece === 'whitePawn' || piece === 'blackPawn') &&
+        (toRank === fromRank + 2 || toRank === fromRank - 2)
+      ) {
+        const newPosition = binaryMask64(
+          getBitBoardPosition(toFile, toRank),
+          'all_zeroes_with_position_as_one'
+        );
+        updateLastDoublePawnMove(
+          gameStatus.isWhitesTurn ? 'lastWhiteDoublePawnMove' : 'lastBlackDoublePawnMove',
+          newPosition
+        );
+      } else {
+        updateLastDoublePawnMove(
+          gameStatus.isWhitesTurn ? 'lastWhiteDoublePawnMove' : 'lastBlackDoublePawnMove',
+          BigInt(0)
+        );
+      }
+
       setCurrentBoard(moveResponse.BoardState);
       handleMoveHistoryUpdates(moveResponse.MoveAttempted);
       checkCheckStatus(moveResponse.BoardState);
@@ -120,9 +150,12 @@ export const useMinotaur = (boardSideLength: number) => {
         updateCastlingStatus(gameStatus.isWhitesTurn ? 'whiteShort' : 'blackShort', false);
       }
     }
+
+    return moveResponse;
   };
 
   useEffect(() => {
+    console.log('useEffect called');
     const makeComputerMove = async () => {
       if (!gameStatus.isWhitesTurn && gameStatus.blackComputerControl && !gameStatus.isGameOver) {
         console.log('Black to move!');
@@ -146,6 +179,27 @@ export const useMinotaur = (boardSideLength: number) => {
           setCurrentBoard(newBoardState);
 
           const bestBoardMove = bitMoveToBoardMove(bestMove);
+
+          if (
+            (bestBoardMove.PieceMoved === 'whitePawn' ||
+              bestBoardMove.PieceMoved === 'blackPawn') &&
+            (bestBoardMove.RankTo === bestBoardMove.RankFrom + 2 ||
+              bestBoardMove.RankTo === bestBoardMove.RankFrom - 2)
+          ) {
+            const newPosition = binaryMask64(
+              getBitBoardPosition(bestBoardMove.FileTo, bestBoardMove.RankTo),
+              'all_zeroes_with_position_as_one'
+            );
+            updateLastDoublePawnMove(
+              gameStatus.isWhitesTurn ? 'lastWhiteDoublePawnMove' : 'lastBlackDoublePawnMove',
+              newPosition
+            );
+          } else {
+            updateLastDoublePawnMove(
+              gameStatus.isWhitesTurn ? 'lastWhiteDoublePawnMove' : 'lastBlackDoublePawnMove',
+              BigInt(0)
+            );
+          }
 
           handleMoveHistoryUpdates(bestBoardMove);
           checkCheckStatus(newBoardState);

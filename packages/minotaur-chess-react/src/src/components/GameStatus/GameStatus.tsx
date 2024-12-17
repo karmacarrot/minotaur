@@ -1,4 +1,5 @@
 import {
+  bigIntToBinaryString,
   BitBoard,
   BoardMove,
   evaluateBoard,
@@ -79,6 +80,18 @@ export function GameStatus({
               {gameStatus.blackKingCanCastleLong ? 'Long' : ''}
               {' | '}
               {gameStatus.blackKingCanCastleShort ? 'Short' : ''}
+            </span>
+          </li>
+          <li key="whiteLastDoublePawnMove" className="flex justify-between items-center">
+            <span className="text-gray-400">White Last Double Pawn Move:</span>
+            <span className="text-lg font-medium">
+              {bigIntToBinaryString(gameStatus.lastWhiteDoublePawnMove)}
+            </span>
+          </li>
+          <li key="whiteLastDoublePawnMove" className="flex justify-between items-center">
+            <span className="text-gray-400">Black Last Double Pawn Move:</span>
+            <span className="text-lg font-medium">
+              {bigIntToBinaryString(gameStatus.lastBlackDoublePawnMove)}
             </span>
           </li>
         </ul>

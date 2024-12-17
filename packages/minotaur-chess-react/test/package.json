@@ -2,7 +2,7 @@
   "name": "@karmacarrot/minotaur-chess-react-tests",
   "version": "1.0.0",
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage --reporters=default --reporters=jest-html-reporter"
   },
   "author": "",
   "license": "ISC",

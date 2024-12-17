@@ -1,0 +1,936 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChessGame should render 1`] = `
+<DocumentFragment>
+  <div
+    class="content-container"
+  >
+    <div
+      class="sc-ivxoEo gKfFNv"
+    >
+      <div
+        class="sc-ghWlax brCSZh"
+      >
+        <div
+          class="sc-dntaoT fQihMP"
+        >
+          <div
+            class="MuiStack-root css-pl8gqh-MuiStack-root"
+          >
+            <div
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary css-1cprn2g-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+              style="background-color: rgb(230, 205, 243); color: rgb(255, 255, 255);"
+            >
+              <div
+                aria-controls=":r0:"
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                aria-labelledby="board-state-select-label board-state-select"
+                class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-15k6ek6-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                id="board-state-select"
+                role="combobox"
+                tabindex="0"
+              >
+                Start
+              </div>
+              <input
+                aria-hidden="true"
+                aria-invalid="false"
+                class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                tabindex="-1"
+                value="0"
+              />
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1u6jos5-MuiSvgIcon-root-MuiSelect-icon"
+                data-testid="ArrowDropDownIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M7 10l5 5 5-5z"
+                />
+              </svg>
+              <fieldset
+                aria-hidden="true"
+                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              >
+                <legend
+                  class="css-1pbc52w"
+                >
+                  <span>
+                    Setup
+                  </span>
+                </legend>
+              </fieldset>
+            </div>
+            <button
+              class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-142372x-MuiButtonBase-root-MuiButton-root"
+              style="background-color: rgb(151, 91, 186); color: rgb(255, 255, 255);"
+              tabindex="0"
+              type="button"
+            >
+              Reset
+            </button>
+            <div
+              class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+            >
+              <label
+                class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+              >
+                <span
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-1y5vrnu-MuiButtonBase-root-MuiCheckbox-root"
+                >
+                  <input
+                    checked=""
+                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    data-indeterminate="false"
+                    type="checkbox"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-20bmp1-MuiSvgIcon-root"
+                    data-testid="CheckBoxIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                    />
+                  </svg>
+                </span>
+                <span
+                  class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-1edfpdg-MuiTypography-root"
+                >
+                  Black computer
+                </span>
+              </label>
+              <label
+                class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+              >
+                <span
+                  class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeMedium css-1y5vrnu-MuiButtonBase-root-MuiCheckbox-root"
+                >
+                  <input
+                    class="PrivateSwitchBase-input css-1m9pwf3"
+                    data-indeterminate="false"
+                    type="checkbox"
+                  />
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-20bmp1-MuiSvgIcon-root"
+                    data-testid="CheckBoxOutlineBlankIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                    />
+                  </svg>
+                </span>
+                <span
+                  class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-1edfpdg-MuiTypography-root"
+                >
+                  White Computer
+                </span>
+              </label>
+            </div>
+            <div
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary css-1cprn2g-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+              style="background-color: rgb(230, 205, 243); color: rgb(255, 255, 255);"
+            >
+              <div
+                aria-controls=":r1:"
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                aria-labelledby="engine-depth engine-depth-select"
+                class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-15k6ek6-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                id="engine-depth-select"
+                role="combobox"
+                tabindex="0"
+              >
+                2
+              </div>
+              <input
+                aria-hidden="true"
+                aria-invalid="false"
+                class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                tabindex="-1"
+                value="2"
+              />
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1u6jos5-MuiSvgIcon-root-MuiSelect-icon"
+                data-testid="ArrowDropDownIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M7 10l5 5 5-5z"
+                />
+              </svg>
+              <fieldset
+                aria-hidden="true"
+                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              >
+                <legend
+                  class="css-1pbc52w"
+                >
+                  <span>
+                    Depth
+                  </span>
+                </legend>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-khLCKb gYRtPq"
+        >
+          <div
+            class="sc-egkSDF kYMACv"
+          >
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw TzrxO"
+                  id="blackRook"
+                  pieceimage="/chess-pieces/rook_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw iTdYLM"
+                  id="blackKnight"
+                  pieceimage="/chess-pieces/knight_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw glOHZM"
+                  id="blackBishop"
+                  pieceimage="/chess-pieces/bishop_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw kNVCPd"
+                  id="blackQueen"
+                  pieceimage="/chess-pieces/queen_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jzGcAo"
+                  id="blackKing"
+                  pieceimage="/chess-pieces/king_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw glOHZM"
+                  id="blackBishop"
+                  pieceimage="/chess-pieces/bishop_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw iTdYLM"
+                  id="blackKnight"
+                  pieceimage="/chess-pieces/knight_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw TzrxO"
+                  id="blackRook"
+                  pieceimage="/chess-pieces/rook_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jBQvgT"
+                  id="blackPawn"
+                  pieceimage="/chess-pieces/pawn_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jBQvgT"
+                  id="blackPawn"
+                  pieceimage="/chess-pieces/pawn_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jBQvgT"
+                  id="blackPawn"
+                  pieceimage="/chess-pieces/pawn_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jBQvgT"
+                  id="blackPawn"
+                  pieceimage="/chess-pieces/pawn_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jBQvgT"
+                  id="blackPawn"
+                  pieceimage="/chess-pieces/pawn_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jBQvgT"
+                  id="blackPawn"
+                  pieceimage="/chess-pieces/pawn_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jBQvgT"
+                  id="blackPawn"
+                  pieceimage="/chess-pieces/pawn_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jBQvgT"
+                  id="blackPawn"
+                  pieceimage="/chess-pieces/pawn_b.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            />
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw gAyRkO"
+                  id="whitePawn"
+                  pieceimage="/chess-pieces/pawn_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw gAyRkO"
+                  id="whitePawn"
+                  pieceimage="/chess-pieces/pawn_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw gAyRkO"
+                  id="whitePawn"
+                  pieceimage="/chess-pieces/pawn_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw gAyRkO"
+                  id="whitePawn"
+                  pieceimage="/chess-pieces/pawn_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw gAyRkO"
+                  id="whitePawn"
+                  pieceimage="/chess-pieces/pawn_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw gAyRkO"
+                  id="whitePawn"
+                  pieceimage="/chess-pieces/pawn_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw gAyRkO"
+                  id="whitePawn"
+                  pieceimage="/chess-pieces/pawn_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw gAyRkO"
+                  id="whitePawn"
+                  pieceimage="/chess-pieces/pawn_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw hkttmr"
+                  id="whiteRook"
+                  pieceimage="/chess-pieces/rook_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw EIQjR"
+                  id="whiteKnight"
+                  pieceimage="/chess-pieces/knight_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jvtERR"
+                  id="whiteBishop"
+                  pieceimage="/chess-pieces/bishop_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw epuemY"
+                  id="whiteQueen"
+                  pieceimage="/chess-pieces/queen_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jOYiXV"
+                  id="whiteKing"
+                  pieceimage="/chess-pieces/king_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw jvtERR"
+                  id="whiteBishop"
+                  pieceimage="/chess-pieces/bishop_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb fzjUMn"
+              tiletype="dark"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw EIQjR"
+                  id="whiteKnight"
+                  pieceimage="/chess-pieces/knight_w.png"
+                />
+              </div>
+            </div>
+            <div
+              class="sc-blHHSb czhOHk"
+              tiletype="light"
+            >
+              <div
+                draggable="true"
+              >
+                <div
+                  class="sc-gtLWhw hkttmr"
+                  id="whiteRook"
+                  pieceimage="/chess-pieces/rook_w.png"
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            class="sc-fAUdSK fJTDnn"
+          >
+            <div
+              class="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-80"
+            >
+              <h2
+                class="text-2xl font-semibold mb-4 text-center"
+              >
+                Game Status
+              </h2>
+              <ul
+                class="space-y-3"
+              >
+                <li
+                  class="flex justify-between items-center"
+                >
+                  <span
+                    class="text-gray-400"
+                  >
+                    Turn:
+                  </span>
+                  <span
+                    class="text-lg font-medium"
+                  >
+                    White
+                  </span>
+                </li>
+                <li
+                  class="flex flex-col"
+                >
+                  <span
+                    class="text-gray-400"
+                  >
+                    History:
+                  </span>
+                  <div
+                    class="text-sm font-light text-gray-300 mt-1 pl-2"
+                  >
+                    <ul />
+                  </div>
+                </li>
+                <li
+                  class="flex justify-between items-center"
+                >
+                  <span
+                    class="text-gray-400"
+                  >
+                    White Player:
+                  </span>
+                  <span
+                    class="text-lg font-medium"
+                  >
+                    Human
+                  </span>
+                </li>
+                <li
+                  class="flex justify-between items-center"
+                >
+                  <span
+                    class="text-gray-400"
+                  >
+                    Black Player:
+                  </span>
+                  <span
+                    class="text-lg font-medium"
+                  >
+                    Computer
+                  </span>
+                </li>
+                <li
+                  class="flex justify-between items-center"
+                >
+                  <span
+                    class="text-gray-400"
+                  >
+                    White Player Can Castle:
+                  </span>
+                  <span
+                    class="text-lg font-medium"
+                  >
+                    Long | Short
+                  </span>
+                </li>
+                <li
+                  class="flex justify-between items-center"
+                >
+                  <span
+                    class="text-gray-400"
+                  >
+                    Black Player Can Castle:
+                  </span>
+                  <span
+                    class="text-lg font-medium"
+                  >
+                    Long | Short
+                  </span>
+                </li>
+                <li
+                  class="flex justify-between items-center"
+                >
+                  <span
+                    class="text-gray-400"
+                  >
+                    White Last Double Pawn Move:
+                  </span>
+                  <span
+                    class="text-lg font-medium"
+                  >
+                    0000000000000000000000000000000000000000000000000000000000000000
+                  </span>
+                </li>
+                <li
+                  class="flex justify-between items-center"
+                >
+                  <span
+                    class="text-gray-400"
+                  >
+                    Black Last Double Pawn Move:
+                  </span>
+                  <span
+                    class="text-lg font-medium"
+                  >
+                    0000000000000000000000000000000000000000000000000000000000000000
+                  </span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              Eval: 0.2
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-ixGGxD fuHFsk"
+        >
+          <p>
+            This chess game is using 64-bit binary integers for each type of piece which are then merged into an array for React to render into the board. State is managed by React and the piece movement is done through applying bitmasks in pure functions. Datastructures are intended to be immutable. Currently only pawns movement rules are enforced. Engine analysis is done by a recursive minimax function with alpha beta pruning yet to be implemented. The intention is to first create a strong engine for the pawns then slowly expand out to the other pieces.
+          </p>
+          <p>
+            <strong>
+              Current feature list
+            </strong>
+          </p>
+          <ul>
+            <li>
+              Basic moves - done
+            </li>
+            <li>
+              Basic engine minimax game tree search - done
+            </li>
+            <li>
+              Check / checkmate - in progress
+            </li>
+            <li>
+              Castling / en passant - to do
+            </li>
+            <li>
+              alpha / beta pruning, eval optimisations - to do
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

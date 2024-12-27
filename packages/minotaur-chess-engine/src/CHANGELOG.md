@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/karmacarrot/minotaur/compare/v1.8.0...v1.9.0) (2024-12-27)
+
+
+### Features
+
+* en passant implemented for human player with functions for converting from board positions to co-ordinates and vice versa ([482e73c](https://github.com/karmacarrot/minotaur/commit/482e73c0ac64cf4612e11af2c807736a4d5c822e))
+
 # [1.8.0](https://github.com/karmacarrot/minotaur/compare/v1.7.0...v1.8.0) (2024-12-04)
 
 

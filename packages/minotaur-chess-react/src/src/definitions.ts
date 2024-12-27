@@ -1,6 +1,6 @@
-import { MinotaurConfig } from "@karmacarrot/minotaur-chess-engine";
+import { MinotaurConfig } from '@karmacarrot/minotaur-chess-engine';
 
-export interface BoardOffset {
+export interface BoardXY {
   x: number;
   y: number;
 }

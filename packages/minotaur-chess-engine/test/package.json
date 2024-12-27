@@ -10,6 +10,9 @@
     "@karmacarrot/minotaur-chess-engine": "*",
     "@karmacarrot/typescript-config": "*"
   },
+  "exports": {
+    "./testHelper": "./helpers/testHelper.ts"
+  },
   "author": "",
   "license": "ISC",
   "description": "",

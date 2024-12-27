@@ -2,12 +2,14 @@
   "name": "@karmacarrot/minotaur-chess-react-tests",
   "version": "1.0.0",
   "scripts": {
-    "test": "jest --coverage --reporters=default --reporters=jest-html-reporter"
+    "test": "jest --coverage --reporters=default --reporters=jest-html-reporter",
+    "testsuite": "jest -t \"useMinotaur Hook\""
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@karmacarrot/minotaur-chess-engine-tests": "*",
     "@karmacarrot/minotaur-chess-react": "*",
     "@testing-library/jest-dom": "^6.6.2",
     "@testing-library/react": "^16.0.1",
@@ -26,6 +28,7 @@
     "@types/node": "^20.11.24",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
+    "chance": "^1.1.12",
     "eslint": "^8.57.0",
     "typescript": "^5.3.3"
   }

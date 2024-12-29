@@ -17,6 +17,7 @@ import {
   StartingNode,
   getCastleStatus,
   handleCastleMove,
+  InitialGameStatus,
 } from '@karmacarrot/minotaur-chess-engine';
 import { faker } from '@faker-js/faker';
 
@@ -207,8 +208,8 @@ describe('bitMoveToBoardMove', () => {
         RankFrom: 2,
         RankTo: 3,
         isLegal: true,
-        castleRookFrom: '',
-        castleRookTo: '',
+        CastleRookFrom: '',
+        CastleRookTo: '',
       },
     },
     {
@@ -228,8 +229,8 @@ describe('bitMoveToBoardMove', () => {
         RankFrom: 8,
         RankTo: 6,
         isLegal: true,
-        castleRookFrom: '',
-        castleRookTo: '',
+        CastleRookFrom: '',
+        CastleRookTo: '',
       },
     },
     {
@@ -251,8 +252,8 @@ describe('bitMoveToBoardMove', () => {
         RankFrom: 8,
         RankTo: 8,
         isLegal: true,
-        castleRookFrom: 'h',
-        castleRookTo: 'f',
+        CastleRookFrom: 'h',
+        CastleRookTo: 'f',
       },
     },
   ];
@@ -266,7 +267,7 @@ describe('bitMoveToBoardMove', () => {
 describe('movePiece', () => {
   it("should invalidate long castle option for black when moving Queen's rook", () => {
     const startingBoard = { ...CastleForBlackGameBoard };
-    const updateResponse = movePiece(startingBoard, 'blackRook', 8, 'h', 8, 'g');
+    const updateResponse = movePiece(startingBoard, 'blackRook', 8, 'h', 8, 'g', InitialGameStatus);
     expect(updateResponse.CastleShortLost).toBe(true);
     expect(updateResponse.CastleLongLost).toBe(false);
   });

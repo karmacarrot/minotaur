@@ -1,22 +1,13 @@
-import { GameNode } from "../../../../types";
-import {
-  allBlackPositions,
-  allPositions,
-  allWhitePositions,
-  applyMove,
-} from "../../../bitboards";
-import {
-  aTogFilesOnly,
-  bTohFilesOnly,
-  evalLoggingOff,
-} from "../../../definitions";
+import { GameNode } from '../../../../types';
+import { allBlackPositions, allPositions, allWhitePositions, applyMove } from '../../../bitboards';
+import { aTogFilesOnly, bTohFilesOnly, evalLoggingOff } from '../../../definitions';
 import {
   AllBlackPawnMovesOneSquare,
   AllBlackPawnMovesTwoSquare,
   AllWhitePawnMovesOneSquare,
   AllWhitePawnMovesTwoSquare,
-} from "../../../moveEval";
-import { pushNewNode } from "../nodeGenerators";
+} from '../../../moveEval';
+import { pushNewNode } from '../nodeGenerators';
 
 export function whitePawnNodes(node: GameNode): GameNode[] {
   const allOccupiedPositions = allPositions(node.boardState);
@@ -28,30 +19,21 @@ export function whitePawnNodes(node: GameNode): GameNode[] {
 
   const captures = whitePawnCaptureNodes(node, allOccupiedBlackPositions);
 
-  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures];
+  const enPassantCaptures = whitePawnEnPassantCaptureNodes(node);
+
+  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures, ...enPassantCaptures];
 
   return allMoves;
 }
 
-function whitePawnOneSquareNodes(
-  node: GameNode,
-  allOccupiedPositions: bigint
-): GameNode[] {
+function whitePawnOneSquareNodes(node: GameNode, allOccupiedPositions: bigint): GameNode[] {
   let newNodes: GameNode[] = [];
-  const potentialMoves = AllWhitePawnMovesOneSquare(
-    node.boardState,
-    allOccupiedPositions
-  );
+  const potentialMoves = AllWhitePawnMovesOneSquare(node.boardState, allOccupiedPositions);
 
   for (let i = 0; i < 64; i++) {
     const moveBit = BigInt(1) << BigInt(i);
     const offset = 64 - i;
-    const newBoardState = applyMove(
-      node.boardState,
-      offset - 8,
-      offset,
-      "whitePawn"
-    );
+    const newBoardState = applyMove(node.boardState, offset - 8, offset, 'whitePawn');
 
     if (potentialMoves & moveBit) {
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
@@ -60,41 +42,40 @@ function whitePawnOneSquareNodes(
   return newNodes;
 }
 
-function whitePawnTwoSquareNodes(
-  node: GameNode,
-  allOccupiedPositions: bigint
-): GameNode[] {
+function whitePawnTwoSquareNodes(node: GameNode, allOccupiedPositions: bigint): GameNode[] {
   let newNodes: GameNode[] = [];
-  const potentialTwoStepMoves = AllWhitePawnMovesTwoSquare(
-    node.boardState,
-    allOccupiedPositions
-  );
+  const potentialTwoStepMoves = AllWhitePawnMovesTwoSquare(node.boardState, allOccupiedPositions);
 
   for (let i = 0; i < 64; i++) {
     const moveBit = BigInt(1) << BigInt(i);
     if (potentialTwoStepMoves & moveBit) {
       const offset = 64 - i;
 
-      const newBoardState = applyMove(
-        node.boardState,
-        offset - 16,
-        offset,
-        "whitePawn"
-      );
+      const newBoardState = applyMove(node.boardState, offset - 16, offset, 'whitePawn');
 
       if (potentialTwoStepMoves & moveBit) {
-        newNodes = pushNewNode(
-          newNodes,
-          node,
-          newBoardState,
-          evalLoggingOff,
-          0
-        );
+        newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
       }
     }
   }
 
   return newNodes;
+}
+
+export function whitePawnEnPassantCaptureNodes(node: GameNode): GameNode[] {
+  if (node.gameState.lastBlackDoublePawnMove === BigInt(0)) {
+    return [];
+  }
+  const possiblePositionForWhiteToEnPassantCaptureTo =
+    node.gameState.lastBlackDoublePawnMove >> BigInt(8);
+
+  const whiteCaptures = whitePawnCaptureNodes(node, possiblePositionForWhiteToEnPassantCaptureTo);
+  for (const capture of whiteCaptures) {
+    capture.boardState.blackPawn =
+      capture.boardState.blackPawn & ~node.gameState.lastBlackDoublePawnMove;
+  }
+
+  return whiteCaptures;
 }
 
 export function whitePawnCaptureNodes(
@@ -103,10 +84,8 @@ export function whitePawnCaptureNodes(
 ): GameNode[] {
   let newNodes: GameNode[] = [];
 
-  const leftCapturePositions =
-    (node.boardState.whitePawn & ~bTohFilesOnly) >> BigInt(7);
-  const rightCapturePositions =
-    (node.boardState.whitePawn & ~aTogFilesOnly) >> BigInt(9);
+  const leftCapturePositions = (node.boardState.whitePawn & ~bTohFilesOnly) >> BigInt(7);
+  const rightCapturePositions = (node.boardState.whitePawn & ~aTogFilesOnly) >> BigInt(9);
 
   for (let i = 0; i < 64; i++) {
     let fromIndex, toIndex;
@@ -118,12 +97,7 @@ export function whitePawnCaptureNodes(
       (leftCapturePositions & (BigInt(1) << BigInt(i))) !== BigInt(0) &&
       (allOccupiedBlackPositions & (BigInt(1) << BigInt(i))) !== BigInt(0)
     ) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - fromIndex,
-        64 - toIndex,
-        "whitePawn"
-      );
+      const newBoardState = applyMove(node.boardState, 64 - fromIndex, 64 - toIndex, 'whitePawn');
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
 
@@ -134,12 +108,7 @@ export function whitePawnCaptureNodes(
       (rightCapturePositions & (BigInt(1) << BigInt(i))) !== BigInt(0) &&
       (allOccupiedBlackPositions & (BigInt(1) << BigInt(i))) !== BigInt(0)
     ) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - fromIndex,
-        64 - toIndex,
-        "whitePawn"
-      );
+      const newBoardState = applyMove(node.boardState, 64 - fromIndex, 64 - toIndex, 'whitePawn');
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
   }
@@ -157,20 +126,16 @@ export function blackPawnNodes(node: GameNode): GameNode[] {
 
   const captures = blackPawnCaptureNodes(node, allOccupiedWhitePositions);
 
-  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures];
+  const enPassantCaptures = blackPawnEnPassantCaptureNodes(node);
+
+  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures, ...enPassantCaptures];
 
   return allMoves;
 }
 
-function blackPawnOneSquareNodes(
-  node: GameNode,
-  allOccupiedPositions: bigint
-): GameNode[] {
+function blackPawnOneSquareNodes(node: GameNode, allOccupiedPositions: bigint): GameNode[] {
   let newNodes: GameNode[] = [];
-  const potentialMoves = AllBlackPawnMovesOneSquare(
-    node.boardState,
-    allOccupiedPositions
-  );
+  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions);
   const a1Position = 64;
   const h8Position = 1;
   for (let position = h8Position; position <= a1Position; position++) {
@@ -184,7 +149,7 @@ function blackPawnOneSquareNodes(
         node.boardState,
         64 - position + 8,
         64 - position,
-        "blackPawn"
+        'blackPawn'
       );
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
@@ -193,15 +158,9 @@ function blackPawnOneSquareNodes(
   return newNodes;
 }
 
-export function blackPawnTwoSquareNodes(
-  node: GameNode,
-  allOccupiedPositions: bigint
-): GameNode[] {
+export function blackPawnTwoSquareNodes(node: GameNode, allOccupiedPositions: bigint): GameNode[] {
   let newNodes: GameNode[] = [];
-  const potentialTwoStepMoves = AllBlackPawnMovesTwoSquare(
-    node.boardState,
-    allOccupiedPositions
-  );
+  const potentialTwoStepMoves = AllBlackPawnMovesTwoSquare(node.boardState, allOccupiedPositions);
 
   const a1Position = 64;
   const h8Position = 1;
@@ -216,7 +175,7 @@ export function blackPawnTwoSquareNodes(
         node.boardState,
         64 - position + 16,
         64 - position,
-        "blackPawn"
+        'blackPawn'
       );
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
@@ -225,16 +184,30 @@ export function blackPawnTwoSquareNodes(
   return newNodes;
 }
 
+export function blackPawnEnPassantCaptureNodes(node: GameNode): GameNode[] {
+  if (node.gameState.lastWhiteDoublePawnMove === BigInt(0)) {
+    return [];
+  }
+  const possiblePositionForBlackToEnPassantCaptureTo =
+    node.gameState.lastWhiteDoublePawnMove << BigInt(8);
+
+  const blackCaptures = blackPawnCaptureNodes(node, possiblePositionForBlackToEnPassantCaptureTo);
+  for (const capture of blackCaptures) {
+    capture.boardState.whitePawn =
+      capture.boardState.whitePawn & ~node.gameState.lastWhiteDoublePawnMove;
+  }
+
+  return blackCaptures;
+}
+
 export function blackPawnCaptureNodes(
   node: GameNode,
   allOccupiedWhitePositions: bigint
 ): GameNode[] {
   let newNodes: GameNode[] = [];
 
-  const leftCapturePositions =
-    (node.boardState.blackPawn & ~bTohFilesOnly) << BigInt(9);
-  const rightCapturePositions =
-    (node.boardState.blackPawn & ~aTogFilesOnly) << BigInt(7);
+  const leftCapturePositions = (node.boardState.blackPawn & ~bTohFilesOnly) << BigInt(9);
+  const rightCapturePositions = (node.boardState.blackPawn & ~aTogFilesOnly) << BigInt(7);
 
   for (let i = 0; i < 64; i++) {
     let fromIndex, toIndex;
@@ -245,12 +218,7 @@ export function blackPawnCaptureNodes(
       (leftCapturePositions & (BigInt(1) << BigInt(i))) !== BigInt(0) &&
       (allOccupiedWhitePositions & (BigInt(1) << BigInt(i))) !== BigInt(0)
     ) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - fromIndex,
-        64 - toIndex,
-        "blackPawn"
-      );
+      const newBoardState = applyMove(node.boardState, 64 - fromIndex, 64 - toIndex, 'blackPawn');
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
 
@@ -260,12 +228,7 @@ export function blackPawnCaptureNodes(
       (rightCapturePositions & (BigInt(1) << BigInt(i))) !== BigInt(0) &&
       (allOccupiedWhitePositions & (BigInt(1) << BigInt(i))) !== BigInt(0)
     ) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - fromIndex,
-        64 - toIndex,
-        "blackPawn"
-      );
+      const newBoardState = applyMove(node.boardState, 64 - fromIndex, 64 - toIndex, 'blackPawn');
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
   }

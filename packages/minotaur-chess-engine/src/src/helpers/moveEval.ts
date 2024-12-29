@@ -240,6 +240,18 @@ export function AllWhitePawnCaptures(boardState: BitBoard, allOccupiedBlackPosit
   return leftCaptures | rightCaptures;
 }
 
+export function AllWhitePawnEnPassantCaptures(
+  boardState: BitBoard,
+  blackLastDoubleSquareMove: bigint
+) {
+  if (blackLastDoubleSquareMove === BigInt(0)) {
+    return BigInt(0);
+  }
+  const possiblePositionForWhiteToEnPassantCaptureTo = blackLastDoubleSquareMove >> BigInt(8);
+
+  return AllWhitePawnCaptures(boardState, possiblePositionForWhiteToEnPassantCaptureTo);
+}
+
 export function AllWhitePawnMovesComposite(boardState: BitBoard): BitBoard {
   const allOccupiedPositions = allPositions(boardState);
   const allOccupiedBlackPositions = allBlackPositions(boardState);
@@ -251,7 +263,9 @@ export function AllWhitePawnMovesComposite(boardState: BitBoard): BitBoard {
 
   const captures = AllWhitePawnCaptures(boardState, allOccupiedBlackPositions);
 
-  const allMoves = singleStepMoves | doubleStepMoves | captures;
+  const enPassantCaptures = AllWhitePawnEnPassantCaptures(boardState, allOccupiedBlackPositions);
+
+  const allMoves = singleStepMoves | doubleStepMoves | captures | enPassantCaptures;
 
   pawnMoveBoard.whitePawn = allMoves;
 

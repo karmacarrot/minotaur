@@ -5,19 +5,25 @@
 import {
   allPositions,
   applyMove,
+  binaryMask64,
   bitCount,
   blackPawnNodes,
   blackPawnTwoSquareNodes,
   createEvalLogs,
   DuellingPawnsBoard,
   EmptyBoard,
+  EnPassantBoard,
   generateNodeId,
+  getBitBoardPosition,
   InitialGameStatus,
   LoggerConfig,
   outputEvalLogsHtml,
   StartingBoard,
   whitePawnNodes,
+  whitePawnEnPassantCaptureNodes,
+  blackPawnEnPassantCaptureNodes,
 } from '@karmacarrot/minotaur-chess-engine';
+import { LogBoardPositions } from '../../../testHelper';
 
 describe('whitePawnNodes', () => {
   it('returns 16 possible nodes from a starting board', () => {
@@ -103,6 +109,58 @@ describe('whitePawnNodes', () => {
       const countWhitePawns = bitCount(pawnNode.boardState.whitePawn);
       expect(countWhitePawns).toBeLessThan(countBlackPawns);
     }
+  });
+});
+
+describe('whitePawnEnPassantCaptureNodes', () => {
+  it("returns a possible en passant capture for white from a board where black moves to h5 while white's pawn is on g5", () => {
+    const enPassantBoard = { ...EnPassantBoard };
+    const startStatus = { ...InitialGameStatus };
+    const lastBlackDoubleSquareMove = binaryMask64(
+      getBitBoardPosition('h', 5),
+      'all_zeroes_with_position_as_one'
+    );
+    startStatus.isWhitesTurn = false;
+    startStatus.lastBlackDoublePawnMove = lastBlackDoubleSquareMove;
+    const moveBlackPawn = applyMove(enPassantBoard, 56, 40, 'blackPawn');
+    LogBoardPositions(moveBlackPawn);
+    const currentNode = {
+      boardState: moveBlackPawn,
+      gameState: startStatus,
+      parentId: '',
+      id: generateNodeId(),
+    };
+
+    const moves = whitePawnEnPassantCaptureNodes(currentNode);
+    LogBoardPositions(moves[0].boardState);
+    expect(moves.length).toBe(1);
+    expect(moves[0].boardState.blackPawn & lastBlackDoubleSquareMove).toBe(BigInt(0));
+  });
+});
+
+describe('blackPawnEnPassantCaptureNodes', () => {
+  it("returns a possible en passant capture for black from a board where white moves to c4 while black's pawn is on d4", () => {
+    const enPassantBoard = { ...EnPassantBoard };
+    const startStatus = { ...InitialGameStatus };
+    const lastWhiteDoubleSquareMove = binaryMask64(
+      getBitBoardPosition('c', 4),
+      'all_zeroes_with_position_as_one'
+    );
+    startStatus.isWhitesTurn = true;
+    startStatus.lastWhiteDoublePawnMove = lastWhiteDoubleSquareMove;
+    const moveWhitePawn = applyMove(enPassantBoard, 11, 27, 'whitePawn');
+    LogBoardPositions(moveWhitePawn);
+    const currentNode = {
+      boardState: moveWhitePawn,
+      gameState: startStatus,
+      parentId: '',
+      id: generateNodeId(),
+    };
+
+    const moves = blackPawnEnPassantCaptureNodes(currentNode);
+    LogBoardPositions(moves[0].boardState);
+    expect(moves.length).toBe(2);
+    expect(moves[0].boardState.whitePawn & lastWhiteDoubleSquareMove).toBe(BigInt(0));
   });
 });
 

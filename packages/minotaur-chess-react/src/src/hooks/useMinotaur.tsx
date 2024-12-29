@@ -212,6 +212,29 @@ export const useMinotaur = (boardSideLength: number) => {
               gameStatus.isWhitesTurn ? 'whiteRook' : 'blackRook'
             );
           }
+          console.log('bestMove.piece', bestMove);
+          if (bestMove.piece === 'whitePawn') {
+            if (
+              bestMove.to - bestMove.from !== 8 &&
+              bestMove.to - bestMove.from !== 16 &&
+              bestMove.pieceTaken === 'blackPawn'
+            ) {
+              //must be en passant
+              console.log('useEffect en passant');
+              newBoardState = applyMove(newBoardState, bestMove.to - 8, 0, bestMove.pieceTaken);
+            }
+          }
+          if (bestMove.piece === 'blackPawn') {
+            if (
+              bestMove.from - bestMove.to !== 8 &&
+              bestMove.from - bestMove.to !== 16 &&
+              bestMove.pieceTaken === 'whitePawn'
+            ) {
+              //must be en passant
+              console.log('useEffect en passant');
+              newBoardState = applyMove(newBoardState, bestMove.to + 8, 0, bestMove.pieceTaken);
+            }
+          }
 
           setCurrentBoard(newBoardState);
 

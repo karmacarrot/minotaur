@@ -227,6 +227,19 @@ export function getSinglePieceMoveFromBoardStates(before: BitBoard, after: BitBo
     }
   }
 
+  if (move.piece === 'whitePawn') {
+    if (move.to - move.from !== 8 && move.to - move.from !== 16 && move.pieceTaken === 'none') {
+      //must be en passant
+      move.pieceTaken = 'blackPawn';
+    }
+  }
+  if (move.piece === 'blackPawn') {
+    if (move.from - move.to !== 8 && move.from - move.to !== 16 && move.pieceTaken === 'none') {
+      //must be en passant
+      move.pieceTaken = 'whitePawn';
+    }
+  }
+
   return move;
 }
 

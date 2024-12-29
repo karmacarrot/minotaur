@@ -4,7 +4,6 @@
 
 import {
   StartingBoard,
-  FindBestMoves,
   InitialGameStatus,
   FindBestMoveMiniMax,
   allPositions,
@@ -40,25 +39,13 @@ import {
   allOnes,
   EmptyBoard,
   StartingNode,
+  EnPassantBoard,
 } from '@karmacarrot/minotaur-chess-engine';
 import { LogBoardPositions } from './testHelper';
-
-// describe('FindBestMoves', () => {
-//   it('makes a legal move on opening for white', () => {
-//     const startingBoard = { ...StartingBoard };
-//     const bestMoves = FindBestMoves(startingBoard, true);
-//     expect(bestMoves.length).toBe(3);
-//     expect(bestMoves[0].move.to > 16 && bestMoves[0].move.to <= 32).toBeTruthy;
-//   });
-//   it('makes a legal first move for black', () => {
-//     const startingBoard = { ...StartingBoard };
-//     const bestMoves = FindBestMoves(startingBoard, false);
-//     //console.log(bestMoves);
-//     expect(bestMoves.length).toBe(3);
-//     expect(bestMoves[0].move.to).toBeLessThanOrEqual(48);
-//     expect(bestMoves[0].move.to).toBeGreaterThanOrEqual(32);
-//   });
-// });
+import {
+  AllWhitePawnEnPassantCaptures,
+  binaryMask64,
+} from '@karmacarrot/minotaur-chess-engine/src';
 
 const startingNode = StartingNode();
 
@@ -1029,5 +1016,27 @@ describe('AllQueenMoves', () => {
       );
     }
     expect(bitCount(secondQueenPositions)).toBe(16);
+  });
+});
+
+describe('AllWhitePawnEnPassantCaptures', () => {
+  it('returns all legal white pawn en passant captures after black double moving h pawn', () => {
+    const startingBoard = { ...EnPassantBoard };
+    const lastBlackDoubleSquareMove = binaryMask64(
+      getBitBoardPosition('h', 5),
+      'all_zeroes_with_position_as_one'
+    );
+    const moves = AllWhitePawnEnPassantCaptures(startingBoard, lastBlackDoubleSquareMove);
+    const startPosition = binaryMask64(
+      getBitBoardPosition('g', 5),
+      'all_zeroes_with_position_as_one'
+    );
+    const endPosition = binaryMask64(
+      getBitBoardPosition('h', 6),
+      'all_zeroes_with_position_as_one'
+    );
+
+    expect(moves & startPosition).toBe(BigInt(0));
+    expect(moves & endPosition).toBe(endPosition);
   });
 });

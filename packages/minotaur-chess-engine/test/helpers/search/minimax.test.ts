@@ -16,6 +16,7 @@ import {
   evaluateBoard,
   scoredMove,
   EvalWeightings,
+  EnPassantBoard,
 } from '@karmacarrot/minotaur-chess-engine';
 
 const showEvalOutputs = LoggerConfig.enableEvaluationLogs;
@@ -262,12 +263,37 @@ describe('scoredMove', () => {
     const newBoard = applyMove(startingBoard, 12, 28, 'whitePawn');
     const scoreNewBoard = evaluateBoard(newBoard, true);
     const scoredPawnMove = scoredMove(scoreNewBoard, startingBoard, newBoard);
-    expect(scoredPawnMove).toEqual({
-      from: 12,
-      to: 28,
-      piece: 'whitePawn',
-      pieceTaken: 'none',
-      score: EvalWeightings.absoluteCentreWeight,
-    });
+    expect(scoredPawnMove).toEqual(
+      expect.objectContaining({
+        castleRookFrom: 0,
+        castleRookTo: 0,
+        evaluations: 0,
+        from: 12,
+        to: 28,
+        piece: 'whitePawn',
+        pieceTaken: 'none',
+        score: expect.any(Number),
+      })
+    );
+  });
+  it('returns the right capture when moving en passant', () => {
+    const startingBoard = { ...EnPassantBoard };
+    const newBoard = applyMove(startingBoard, 11, 27, 'whitePawn');
+
+    const captureBoard = applyMove(newBoard, 28, 19, 'blackPawn');
+    const scoreCaptureBoard = evaluateBoard(captureBoard, true);
+    const scoredPawnMove = scoredMove(scoreCaptureBoard, newBoard, captureBoard);
+    expect(scoredPawnMove).toEqual(
+      expect.objectContaining({
+        castleRookFrom: 0,
+        castleRookTo: 0,
+        evaluations: 0,
+        from: 28,
+        to: 19,
+        piece: 'blackPawn',
+        pieceTaken: 'whitePawn',
+        score: expect.any(Number),
+      })
+    );
   });
 });

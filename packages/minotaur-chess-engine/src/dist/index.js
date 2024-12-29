@@ -31,6 +31,7 @@ __export(src_exports, {
   AllQueenMoves: () => AllQueenMoves,
   AllRookMoves: () => AllRookMoves,
   AllWhitePawnCaptures: () => AllWhitePawnCaptures,
+  AllWhitePawnEnPassantCaptures: () => AllWhitePawnEnPassantCaptures,
   AllWhitePawnMovesComposite: () => AllWhitePawnMovesComposite,
   AllWhitePawnMovesOneSquare: () => AllWhitePawnMovesOneSquare,
   AllWhitePawnMovesTwoSquare: () => AllWhitePawnMovesTwoSquare,
@@ -94,6 +95,7 @@ __export(src_exports, {
   blackPawnChain_NoChains: () => blackPawnChain_NoChains,
   blackPawnChain_Pyramid: () => blackPawnChain_Pyramid,
   blackPawnChain_ThreeIslands: () => blackPawnChain_ThreeIslands,
+  blackPawnEnPassantCaptureNodes: () => blackPawnEnPassantCaptureNodes,
   blackPawnLongGuards: () => blackPawnLongGuards,
   blackPawnNodes: () => blackPawnNodes,
   blackPawnShortGuards: () => blackPawnShortGuards,
@@ -189,6 +191,7 @@ __export(src_exports, {
   whitePawnChain_NoChains: () => whitePawnChain_NoChains,
   whitePawnChain_Pyramid: () => whitePawnChain_Pyramid,
   whitePawnChain_ThreeIslands: () => whitePawnChain_ThreeIslands,
+  whitePawnEnPassantCaptureNodes: () => whitePawnEnPassantCaptureNodes,
   whitePawnLongGuards: () => whitePawnLongGuards,
   whitePawnNodes: () => whitePawnNodes,
   whitePawnShortGuards: () => whitePawnShortGuards,
@@ -698,6 +701,16 @@ function getSinglePieceMoveFromBoardStates(before, after) {
           move.to = findBitPositionReverse(movedToBitboard);
         }
       }
+    }
+  }
+  if (move.piece === "whitePawn") {
+    if (move.to - move.from !== 8 && move.to - move.from !== 16 && move.pieceTaken === "none") {
+      move.pieceTaken = "blackPawn";
+    }
+  }
+  if (move.piece === "blackPawn") {
+    if (move.from - move.to !== 8 && move.from - move.to !== 16 && move.pieceTaken === "none") {
+      move.pieceTaken = "whitePawn";
     }
   }
   return move;
@@ -1410,24 +1423,17 @@ function whitePawnNodes(node) {
   const singleStepMoves = whitePawnOneSquareNodes(node, allOccupiedPositions);
   const doubleStepMoves = whitePawnTwoSquareNodes(node, allOccupiedPositions);
   const captures = whitePawnCaptureNodes(node, allOccupiedBlackPositions);
-  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures];
+  const enPassantCaptures = whitePawnEnPassantCaptureNodes(node);
+  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures, ...enPassantCaptures];
   return allMoves;
 }
 function whitePawnOneSquareNodes(node, allOccupiedPositions) {
   let newNodes = [];
-  const potentialMoves = AllWhitePawnMovesOneSquare(
-    node.boardState,
-    allOccupiedPositions
-  );
+  const potentialMoves = AllWhitePawnMovesOneSquare(node.boardState, allOccupiedPositions);
   for (let i = 0; i < 64; i++) {
     const moveBit = BigInt(1) << BigInt(i);
     const offset = 64 - i;
-    const newBoardState = applyMove(
-      node.boardState,
-      offset - 8,
-      offset,
-      "whitePawn"
-    );
+    const newBoardState = applyMove(node.boardState, offset - 8, offset, "whitePawn");
     if (potentialMoves & moveBit) {
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
@@ -1436,32 +1442,29 @@ function whitePawnOneSquareNodes(node, allOccupiedPositions) {
 }
 function whitePawnTwoSquareNodes(node, allOccupiedPositions) {
   let newNodes = [];
-  const potentialTwoStepMoves = AllWhitePawnMovesTwoSquare(
-    node.boardState,
-    allOccupiedPositions
-  );
+  const potentialTwoStepMoves = AllWhitePawnMovesTwoSquare(node.boardState, allOccupiedPositions);
   for (let i = 0; i < 64; i++) {
     const moveBit = BigInt(1) << BigInt(i);
     if (potentialTwoStepMoves & moveBit) {
       const offset = 64 - i;
-      const newBoardState = applyMove(
-        node.boardState,
-        offset - 16,
-        offset,
-        "whitePawn"
-      );
+      const newBoardState = applyMove(node.boardState, offset - 16, offset, "whitePawn");
       if (potentialTwoStepMoves & moveBit) {
-        newNodes = pushNewNode(
-          newNodes,
-          node,
-          newBoardState,
-          evalLoggingOff,
-          0
-        );
+        newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
       }
     }
   }
   return newNodes;
+}
+function whitePawnEnPassantCaptureNodes(node) {
+  if (node.gameState.lastBlackDoublePawnMove === BigInt(0)) {
+    return [];
+  }
+  const possiblePositionForWhiteToEnPassantCaptureTo = node.gameState.lastBlackDoublePawnMove >> BigInt(8);
+  const whiteCaptures = whitePawnCaptureNodes(node, possiblePositionForWhiteToEnPassantCaptureTo);
+  for (const capture of whiteCaptures) {
+    capture.boardState.blackPawn = capture.boardState.blackPawn & ~node.gameState.lastBlackDoublePawnMove;
+  }
+  return whiteCaptures;
 }
 function whitePawnCaptureNodes(node, allOccupiedBlackPositions) {
   let newNodes = [];
@@ -1472,23 +1475,13 @@ function whitePawnCaptureNodes(node, allOccupiedBlackPositions) {
     fromIndex = i + 7;
     toIndex = i;
     if ((leftCapturePositions & BigInt(1) << BigInt(i)) !== BigInt(0) && (allOccupiedBlackPositions & BigInt(1) << BigInt(i)) !== BigInt(0)) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - fromIndex,
-        64 - toIndex,
-        "whitePawn"
-      );
+      const newBoardState = applyMove(node.boardState, 64 - fromIndex, 64 - toIndex, "whitePawn");
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
     fromIndex = i + 9;
     toIndex = i;
     if ((rightCapturePositions & BigInt(1) << BigInt(i)) !== BigInt(0) && (allOccupiedBlackPositions & BigInt(1) << BigInt(i)) !== BigInt(0)) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - fromIndex,
-        64 - toIndex,
-        "whitePawn"
-      );
+      const newBoardState = applyMove(node.boardState, 64 - fromIndex, 64 - toIndex, "whitePawn");
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
   }
@@ -1500,15 +1493,13 @@ function blackPawnNodes(node) {
   const singleStepMoves = blackPawnOneSquareNodes(node, allOccupiedPositions);
   const doubleStepMoves = blackPawnTwoSquareNodes(node, allOccupiedPositions);
   const captures = blackPawnCaptureNodes(node, allOccupiedWhitePositions);
-  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures];
+  const enPassantCaptures = blackPawnEnPassantCaptureNodes(node);
+  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures, ...enPassantCaptures];
   return allMoves;
 }
 function blackPawnOneSquareNodes(node, allOccupiedPositions) {
   let newNodes = [];
-  const potentialMoves = AllBlackPawnMovesOneSquare(
-    node.boardState,
-    allOccupiedPositions
-  );
+  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions);
   const a1Position = 64;
   const h8Position = 1;
   for (let position = h8Position; position <= a1Position; position++) {
@@ -1527,10 +1518,7 @@ function blackPawnOneSquareNodes(node, allOccupiedPositions) {
 }
 function blackPawnTwoSquareNodes(node, allOccupiedPositions) {
   let newNodes = [];
-  const potentialTwoStepMoves = AllBlackPawnMovesTwoSquare(
-    node.boardState,
-    allOccupiedPositions
-  );
+  const potentialTwoStepMoves = AllBlackPawnMovesTwoSquare(node.boardState, allOccupiedPositions);
   const a1Position = 64;
   const h8Position = 1;
   for (let position = h8Position; position <= a1Position; position++) {
@@ -1547,6 +1535,17 @@ function blackPawnTwoSquareNodes(node, allOccupiedPositions) {
   }
   return newNodes;
 }
+function blackPawnEnPassantCaptureNodes(node) {
+  if (node.gameState.lastWhiteDoublePawnMove === BigInt(0)) {
+    return [];
+  }
+  const possiblePositionForBlackToEnPassantCaptureTo = node.gameState.lastWhiteDoublePawnMove << BigInt(8);
+  const blackCaptures = blackPawnCaptureNodes(node, possiblePositionForBlackToEnPassantCaptureTo);
+  for (const capture of blackCaptures) {
+    capture.boardState.whitePawn = capture.boardState.whitePawn & ~node.gameState.lastWhiteDoublePawnMove;
+  }
+  return blackCaptures;
+}
 function blackPawnCaptureNodes(node, allOccupiedWhitePositions) {
   let newNodes = [];
   const leftCapturePositions = (node.boardState.blackPawn & ~bTohFilesOnly) << BigInt(9);
@@ -1556,23 +1555,13 @@ function blackPawnCaptureNodes(node, allOccupiedWhitePositions) {
     fromIndex = i - 9;
     toIndex = i;
     if ((leftCapturePositions & BigInt(1) << BigInt(i)) !== BigInt(0) && (allOccupiedWhitePositions & BigInt(1) << BigInt(i)) !== BigInt(0)) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - fromIndex,
-        64 - toIndex,
-        "blackPawn"
-      );
+      const newBoardState = applyMove(node.boardState, 64 - fromIndex, 64 - toIndex, "blackPawn");
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
     fromIndex = i - 7;
     toIndex = i;
     if ((rightCapturePositions & BigInt(1) << BigInt(i)) !== BigInt(0) && (allOccupiedWhitePositions & BigInt(1) << BigInt(i)) !== BigInt(0)) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - fromIndex,
-        64 - toIndex,
-        "blackPawn"
-      );
+      const newBoardState = applyMove(node.boardState, 64 - fromIndex, 64 - toIndex, "blackPawn");
       newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
     }
   }
@@ -1997,6 +1986,13 @@ function AllWhitePawnCaptures(boardState, allOccupiedBlackPositions) {
   const rightCaptures = (boardState.whitePawn & ~BigInt("0x8080808080808080")) >> BigInt(9) & allOccupiedBlackPositions;
   return leftCaptures | rightCaptures;
 }
+function AllWhitePawnEnPassantCaptures(boardState, blackLastDoubleSquareMove) {
+  if (blackLastDoubleSquareMove === BigInt(0)) {
+    return BigInt(0);
+  }
+  const possiblePositionForWhiteToEnPassantCaptureTo = blackLastDoubleSquareMove >> BigInt(8);
+  return AllWhitePawnCaptures(boardState, possiblePositionForWhiteToEnPassantCaptureTo);
+}
 function AllWhitePawnMovesComposite(boardState) {
   const allOccupiedPositions = allPositions(boardState);
   const allOccupiedBlackPositions = allBlackPositions(boardState);
@@ -2004,7 +2000,8 @@ function AllWhitePawnMovesComposite(boardState) {
   const singleStepMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions);
   const doubleStepMoves = AllWhitePawnMovesTwoSquare(boardState, allOccupiedPositions);
   const captures = AllWhitePawnCaptures(boardState, allOccupiedBlackPositions);
-  const allMoves = singleStepMoves | doubleStepMoves | captures;
+  const enPassantCaptures = AllWhitePawnEnPassantCaptures(boardState, allOccupiedBlackPositions);
+  const allMoves = singleStepMoves | doubleStepMoves | captures | enPassantCaptures;
   pawnMoveBoard.whitePawn = allMoves;
   return pawnMoveBoard;
 }
@@ -3007,6 +3004,7 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   AllQueenMoves,
   AllRookMoves,
   AllWhitePawnCaptures,
+  AllWhitePawnEnPassantCaptures,
   AllWhitePawnMovesComposite,
   AllWhitePawnMovesOneSquare,
   AllWhitePawnMovesTwoSquare,
@@ -3070,6 +3068,7 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   blackPawnChain_NoChains,
   blackPawnChain_Pyramid,
   blackPawnChain_ThreeIslands,
+  blackPawnEnPassantCaptureNodes,
   blackPawnLongGuards,
   blackPawnNodes,
   blackPawnShortGuards,
@@ -3165,6 +3164,7 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   whitePawnChain_NoChains,
   whitePawnChain_Pyramid,
   whitePawnChain_ThreeIslands,
+  whitePawnEnPassantCaptureNodes,
   whitePawnLongGuards,
   whitePawnNodes,
   whitePawnShortGuards,

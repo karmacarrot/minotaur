@@ -47,7 +47,6 @@ Mark Luxon - Main developer
 
 ## Roadmap
 
-- Castling
 - En passant
 - Version 1 can be released
 - Alpha-beta pruning for minimax

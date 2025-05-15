@@ -1,6 +1,6 @@
 {
   "name": "@karmacarrot/minotaur-chess-react-tests",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "scripts": {
     "test": "jest --coverage --reporters=default --reporters=jest-html-reporter",
     "testsuite": "jest -t \"useMinotaur Hook\""
@@ -9,27 +9,34 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@karmacarrot/minotaur-chess-engine-tests": "*",
-    "@karmacarrot/minotaur-chess-react": "*",
-    "@testing-library/jest-dom": "^6.6.2",
-    "@testing-library/react": "^16.0.1",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "jest-html-reporter": "^3.10.2",
-    "react": "^18.3.1",
-    "ts-jest": "^29.2.5"
+    
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.25.9",
+    "@karmacarrot/minotaur-chess-engine-tests": "*",
+    "@karmacarrot/minotaur-chess-react": "*",
+    "@testing-library/jest-dom": "6.6.2",
+    "@testing-library/react": "16.0.1",
+    "jest": "29.7.0",
+    "jest-environment-jsdom": "29.7.0",
+    "jest-html-reporter": "3.10.2",
+    "react": "18.3.1",
+    "ts-jest": "29.2.5",
+    "@babel/preset-react": "7.25.9",
     "@karmacarrot/eslint-config": "*",
     "@karmacarrot/typescript-config": "*",
-    "@turbo/gen": "^1.12.4",
-    "@types/eslint": "^8.56.5",
-    "@types/node": "^20.11.24",
-    "@types/react": "^18.2.61",
-    "@types/react-dom": "^18.2.19",
-    "chance": "^1.1.12",
-    "eslint": "^8.57.0",
-    "typescript": "^5.3.3"
+    "@turbo/gen": "1.12.4",
+    "@types/eslint": "8.56.5",
+    "@types/node": "20.11.24",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.1",
+    "chance": "1.1.12",
+    "eslint": "8.57.0",
+    "typescript": "5.6.2"
+  },
+  "peerDependencies": {
+    
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+
   }
 }

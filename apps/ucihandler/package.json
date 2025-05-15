@@ -11,6 +11,6 @@
   "description": "",
   "dependencies": {
     "@karmacarrot/minotaur-chess-engine": "*",
-    "jest": "^29.7.0"
+    "jest": "29.7.0"
   }
 }

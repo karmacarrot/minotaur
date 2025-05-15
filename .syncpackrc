@@ -1,0 +1,41 @@
+{
+  "lintFormatting": false,
+  "versionGroups": [
+    {
+      "label": "Internal package consumption should use workspace protocol",
+      "dependencies": [
+        "$LOCAL"
+      ],
+      "dependencyTypes": [
+        "dev",
+        "prod",
+        "peer"
+      ],
+      "pinVersion": "*"
+    },
+    {
+      "label": "Local package versions should always be zero",
+      "dependencyTypes": [
+        "local"
+      ],
+      "pinVersion": "0.0.0"
+    }
+  ],
+  "semverGroups": [
+    {
+      "label": "Use exact version numbers for all external dependencies",
+      "packages": [
+        "**"
+      ],
+      "dependencyTypes": [
+        "dev",
+        "peer",
+        "prod"
+      ],
+      "dependencies": [
+        "**"
+      ],
+      "range": ""
+    }
+  ]
+}

@@ -33,10 +33,10 @@ describe('UCI Wrapper', () => {
     expect(responses.some((r) => r.startsWith('id name'))).toBe(true);
   });
 
-  // it('responds to isready command', async () => {
-  //   const responses = await runEngineWithInput(['isready', 'quit']);
-  //   expect(responses).toContain('readyok');
-  // });
+  it('responds to isready command', async () => {
+    const responses = await runEngineWithInput(['isready', 'quit']);
+    expect(responses).toContain('readyok');
+  });
 
   // it('calculates a best move from start position', async () => {
   //   const responses = await runEngineWithInput(['position startpos moves e2e4', 'go', 'quit']);

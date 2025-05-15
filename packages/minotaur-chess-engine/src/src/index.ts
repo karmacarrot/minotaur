@@ -24,3 +24,5 @@ export * from './logging/logger';
 export * from './referee/referee';
 export * from './referee/mockBoardStates';
 export * from './helpers/rules/enpassant';
+
+export * from './helpers/fen/fen';

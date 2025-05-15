@@ -1,6 +1,6 @@
 {
   "name": "@karmacarrot/minotaur-chess-engine",
-  "version": "0.0.10",
+  "version": "0.0.0",
   "description": "A chess engine for JavaScript projects.",
   "private": false,
   "license": "MIT",
@@ -21,15 +21,15 @@
     "dev": "tsup --watch"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^13.0.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^10.3.4",
-    "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/release-notes-generator": "^14.0.1",
-    "semantic-release": "^24.1.1",
-    "tsup": "^8.2.4",
-    "typescript": "^5.6.2",
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/commit-analyzer": "13.0.0",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/github": "10.3.4",
+    "@semantic-release/npm": "12.0.1",
+    "@semantic-release/release-notes-generator": "14.0.1",
+    "semantic-release": "24.1.1",
+    "tsup": "8.2.4",
+    "typescript": "5.6.2",
     "@karmacarrot/eslint-config": "*",
     "@karmacarrot/typescript-config": "*"
   },

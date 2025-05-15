@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/karmacarrot/minotaur/compare/v1.9.0...v1.10.0) (2024-12-29)
+
+
+### Features
+
+* en passant captures implemented for computer moves ([f683715](https://github.com/karmacarrot/minotaur/commit/f6837153c8328252109bc72b54e6d76876aeb722))
+
 # [1.9.0](https://github.com/karmacarrot/minotaur/compare/v1.8.0...v1.9.0) (2024-12-27)
 
 

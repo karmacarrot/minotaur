@@ -31,7 +31,7 @@ rl.on('line', async (line) => {
       gameNode.gameState,
       ENGINE_DEPTH
     );
-    console.log(moveToUciFormat(bestMove));
+    console.log('bestmove ' + moveToUciFormat(bestMove));
   } else if (line.startsWith('position')) {
     //parse moves, update state
   } else {

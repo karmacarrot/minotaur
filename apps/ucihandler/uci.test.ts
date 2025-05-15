@@ -40,10 +40,10 @@ describe('UCI Wrapper', () => {
     expect(responses).toContain('readyok');
   });
 
-  // it('calculates a best move from start position', async () => {
-  //   const responses = await runEngineWithInput(['position startpos moves e2e4', 'go', 'quit']);
+  it('calculates a best move from start position', async () => {
+    const responses = await runEngineWithInput(['position startpos moves e2e4', 'go', 'quit']);
 
-  //   const bestMoveLine = responses.find((r) => r.startsWith('bestmove'));
-  //   expect(bestMoveLine).toMatch(/^bestmove\s[a-h][1-8][a-h][1-8]/); // e.g., e2e4
-  // });
+    const bestMoveLine = responses.find((r) => r.startsWith('bestmove'));
+    expect(bestMoveLine).toBe('bestmove e2e4');
+  });
 });

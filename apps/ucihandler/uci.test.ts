@@ -1,0 +1,47 @@
+import { spawn } from 'child_process';
+
+async function runEngineWithInput(inputs: string[]): Promise<string[]> {
+  const child = spawn('node', ['uci.ts']);
+  let output = '';
+
+  await new Promise<void>((resolve, reject) => {
+    child.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+    child.on('error', reject);
+    child.on('spawn', () => {
+      for (const input of inputs) {
+        child.stdin.write(input + '\n');
+      }
+      child.stdin.end();
+    });
+    child.on('exit', () => resolve());
+  });
+  console.log('Raw output:', JSON.stringify(output));
+  return output.split(/\r?\n/).filter((line) => line.trim().length > 0);
+}
+
+describe('UCI Wrapper', () => {
+  it('starts the engine', async () => {
+    const responses = await runEngineWithInput(['quit']);
+    expect(responses).toContain('UCI handler started.');
+  });
+
+  it('responds to uci command', async () => {
+    const responses = await runEngineWithInput(['uci', 'quit']);
+    expect(responses).toContain('uciok');
+    expect(responses.some((r) => r.startsWith('id name'))).toBe(true);
+  });
+
+  // it('responds to isready command', async () => {
+  //   const responses = await runEngineWithInput(['isready', 'quit']);
+  //   expect(responses).toContain('readyok');
+  // });
+
+  // it('calculates a best move from start position', async () => {
+  //   const responses = await runEngineWithInput(['position startpos moves e2e4', 'go', 'quit']);
+
+  //   const bestMoveLine = responses.find((r) => r.startsWith('bestmove'));
+  //   expect(bestMoveLine).toMatch(/^bestmove\s[a-h][1-8][a-h][1-8]/); // e.g., e2e4
+  // });
+});

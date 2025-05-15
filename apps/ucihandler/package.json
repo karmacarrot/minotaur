@@ -1,0 +1,16 @@
+{
+  "name": "@karmacarrot/minotaur-chess-uci",
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll=false --detectOpenHandles --forceExit"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@karmacarrot/minotaur-chess-engine": "*",
+    "jest": "^29.7.0"
+  }
+}

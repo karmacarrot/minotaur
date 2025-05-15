@@ -2,9 +2,9 @@ import { spawn } from 'child_process';
 
 async function runEngineWithInput(inputs: string[]): Promise<string[]> {
   const child = spawn('node', ['uci.ts']);
-  let output = '';
 
-  await new Promise<void>((resolve, reject) => {
+  const finalOutput = await new Promise<string>((resolve, reject) => {
+    let output = '';
     child.stdout.on('data', (data) => {
       output += data.toString();
     });
@@ -15,10 +15,12 @@ async function runEngineWithInput(inputs: string[]): Promise<string[]> {
       }
       child.stdin.end();
     });
-    child.on('exit', () => resolve());
+    child.stdout.on('close', () => {
+      resolve(output);
+    });
   });
-  console.log('Raw output:', JSON.stringify(output));
-  return output.split(/\r?\n/).filter((line) => line.trim().length > 0);
+  console.log('Raw output:', JSON.stringify(finalOutput));
+  return finalOutput.split(/\r?\n/).filter((line) => line.trim().length > 0);
 }
 
 describe('UCI Wrapper', () => {

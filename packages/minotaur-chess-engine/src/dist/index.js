@@ -166,6 +166,7 @@ __export(src_exports, {
   memoize: () => memoize,
   moveAnyPiece: () => moveAnyPiece,
   movePiece: () => movePiece,
+  moveToUciFormat: () => moveToUciFormat,
   numberOfTiles: () => numberOfTiles,
   occupiedBy: () => occupiedBy,
   orthagonalOffsets: () => orthagonalOffsets,
@@ -3119,6 +3120,14 @@ function pieceNameToFenName(pieceName) {
       return "";
   }
 }
+
+// src/helpers/uci/uci.ts
+function moveToUciFormat(moveAndState) {
+  const [move, state] = moveAndState;
+  const rankAndFileForStartPosition = getFileAndRank(move.from);
+  const rankAndFileForEndPosition = getFileAndRank(move.to);
+  return `${rankAndFileForStartPosition.file}${rankAndFileForStartPosition.rank}${rankAndFileForEndPosition.file}${rankAndFileForEndPosition.rank}`;
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   AllBishopMoves,
@@ -3267,6 +3276,7 @@ function pieceNameToFenName(pieceName) {
   memoize,
   moveAnyPiece,
   movePiece,
+  moveToUciFormat,
   numberOfTiles,
   occupiedBy,
   orthagonalOffsets,

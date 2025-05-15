@@ -26,3 +26,4 @@ export * from './referee/mockBoardStates';
 export * from './helpers/rules/enpassant';
 
 export * from './helpers/fen/fen';
+export * from './helpers/uci/uci';

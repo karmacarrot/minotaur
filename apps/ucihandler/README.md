@@ -32,32 +32,32 @@ Field 6: Fullmove number (starts at 1, incremented after Black's move)
 
 ## Sample UCI Game
 
-> uci
-> < id name MinotaurEngine
-> < id author Mark Luxon
-> < uciok
+- IN uci
+- OUT id name MinotaurEngine
+- OUT id author Mark Luxon
+- OUT uciok
 
-> isready
-> < readyok
+- IN isready
+- OUT readyok
 
-> ucinewgame # optional: indicates a new game is starting
-> isready
-> < readyok
+- IN ucinewgame # optional: indicates a new game is starting
+- IN isready
+- OUT readyok
 
-> position startpos # sets up initial position
-> go # GUI says: “your move”
-> < bestmove e2e4 # engine picks 1. e4
+- IN position startpos # sets up initial position
+- IN go
+- OUT bestmove e2e4 # engine picks 1. e4
 
-> position startpos moves e2e4
-> go
-> < bestmove e7e5 # engine plays 1... e5
+- IN position startpos moves e2e4
+- IN go
+- OUT bestmove e7e5 # engine plays 1... e5
 
-> position startpos moves e2e4 e7e5
-> go
-> < bestmove g1f3 # 2. Nf3
+- IN position startpos moves e2e4 e7e5
+- IN go
+- OUT bestmove g1f3 # 2. Nf3
 
-> position startpos moves e2e4 e7e5 g1f3 b8c6
-> go
-> < bestmove f1c4 # 3. Bc4
+- IN position startpos moves e2e4 e7e5 g1f3 b8c6
+- IN go
+- OUT bestmove f1c4 # 3. Bc4
 
-> quit
+- IN quit

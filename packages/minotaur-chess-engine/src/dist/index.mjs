@@ -2912,6 +2912,14 @@ function pieceNameToFenName(pieceName) {
       return "";
   }
 }
+
+// src/helpers/uci/uci.ts
+function moveToUciFormat(moveAndState) {
+  const [move, state] = moveAndState;
+  const rankAndFileForStartPosition = getFileAndRank(move.from);
+  const rankAndFileForEndPosition = getFileAndRank(move.to);
+  return `${rankAndFileForStartPosition.file}${rankAndFileForStartPosition.rank}${rankAndFileForEndPosition.file}${rankAndFileForEndPosition.rank}`;
+}
 export {
   AllBishopMoves,
   AllBlackPawnCaptures,
@@ -3059,6 +3067,7 @@ export {
   memoize,
   moveAnyPiece,
   movePiece,
+  moveToUciFormat,
   numberOfTiles,
   occupiedBy,
   orthagonalOffsets,

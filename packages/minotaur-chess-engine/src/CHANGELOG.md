@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/karmacarrot/minotaur/compare/v1.11.0...v1.12.0) (2025-05-15)
+
+
+### Features
+
+* uci conversion wip ([fb113a9](https://github.com/karmacarrot/minotaur/commit/fb113a9976d9c06ca073d3e6142f90c76a8449fc))
+
 # [1.11.0](https://github.com/karmacarrot/minotaur/compare/v1.10.0...v1.11.0) (2025-05-15)
 
 

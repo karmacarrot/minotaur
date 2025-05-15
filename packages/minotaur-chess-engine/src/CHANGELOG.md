@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/karmacarrot/minotaur/compare/v1.10.0...v1.11.0) (2025-05-15)
+
+
+### Features
+
+* added FEN functions to output FEN strings based on board and game state ([640a29d](https://github.com/karmacarrot/minotaur/commit/640a29d976c83ae9955abc24ce63efd33438cdd6))
+
 # [1.10.0](https://github.com/karmacarrot/minotaur/compare/v1.9.0...v1.10.0) (2024-12-29)
 
 

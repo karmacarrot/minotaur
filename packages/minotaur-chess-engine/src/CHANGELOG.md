@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/karmacarrot/minotaur/compare/v1.12.1...v1.13.0) (2025-05-18)
+
+
+### Features
+
+* CLI wip. adding fen outputs and unicode board visualiser from command line ([2bb7583](https://github.com/karmacarrot/minotaur/commit/2bb7583c1a56fb597259cf0704b5089954881226))
+
 ## [1.12.1](https://github.com/karmacarrot/minotaur/compare/v1.12.0...v1.12.1) (2025-05-15)
 
 

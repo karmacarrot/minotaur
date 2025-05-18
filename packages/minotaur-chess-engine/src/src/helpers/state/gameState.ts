@@ -1,4 +1,5 @@
-import { BoardMove, GameStatus, InitialGameStatus } from '@karmacarrot/minotaur-chess-engine';
+import { BoardMove, GameStatus } from '../../types';
+import { InitialGameStatus } from '../definitions';
 
 export type GameStatusUpdateAction =
   | { type: 'ADD_MOVE'; move: BoardMove }

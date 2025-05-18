@@ -1,7 +1,8 @@
 import { spawn } from 'child_process';
+import { parseUciMove } from './uciHandler.ts';
 
 async function runEngineWithInput(inputs: string[]): Promise<string[]> {
-  const child = spawn('node', ['uci.ts']);
+  const child = spawn('node', ['uciHandler.ts']);
 
   const finalOutput = await new Promise<string>((resolve, reject) => {
     let output = '';
@@ -45,5 +46,19 @@ describe('UCI Wrapper', () => {
 
     const bestMoveLine = responses.find((r) => r.startsWith('bestmove'));
     expect(bestMoveLine).toBe('bestmove e2e4');
+  });
+});
+
+describe('parseUciMove', () => {
+  const testCases = [
+    { input: 'e2e4', expected: 'moving from e2 to e4' },
+    { input: 'g1f3', expected: 'moving from g1 to f3' },
+    { input: 'a7a8q', expected: 'moving from a7 to a8 turning into a q' },
+    { input: 'h2h1n', expected: 'moving from h2 to h1 turning into a n' },
+    { input: 'b8c6', expected: 'moving from b8 to c6' },
+  ];
+
+  test.each(testCases)('parses $input', ({ input, expected }) => {
+    expect(parseUciMove(input)).toBe(expected);
   });
 });

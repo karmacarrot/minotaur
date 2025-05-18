@@ -22,7 +22,7 @@ import {
 
 import JSConfetti from 'js-confetti';
 import { BoardXY } from '../definitions';
-import { gameStatusReducer } from './useGameState';
+import { gameStatusReducer } from '@karmacarrot/minotaur-chess-engine';
 
 export const useMinotaur = (boardSideLength: number) => {
   const [currentBoard, setCurrentBoard] = useState(() =>

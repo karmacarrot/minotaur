@@ -1,5 +1,4 @@
 export * from './hooks/useMinotaur';
-// export * from "./components/BitBoardGenerator/BitBoardGenerator";
 export * from './components/BitBoardGenerator/CheckBoxBoard';
 export * from './components/ChessBoard/ChessBoard';
 export * from './components/ChessGame/ChessGame';

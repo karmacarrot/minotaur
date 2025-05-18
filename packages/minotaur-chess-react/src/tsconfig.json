@@ -3,6 +3,6 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": ["src"],
+  "include": ["src", "../../minotaur-chess-engine/src/src/helpers/state/gameState.ts"],
   "exclude": ["node_modules"]
 }

@@ -13,28 +13,6 @@ var LoggerConfig = {
   enableEvaluationLogs: true
 };
 
-// src/logging/logger.ts
-function MultiLog(outputType, message, outputVerbosity) {
-  if ((outputType === 0 /* warn */ || outputType === 3 /* info */) && outputVerbosity === 2 /* error */) {
-    return;
-  }
-  if (outputType === 3 /* info */ && outputVerbosity !== 3 /* info */) {
-    return;
-  }
-  switch (outputType) {
-    case 3 /* info */:
-      console.info(message);
-    case 0 /* warn */:
-      console.warn(message);
-    case 2 /* error */:
-      console.error(message);
-    case 1 /* log */:
-      console.log(message);
-    default:
-      console.log(message);
-  }
-}
-
 // src/helpers/definitions.ts
 var InitialGameStatus = {
   isWhitesTurn: true,
@@ -340,6 +318,45 @@ var boardMapping = {
 BigInt.prototype.toJSON = function() {
   return this.toString();
 };
+
+// src/logging/logger.ts
+function LogUnicodeBoardPositions(currentBoard) {
+  const board = BoardArray(currentBoard);
+  let boardString = "";
+  for (let row = 7; row >= 0; row--) {
+    let rowString = "________________________________________\n";
+    for (let col = 7; col >= 0; col--) {
+      if (board && board[row]) {
+        rowString += "| ";
+        const piece = board[row]?.[col];
+        rowString += piece ? `${unicodePieceMap[piece] || piece}` : ".";
+        rowString += " |";
+      }
+    }
+    boardString += rowString + "\n";
+  }
+  console.log(boardString);
+}
+function MultiLog(outputType, message, outputVerbosity) {
+  if ((outputType === 0 /* warn */ || outputType === 3 /* info */) && outputVerbosity === 2 /* error */) {
+    return;
+  }
+  if (outputType === 3 /* info */ && outputVerbosity !== 3 /* info */) {
+    return;
+  }
+  switch (outputType) {
+    case 3 /* info */:
+      console.info(message);
+    case 0 /* warn */:
+      console.warn(message);
+    case 2 /* error */:
+      console.error(message);
+    case 1 /* log */:
+      console.log(message);
+    default:
+      console.log(message);
+  }
+}
 
 // src/helpers/bitboards.ts
 function applyMove(bitBoard, from, to, pieceBitBoard) {
@@ -2920,6 +2937,49 @@ function moveToUciFormat(moveAndState) {
   const rankAndFileForEndPosition = getFileAndRank(move.to);
   return `${rankAndFileForStartPosition.file}${rankAndFileForStartPosition.rank}${rankAndFileForEndPosition.file}${rankAndFileForEndPosition.rank}`;
 }
+
+// src/helpers/state/gameState.ts
+var gameStatusReducer = (state, action) => {
+  switch (action.type) {
+    case "RESET_GAME":
+      return {
+        ...InitialGameStatus
+      };
+    case "ADD_MOVE":
+      return {
+        ...state,
+        moveHistory: [...state.moveHistory, action.move],
+        isWhitesTurn: !state.isWhitesTurn
+      };
+    case "SET_COMPUTER_CONTROL":
+      return {
+        ...state,
+        [action.colour === "white" ? "whiteComputerControl" : "blackComputerControl"]: action.value
+      };
+    case "SET_CHECK":
+      return {
+        ...state,
+        [action.colour === "white" ? "whiteKingChecked" : "blackKingChecked"]: action.value
+      };
+    case "SET_CASTLING":
+      return {
+        ...state,
+        [action.castling]: action.value
+      };
+    case "SET_GAME_OVER":
+      return {
+        ...state,
+        isGameOver: action.value
+      };
+    case "SET_LAST_PAWN_DOUBLE_MOVE":
+      return {
+        ...state,
+        [action.colour]: action.value
+      };
+    default:
+      return state;
+  }
+};
 export {
   AllBishopMoves,
   AllBlackPawnCaptures,
@@ -2958,6 +3018,7 @@ export {
   InitialGameStatus,
   LogBoardPositionsHTML,
   LogLevels,
+  LogUnicodeBoardPositions,
   LoggerConfig,
   MateInOneForBlackGameBoard,
   MateInOneForWhiteGameBoard,
@@ -3025,6 +3086,7 @@ export {
   findBitPositionReverse,
   findBitPositions,
   fullBitMask,
+  gameStatusReducer,
   generateLegalMoves,
   generateNodeId,
   getBeforeAndAfterPositions,

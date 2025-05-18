@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/karmacarrot/minotaur/compare/v1.12.0...v1.12.1) (2025-05-15)
+
+
+### Bug Fixes
+
+* giving a best move ([26759ad](https://github.com/karmacarrot/minotaur/commit/26759adb7e80d9f837d6c78f9bc03ff089c83f27))
+
 # [1.12.0](https://github.com/karmacarrot/minotaur/compare/v1.11.0...v1.12.0) (2025-05-15)
 
 

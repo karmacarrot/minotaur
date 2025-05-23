@@ -1,4 +1,4 @@
-import { BoardXY } from '../definitions';
+import { BoardXY } from '@karmacarrot/minotaur-chess-engine';
 
 export type BoardPosition = {
   Rank: number;

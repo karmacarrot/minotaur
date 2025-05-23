@@ -63,6 +63,7 @@ __export(src_exports, {
   MateInOneForWhiteGameBoard: () => MateInOneForWhiteGameBoard,
   MiddleGameBoard: () => MiddleGameBoard,
   MiniMaxTestBoardOne: () => MiniMaxTestBoardOne,
+  MinotaurEngineController: () => MinotaurEngineController,
   MultiLog: () => MultiLog,
   NodeFactory: () => NodeFactory,
   RankWeightings: () => RankWeightings,
@@ -1640,7 +1641,6 @@ function queenNodes(node, evalLogs) {
 // src/helpers/search/nodes/rooks/rookNodes.ts
 function rookNodes(node, evalLogs) {
   let possibleNodes = [];
-  console.log(`black king check status: ${node.gameState.blackKingChecked}`);
   const isWhitesTurn = node.gameState.isWhitesTurn;
   const rooksToMove = isWhitesTurn ? node.boardState.whiteRook : node.boardState.blackRook;
   const rookPositions = findBitPositions(rooksToMove);
@@ -1664,13 +1664,7 @@ function rookNodes(node, evalLogs) {
             newPosition,
             isWhitesTurn ? "whiteRook" : "blackRook"
           );
-          possibleNodes = pushNewNode(
-            possibleNodes,
-            node,
-            newBoardState,
-            evalLogs,
-            0
-          );
+          possibleNodes = pushNewNode(possibleNodes, node, newBoardState, evalLogs, 0);
         }
         lastPosition = newPosition;
         if (isOccupiedComposite(allEnemyOccupiedPositions, newPosition)) {
@@ -3141,8 +3135,7 @@ function pieceNameToFenName(pieceName) {
 }
 
 // src/helpers/uci/uci.ts
-function moveToUciFormat(moveAndState) {
-  const [move, state] = moveAndState;
+function moveToUciFormat(move) {
   const rankAndFileForStartPosition = getFileAndRank(move.from);
   const rankAndFileForEndPosition = getFileAndRank(move.to);
   return `${rankAndFileForStartPosition.file}${rankAndFileForStartPosition.rank}${rankAndFileForEndPosition.file}${rankAndFileForEndPosition.rank}`;
@@ -3190,6 +3183,126 @@ var gameStatusReducer = (state, action) => {
       return state;
   }
 };
+
+// src/engine.ts
+var MinotaurEngineController = class {
+  constructor(engineDepth) {
+    this.engineDepth = engineDepth;
+  }
+  currentBoard = initBoard(0 /* StartingPositions */);
+  gameStatus = InitialGameStatus;
+  dispatch = (action) => {
+    this.gameStatus = gameStatusReducer(this.gameStatus, action);
+  };
+  resetGame(boardArrangement) {
+    this.currentBoard = initBoard(boardArrangement);
+    this.dispatch({ type: "RESET_GAME" });
+  }
+  engineBestMove = async () => {
+    const miniMaxResult = await FindBestMoveMiniMax(
+      this.currentBoard,
+      this.gameStatus,
+      this.engineDepth
+    );
+    const bestMove = miniMaxResult[0];
+    const toPosition = getFileAndRank(bestMove.to);
+    const fromPosition = getFileAndRank(bestMove.from);
+    const moveUpdateResponse = this.movePiece(
+      bestMove.piece,
+      fromPosition.rank,
+      toPosition.rank,
+      fromPosition.file + "",
+      toPosition.file + ""
+    );
+    return { boardUpdateResponse: moveUpdateResponse, bestMove };
+  };
+  movePiece = (piece, fromRank, toRank, fromFile, toFile) => {
+    console.log("move piece called");
+    if (this.gameStatus.isWhitesTurn && !piece?.toLowerCase().includes("white")) {
+      return null;
+    }
+    if (!this.gameStatus.isWhitesTurn && !piece?.toLowerCase().includes("black")) {
+      return null;
+    }
+    let moveResponse = movePiece(
+      this.currentBoard,
+      piece,
+      fromRank,
+      fromFile,
+      toRank,
+      toFile,
+      this.gameStatus
+    );
+    console.log(moveResponse);
+    const newPosition = binaryMask64(
+      getBitBoardPosition(toFile, toRank),
+      "all_zeroes_with_position_as_one"
+    );
+    if (moveResponse.MoveAttempted.isLegal) {
+      console.log("move piece legal");
+      if ((piece === "whitePawn" || piece === "blackPawn") && toFile !== fromFile) {
+        if (!(newPosition & (this.gameStatus.isWhitesTurn ? this.currentBoard.whitePawn : this.currentBoard.blackPawn))) {
+          const enPassantMask = ~(this.gameStatus.isWhitesTurn ? this.gameStatus.lastBlackDoublePawnMove : this.gameStatus.lastWhiteDoublePawnMove);
+          if (this.gameStatus.isWhitesTurn) {
+            moveResponse.BoardState.blackPawn = moveResponse.BoardState.blackPawn & enPassantMask;
+          } else {
+            moveResponse.BoardState.whitePawn = moveResponse.BoardState.blackPawn & enPassantMask;
+          }
+        }
+      }
+      if ((piece === "whitePawn" || piece === "blackPawn") && (toRank === fromRank + 2 || toRank === fromRank - 2)) {
+        this.dispatch({
+          type: this.gameStatus.isWhitesTurn ? "lastWhiteDoublePawnMove" : "lastBlackDoublePawnMove",
+          move: newPosition
+        });
+      } else {
+        this.dispatch({
+          type: this.gameStatus.isWhitesTurn ? "lastWhiteDoublePawnMove" : "lastBlackDoublePawnMove",
+          move: BigInt(0)
+        });
+      }
+      this.currentBoard = moveResponse.BoardState;
+      this.dispatch({ type: "ADD_MOVE", move: moveResponse.MoveAttempted });
+      this._updateCheckStatus(this.currentBoard);
+      if (moveResponse.CastleLongLost) {
+        this.dispatch({
+          type: "SET_CASTLING",
+          castling: this._activeColour() + "Long",
+          value: false
+        });
+      }
+      if (moveResponse.CastleShortLost) {
+        this.dispatch({
+          type: "SET_CASTLING",
+          castling: this._activeColour() + "Short",
+          value: false
+        });
+      }
+    }
+    return moveResponse;
+  };
+  _updateCheckStatus(newBoardState) {
+    const turn = this.gameStatus.isWhitesTurn;
+    this.dispatch({ type: "SET_CHECK", colour: "white", value: false });
+    this.dispatch({ type: "SET_CHECK", colour: "black", value: false });
+    const check1 = isOpponentCheckedMemo(newBoardState, turn).check;
+    const check2 = isOpponentCheckedMemo(newBoardState, !turn).check;
+    if (check1) this.dispatch({ type: "SET_CHECK", colour: turn ? "black" : "white", value: true });
+    if (check2)
+      this.dispatch({ type: "SET_CHECK", colour: !turn ? "black" : "white", value: true });
+  }
+  _activeColour() {
+    return this.gameStatus.isWhitesTurn ? "white" : "black";
+  }
+  getState() {
+    return {
+      boardState: this.currentBoard,
+      gameState: this.gameStatus,
+      id: "",
+      parentId: ""
+    };
+  }
+};
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   AllBishopMoves,
@@ -3235,6 +3348,7 @@ var gameStatusReducer = (state, action) => {
   MateInOneForWhiteGameBoard,
   MiddleGameBoard,
   MiniMaxTestBoardOne,
+  MinotaurEngineController,
   MultiLog,
   NodeFactory,
   RankWeightings,

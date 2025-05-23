@@ -18,10 +18,11 @@ import {
   getBitBoardPosition,
   binaryMask64,
   BoardUpdateResponse,
+  BoardXY,
 } from '@karmacarrot/minotaur-chess-engine';
 
 import JSConfetti from 'js-confetti';
-import { BoardXY } from '../definitions';
+
 import { gameStatusReducer } from '@karmacarrot/minotaur-chess-engine';
 
 export const useMinotaur = (boardSideLength: number) => {

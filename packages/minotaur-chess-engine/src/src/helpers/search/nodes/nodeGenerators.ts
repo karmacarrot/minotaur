@@ -1,16 +1,12 @@
-import { isOpponentCheckedMemo } from "../../../referee/referee";
-import { BitBoard, EvalLogs, GameNode, GameStatus } from "../../../types";
-import {
-  InitialGameStatus,
-  StartingBoard,
-  evalLoggingOff,
-} from "../../definitions";
-import { bishopNodes } from "./bishops/bishopNodes";
-import { kingCastlingNodes, kingNodes } from "./king/kingNodes";
-import { knightNodes } from "./knights/knightNodes";
-import { blackPawnNodes, whitePawnNodes } from "./pawns/pawnNodes";
-import { queenNodes } from "./queens/queenNodes";
-import { rookNodes } from "./rooks/rookNodes";
+import { isOpponentCheckedMemo } from '../../../referee/referee';
+import { BitBoard, EvalLogs, GameNode, GameStatus } from '../../../types';
+import { InitialGameStatus, StartingBoard, evalLoggingOff } from '../../definitions';
+import { bishopNodes } from './bishops/bishopNodes';
+import { kingCastlingNodes, kingNodes } from './king/kingNodes';
+import { knightNodes } from './knights/knightNodes';
+import { blackPawnNodes, whitePawnNodes } from './pawns/pawnNodes';
+import { queenNodes } from './queens/queenNodes';
+import { rookNodes } from './rooks/rookNodes';
 
 export function pushNewNode(
   currentNodeList: GameNode[],
@@ -35,7 +31,6 @@ export function pushNewNode(
   );
 
   if (movingPlayerProposedCheckStatus.check) {
-    console.log("checked");
     return currentNodeList;
   }
 
@@ -104,7 +99,7 @@ export function StartingNode() {
   const startNode = {
     boardState: startBoard,
     gameState: startStatus,
-    parentId: "",
+    parentId: '',
     id: generateNodeId(),
   };
   return startNode;

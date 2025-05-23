@@ -1,4 +1,4 @@
-import { EvalLogs, GameNode } from "../../../../types";
+import { EvalLogs, GameNode } from '../../../../types';
 import {
   allBlackPositions,
   allWhitePositions,
@@ -6,17 +6,15 @@ import {
   findBitPositions,
   isAtoHwraparound,
   isOccupiedComposite,
-} from "../../../bitboards";
-import { orthagonalOffsets } from "../../../definitions";
-import { pushNewNode } from "../nodeGenerators";
+} from '../../../bitboards';
+import { orthagonalOffsets } from '../../../definitions';
+import { pushNewNode } from '../nodeGenerators';
 
 export function rookNodes(node: GameNode, evalLogs: EvalLogs): GameNode[] {
   let possibleNodes: GameNode[] = [];
-  console.log(`black king check status: ${node.gameState.blackKingChecked}`);
+  //console.log(`black king check status: ${node.gameState.blackKingChecked}`);
   const isWhitesTurn = node.gameState.isWhitesTurn;
-  const rooksToMove = isWhitesTurn
-    ? node.boardState.whiteRook
-    : node.boardState.blackRook;
+  const rooksToMove = isWhitesTurn ? node.boardState.whiteRook : node.boardState.blackRook;
 
   const rookPositions = findBitPositions(rooksToMove);
   const allFriendlyOccupiedPositions = isWhitesTurn
@@ -50,17 +48,11 @@ export function rookNodes(node: GameNode, evalLogs: EvalLogs): GameNode[] {
             node.boardState,
             rookPosition,
             newPosition,
-            isWhitesTurn ? "whiteRook" : "blackRook"
+            isWhitesTurn ? 'whiteRook' : 'blackRook'
           );
 
           //TODO: do this for the other pieces
-          possibleNodes = pushNewNode(
-            possibleNodes,
-            node,
-            newBoardState,
-            evalLogs,
-            0
-          );
+          possibleNodes = pushNewNode(possibleNodes, node, newBoardState, evalLogs, 0);
         }
 
         lastPosition = newPosition;

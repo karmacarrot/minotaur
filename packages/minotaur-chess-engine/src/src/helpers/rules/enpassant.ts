@@ -13,7 +13,7 @@ export function pawnsThatCanCaptureEnpassant(board: BitBoard, gameState: GameSta
     gameState.isWhitesTurn &&
     (gameState.lastBlackDoublePawnMove === null || gameState.lastBlackDoublePawnMove === BigInt(0))
   ) {
-    console.log('no white double pawn move');
+    //console.log('no white double pawn move');
     return BigInt(0);
   }
 
@@ -29,11 +29,11 @@ export function pawnsThatCanCaptureEnpassant(board: BitBoard, gameState: GameSta
     : lastMovedPawn >> BigInt(1);
   const canEnPassantPawns = canEnPassantPawnLeft | canEnPassantPawnRight;
 
-  console.log(
-    'returning pawns that can capture enpassant',
-    bigIntToBinaryString(
-      canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn)
-    )
-  );
+  // console.log(
+  //   'returning pawns that can capture enpassant',
+  //   bigIntToBinaryString(
+  //     canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn)
+  //   )
+  // );
   return canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn);
 }

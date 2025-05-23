@@ -29,3 +29,5 @@ export * from './helpers/fen/fen';
 export * from './helpers/uci/uci';
 
 export * from './helpers/state/gameState';
+
+export * from './engine';

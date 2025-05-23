@@ -148,3 +148,13 @@ export type LegalityResponse = {
     | 'castling rules checked'
     | 'fill your boots';
 };
+
+export interface BoardXY {
+  x: number;
+  y: number;
+}
+
+export type EngineResponse = {
+  boardUpdateResponse: BoardUpdateResponse | null;
+  bestMove: BitMove;
+};

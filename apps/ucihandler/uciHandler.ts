@@ -1,14 +1,17 @@
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import {
-  applyMove,
-  FindBestMoveMiniMax,
   moveToUciFormat,
-  StartingNode,
-  gameStatusReducer,
-  type GameStatusUpdateAction,
   getFenFromGameNode,
   LogUnicodeBoardPositions,
+  type BitMove,
+  MinotaurEngineController,
+  BoardArrangements,
+  getBitBoardPosition,
+  occupiedBy,
+  type BitBoard,
+  getFileAndRank,
+  type Piece,
 } from '@karmacarrot/minotaur-chess-engine';
 
 const ENGINE_DEPTH = 2;
@@ -16,35 +19,56 @@ const ENGINE_DEPTH = 2;
 const rl = readline.createInterface({ input, output });
 console.log('UCI handler started.');
 
-//init game state
-let gameNode = StartingNode();
+let controller: MinotaurEngineController;
 
-function resetGame() {
-  gameNode = StartingNode();
+export function resetGame() {
+  controller = new MinotaurEngineController(ENGINE_DEPTH);
+  controller.resetGame(BoardArrangements.StartingPositions);
 }
 
-export function parseUciMove(moveString: string): string {
-  const moveFrom = moveString.slice(0, 2);
-  const moveTo = moveString.slice(2, 4);
-  let promotionPiece = moveString.length === 5 ? moveString[4] : null;
+// export function parseUciMove(moveString: string): string {
+//   const moveFrom = moveString.slice(0, 2);
+//   const moveTo = moveString.slice(2, 4);
+//   let promotionPiece = moveString.length === 5 ? moveString[4] : null;
 
-  return `moving from ${moveFrom} to ${moveTo} ${promotionPiece ? 'turning into a ' + promotionPiece : ''}`.trim();
-}
+//   return `moving from ${moveFrom} to ${moveTo} ${promotionPiece ? 'turning into a ' + promotionPiece : ''}`.trim();
+// }
 
-function applyMoves(moveLine: string) {
+export function uciToBitMoves(moveLine: string): BitMove[] {
   const moveCommands = moveLine.trim().split(/\s+/);
+  const bitMoves: BitMove[] = [];
 
   moveCommands.forEach((moveCommand: string) => {
+    const state = controller.getState();
     if (moveCommand === 'startpos') {
       resetGame();
     } else {
-      // applyMove(gameNode.boardState);
+      if (
+        moveCommand &&
+        moveCommand !== 'moves' &&
+        moveCommand !== 'position' &&
+        moveCommand !== ''
+      ) {
+        const fromPosition = getBitBoardPosition(moveCommand[0], Number(moveCommand[1]));
+        const toPosition = getBitBoardPosition(moveCommand[2], Number(moveCommand[3]));
+        const piece = occupiedBy(state.boardState, fromPosition);
+        const takenPiece = occupiedBy(state.boardState, toPosition);
+        const bitMove: BitMove = {
+          from: fromPosition,
+          to: toPosition,
+          piece: piece as keyof BitBoard,
+          pieceTaken: takenPiece as keyof BitBoard,
+          castleRookFrom: 0,
+          castleRookTo: 0,
+          score: 0,
+          evaluations: 0,
+        };
+        bitMoves.push(bitMove);
+      }
     }
   });
-}
 
-function updateGameStatus(action: GameStatusUpdateAction) {
-  gameNode.gameState = gameStatusReducer(gameNode.gameState, action);
+  return bitMoves;
 }
 
 rl.on('line', async (line) => {
@@ -55,26 +79,37 @@ rl.on('line', async (line) => {
   } else if (line === 'isready') {
     console.log('readyok');
   } else if (line === 'fenme') {
-    console.log(getFenFromGameNode(gameNode));
+    console.log(getFenFromGameNode(controller.getState()));
   } else if (line === 'showme') {
-    console.log(LogUnicodeBoardPositions(gameNode.boardState));
+    const state = controller.getState();
+    console.log(LogUnicodeBoardPositions(state.boardState));
+  } else if (line === 'showmestatus') {
+    const state = controller.getState();
+    console.log(state.gameState);
   } else if (line === 'quit') {
     rl.close();
   } else if (line === 'ucinewgame') {
     resetGame();
   } else if (line === 'go') {
-    const bestMove = await FindBestMoveMiniMax(
-      gameNode.boardState,
-      gameNode.gameState,
-      ENGINE_DEPTH
-    );
-    console.log('bestmove ' + moveToUciFormat(bestMove));
+    const engineResponse = await controller.engineBestMove();
+    console.log('bestmove ' + moveToUciFormat(engineResponse.bestMove));
   } else if (line.startsWith('position')) {
     if (line.endsWith('startpos')) {
       resetGame();
       return;
     }
-    applyMoves(line);
+    const bitMoves = uciToBitMoves(line);
+    bitMoves.forEach((move) => {
+      const fromMove = getFileAndRank(move.from);
+      const toMove = getFileAndRank(move.to);
+      controller.movePiece(
+        move.piece as Piece,
+        fromMove.rank,
+        toMove.rank,
+        fromMove.file + '',
+        toMove.file + ''
+      );
+    });
   } else {
     console.log(`Unknown command: ${line}`);
   }

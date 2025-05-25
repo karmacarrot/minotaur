@@ -26,20 +26,11 @@ export function resetGame() {
   controller.resetGame(BoardArrangements.StartingPositions);
 }
 
-// export function parseUciMove(moveString: string): string {
-//   const moveFrom = moveString.slice(0, 2);
-//   const moveTo = moveString.slice(2, 4);
-//   let promotionPiece = moveString.length === 5 ? moveString[4] : null;
-
-//   return `moving from ${moveFrom} to ${moveTo} ${promotionPiece ? 'turning into a ' + promotionPiece : ''}`.trim();
-// }
-
-export function uciToBitMoves(moveLine: string): BitMove[] {
+export function uciToBitMoves(moveLine: string, boardState: BitBoard): BitMove[] {
   const moveCommands = moveLine.trim().split(/\s+/);
   const bitMoves: BitMove[] = [];
 
   moveCommands.forEach((moveCommand: string) => {
-    const state = controller.getState();
     if (moveCommand === 'startpos') {
       resetGame();
     } else {
@@ -51,8 +42,8 @@ export function uciToBitMoves(moveLine: string): BitMove[] {
       ) {
         const fromPosition = getBitBoardPosition(moveCommand[0], Number(moveCommand[1]));
         const toPosition = getBitBoardPosition(moveCommand[2], Number(moveCommand[3]));
-        const piece = occupiedBy(state.boardState, fromPosition);
-        const takenPiece = occupiedBy(state.boardState, toPosition);
+        const piece = occupiedBy(boardState, fromPosition);
+        const takenPiece = occupiedBy(boardState, toPosition);
         const bitMove: BitMove = {
           from: fromPosition,
           to: toPosition,
@@ -98,7 +89,8 @@ rl.on('line', async (line) => {
       resetGame();
       return;
     }
-    const bitMoves = uciToBitMoves(line);
+    const state = controller.currentBoard;
+    const bitMoves = uciToBitMoves(line, state);
     bitMoves.forEach((move) => {
       const fromMove = getFileAndRank(move.from);
       const toMove = getFileAndRank(move.to);

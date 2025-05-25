@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll=false --detectOpenHandles --forceExit"
+    "test": "jest --watchAll=false --detectOpenHandles --forceExit",
+    "start": "node ucihandler.ts"
   },
   "type": "module",
   "author": "",

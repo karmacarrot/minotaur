@@ -1476,7 +1476,6 @@ function pushNewNode(currentNodeList, parentNode, newBoardState, evalLogs, depth
     !parentNode.gameState.isWhitesTurn
   );
   if (movingPlayerProposedCheckStatus.check) {
-    console.log("checked");
     return currentNodeList;
   }
   const newNode = {
@@ -2134,19 +2133,12 @@ function pawnsThatCanCaptureEnpassant(board, gameState) {
     return BigInt(0);
   }
   if (gameState.isWhitesTurn && (gameState.lastBlackDoublePawnMove === null || gameState.lastBlackDoublePawnMove === BigInt(0))) {
-    console.log("no white double pawn move");
     return BigInt(0);
   }
   const lastMovedPawn = gameState.isWhitesTurn ? gameState.lastBlackDoublePawnMove : gameState.lastWhiteDoublePawnMove;
   const canEnPassantPawnLeft = gameState.isWhitesTurn ? lastMovedPawn << BigInt(1) : lastMovedPawn >> BigInt(-1);
   const canEnPassantPawnRight = gameState.isWhitesTurn ? lastMovedPawn << BigInt(-1) : lastMovedPawn >> BigInt(1);
   const canEnPassantPawns = canEnPassantPawnLeft | canEnPassantPawnRight;
-  console.log(
-    "returning pawns that can capture enpassant",
-    bigIntToBinaryString(
-      canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn)
-    )
-  );
   return canEnPassantPawns & (gameState.isWhitesTurn ? board.whitePawn : board.blackPawn);
 }
 
@@ -3006,7 +2998,6 @@ var MinotaurEngineController = class {
     return { boardUpdateResponse: moveUpdateResponse, bestMove };
   };
   movePiece = (piece, fromRank, toRank, fromFile, toFile) => {
-    console.log("move piece called");
     if (this.gameStatus.isWhitesTurn && !piece?.toLowerCase().includes("white")) {
       return null;
     }
@@ -3022,13 +3013,11 @@ var MinotaurEngineController = class {
       toFile,
       this.gameStatus
     );
-    console.log(moveResponse);
     const newPosition = binaryMask64(
       getBitBoardPosition(toFile, toRank),
       "all_zeroes_with_position_as_one"
     );
     if (moveResponse.MoveAttempted.isLegal) {
-      console.log("move piece legal");
       if ((piece === "whitePawn" || piece === "blackPawn") && toFile !== fromFile) {
         if (!(newPosition & (this.gameStatus.isWhitesTurn ? this.currentBoard.whitePawn : this.currentBoard.blackPawn))) {
           const enPassantMask = ~(this.gameStatus.isWhitesTurn ? this.gameStatus.lastBlackDoublePawnMove : this.gameStatus.lastWhiteDoublePawnMove);

@@ -1,4 +1,6 @@
 import * as readline from 'node:readline/promises';
+import path from 'path';
+import fs from 'fs';
 import { stdin as input, stdout as output } from 'node:process';
 import {
   moveToUciFormat,
@@ -17,7 +19,14 @@ import {
 const ENGINE_DEPTH = 2;
 
 const rl = readline.createInterface({ input, output });
-console.log('UCI handler started.');
+const logPath = path.resolve('/tmp/uci-engine.log');
+
+function log(msg: string) {
+  fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
+}
+
+// Test it
+log('Engine script started');
 
 let controller: MinotaurEngineController;
 

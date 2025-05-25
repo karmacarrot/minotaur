@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll=false --detectOpenHandles --forceExit",
-    "start": "node ucihandler.ts"
+    "start": "node --no-warnings uciHandler.ts",
+    "dev": "node uciHandler.ts"
   },
   "type": "module",
   "author": "",

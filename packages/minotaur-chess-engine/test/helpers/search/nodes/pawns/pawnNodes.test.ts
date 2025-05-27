@@ -24,6 +24,7 @@ import {
   blackPawnEnPassantCaptureNodes,
 } from '@karmacarrot/minotaur-chess-engine';
 import { LogBoardPositions } from '../../../testHelper';
+import { blackPawnPromotionNodes } from '@karmacarrot/minotaur-chess-engine/src/helpers/search/nodes/pawns/pawnNodes';
 
 describe('whitePawnNodes', () => {
   it('returns 16 possible nodes from a starting board', () => {
@@ -137,6 +138,26 @@ describe('whitePawnEnPassantCaptureNodes', () => {
     expect(moves[0].boardState.blackPawn & lastBlackDoubleSquareMove).toBe(BigInt(0));
   });
 });
+
+
+describe("blackPawnPromotionNodes", () => {
+
+  it('returns 5 possible nodes for a black pawn about to be promoted', () => {
+    const startBoard = { ...EmptyBoard };
+    startBoard.blackPawn = BigInt('0b0000000010000000000000000000000000000000000000000000000000000000');
+    const startStatus = { ...InitialGameStatus };
+    const currentNode = {
+      boardState: startBoard,
+      gameState: startStatus,
+      parentId: '',
+      id: generateNodeId(),
+    };
+    const allOccupiedPositions = allPositions(currentNode.boardState);
+    const blackPawnNodeArray = blackPawnPromotionNodes(currentNode, allOccupiedPositions);
+    expect(blackPawnNodeArray.length).toBe(4);
+  });
+
+})
 
 describe('blackPawnEnPassantCaptureNodes', () => {
   it("returns a possible en passant capture for black from a board where white moves to c4 while black's pawn is on d4", () => {

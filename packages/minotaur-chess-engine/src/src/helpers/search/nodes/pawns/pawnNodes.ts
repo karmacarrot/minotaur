@@ -235,3 +235,33 @@ export function blackPawnCaptureNodes(
 
   return newNodes;
 }
+
+
+
+export function blackPawnPromotionNodes(node: GameNode, allOccupiedPositions: bigint): GameNode[] {
+  let newNodes: GameNode[] = [];
+  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions);
+  const a1Position = 64;
+  const h8Position = 1;
+  for (let position = h8Position; position <= a1Position; position++) {
+    //create a bitmask of that position
+    const positionBit = BigInt(1) << BigInt(position);
+
+    //if position is in the 'all moves' bigint
+    if (potentialMoves & positionBit) {
+      //add it
+      const newBoardState = applyMove(
+        node.boardState,
+        64 - position + 8,
+        64 - position,
+        'blackPawn'
+      );
+      newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
+    }
+  }
+
+  return newNodes;
+}
+
+
+//TODO: promotion nodes

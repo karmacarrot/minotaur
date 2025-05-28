@@ -88,7 +88,7 @@ export function GameStatus({
               {bigIntToBinaryString(gameStatus.lastWhiteDoublePawnMove)}
             </span>
           </li>
-          <li key="whiteLastDoublePawnMove" className="flex justify-between items-center">
+          <li key="blackLastDoublePawnMove" className="flex justify-between items-center">
             <span className="text-gray-400">Black Last Double Pawn Move:</span>
             <span className="text-lg font-medium">
               {bigIntToBinaryString(gameStatus.lastBlackDoublePawnMove)}

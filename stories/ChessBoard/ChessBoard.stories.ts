@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ChessBoard } from '../../packages/minotaur-chess-react/src/src/components/ChessBoard/ChessBoard';
 import { Piece } from '@karmacarrot/minotaur-chess-engine';
-import { emptyBoard, minotaurConfig, getCheckedStateBoard, fullBoard } from './ChessBoard.mocks';
+import { emptyBoard, minotaurConfig, getCheckedStateBoard, fullBoard } from '../mocks/config.mocks';
 
 const meta = {
   title: 'Minotaur/ChessBoard',
@@ -9,6 +9,7 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
+
   args: {
     boardArray: emptyBoard,
     blackKingCheck: false,

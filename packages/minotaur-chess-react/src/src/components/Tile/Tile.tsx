@@ -4,20 +4,20 @@ import styled from 'styled-components';
 import { useEffect, useRef } from 'react';
 import { MinotaurConfig, Piece } from '@karmacarrot/minotaur-chess-engine';
 
-const TileContainer = styled.div<{ tileType: string }>`
+const TileContainer = styled.div<{ $tileType: string }>`
   height: 50px;
   width: 50px;
   display: grid;
-  background-color: ${({ tileType }) => (tileType === 'dark' ? '#975bba' : '#e6cdf3')};
+  background-color: ${({ $tileType }) => ($tileType === 'dark' ? '#975bba' : '#e6cdf3')};
 `;
 
-const PieceContainer = styled.div<{ threat: boolean; pieceImage: string }>`
+const PieceContainer = styled.div<{ $threat: boolean; $pieceImage: string }>`
   background-repeat: no-repeat;
   background-position: center;
   background-size: 45px;
   height: 50px;
   width: 50px;
-  background-image: url(${({ pieceImage }) => pieceImage});
+  background-image: url(${({ $pieceImage }) => $pieceImage});
   cursor: grab;
 
   &:active {
@@ -26,8 +26,8 @@ const PieceContainer = styled.div<{ threat: boolean; pieceImage: string }>`
 
   pointer-events: auto;
 
-  ${({ threat }) =>
-    threat &&
+  ${({ $threat }) =>
+    $threat &&
     `
     background-color: rgb(134, 12, 12);
   `}
@@ -108,10 +108,10 @@ export function Tile({
   }, [piece, movePiece, pickUpPiece, putDownPiece]);
 
   return (
-    <TileContainer ref={containerRef} tileType={tiletype}>
+    <TileContainer ref={containerRef} $tileType={tiletype}>
       {piece && (
         <div draggable onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd}>
-          <PieceContainer threat={threat} pieceImage={pieceImage} id={piece} />
+          <PieceContainer $threat={threat} $pieceImage={pieceImage} id={piece} />
         </div>
       )}
     </TileContainer>

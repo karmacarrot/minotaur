@@ -1,7 +1,7 @@
-"use client";
-import { ChessGame } from "@karmacarrot/minotaur-chess-react";
-import styles from "./page.module.css";
-import { minotaurConfig } from "../minotaur";
+'use client';
+import { ChessGame } from '@karmacarrot/minotaur-chess-react';
+import styles from './page.module.css';
+import { minotaurConfig } from '../minotaur';
 
 export default function Home() {
   return (

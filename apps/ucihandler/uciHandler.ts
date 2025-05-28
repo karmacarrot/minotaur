@@ -18,15 +18,15 @@ import {
 
 const ENGINE_DEPTH = 2;
 
-const rl = readline.createInterface({ input, output });
-const logPath = path.resolve('/tmp/uci-engine.log');
+// const rl = readline.createInterface({ input, output });
+// const logPath = path.resolve('/tmp/uci-engine.log');
 
-function log(msg: string) {
-  fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
-}
+// function log(msg: string) {
+//   fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
+// }
 
-// Test it
-log('Engine script started');
+// // Test it
+// log('Engine script started');
 
 let controller: MinotaurEngineController;
 

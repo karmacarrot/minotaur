@@ -1382,6 +1382,25 @@ function blackPawnCaptureNodes(node, allOccupiedWhitePositions) {
   }
   return newNodes;
 }
+function blackPawnPromotionNodes(node, allOccupiedPositions) {
+  let newNodes = [];
+  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions);
+  const a1Position = 64;
+  const h8Position = 1;
+  for (let position = h8Position; position <= a1Position; position++) {
+    const positionBit = BigInt(1) << BigInt(position);
+    if (potentialMoves & positionBit) {
+      const newBoardState = applyMove(
+        node.boardState,
+        64 - position + 8,
+        64 - position,
+        "blackPawn"
+      );
+      newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
+    }
+  }
+  return newNodes;
+}
 
 // src/helpers/search/nodes/queens/queenNodes.ts
 function queenNodes(node, evalLogs) {
@@ -2789,7 +2808,6 @@ var outputSingleBitboardHtml = (currentBoard, currentGameState, testName) => {
   const date = /* @__PURE__ */ new Date();
   const timestamp = date.toISOString().replace(/:/g, "-");
   const fileName = `logs\\eval_logs_${timestamp}.html`;
-  console.log(fileName);
 };
 
 // src/helpers/fen/fen.ts
@@ -3162,6 +3180,7 @@ export {
   blackPawnEnPassantCaptureNodes,
   blackPawnLongGuards,
   blackPawnNodes,
+  blackPawnPromotionNodes,
   blackPawnShortGuards,
   blackPawnTwoSquareNodes,
   blackStartingRank,

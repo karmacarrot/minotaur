@@ -203,7 +203,7 @@ export const outputSingleBitboardHtml = (
   const timestamp = date.toISOString().replace(/:/g, "-");
   const fileName = `logs\\eval_logs_${timestamp}.html`;
 
-  console.log(fileName);
+ // console.log(fileName);
 
   // writeFileSync(fileName, htmlContent);
 

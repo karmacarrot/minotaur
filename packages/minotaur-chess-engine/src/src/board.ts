@@ -22,6 +22,8 @@ import {
   MateInOneForWhiteGameBoard,
   MiddleGameBoard,
   MiniMaxTestBoardOne,
+  PromoteForBlackGameBoard,
+  PromoteForWhiteGameBoard,
 } from './referee/mockBoardStates';
 import { isLegalMove } from './referee/referee';
 import {
@@ -63,6 +65,10 @@ export function initBoard(arrangement: BoardArrangements): BitBoard {
       return CastleForBlackAfterGameBoard;
     case BoardArrangements.EnPassantBoard:
       return EnPassantBoard;
+    case BoardArrangements.PromoteForWhite:
+      return PromoteForWhiteGameBoard;
+    case BoardArrangements.PromoteForBlack:
+      return PromoteForBlackGameBoard;
     default:
       return StartingBoard;
   }

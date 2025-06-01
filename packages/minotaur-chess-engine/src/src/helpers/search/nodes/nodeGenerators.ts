@@ -118,3 +118,7 @@ export function NodeFactory(parentNode: GameNode, newBoardState: BitBoard) {
   };
   return newNode;
 }
+
+export function nodeFromBoardAndGameState(boardState: BitBoard, gameState: GameStatus): GameNode {
+  return { boardState, gameState, id: generateNodeId(), parentId: generateNodeId() };
+}

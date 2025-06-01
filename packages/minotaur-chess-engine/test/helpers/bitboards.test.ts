@@ -33,6 +33,10 @@ import {
 import { StartingBoard, a1, boardMapping, h8 } from '../../src/src/helpers/definitions';
 import { evaluateSquareControl } from '@karmacarrot/minotaur-chess-engine/src/helpers/boardevaluation/boardEval';
 import { LogBoardPositions } from './testHelper';
+import {
+  getBlackPromotionMoveFromBoardStates,
+  PromoteForBlackGameBoard,
+} from '@karmacarrot/minotaur-chess-engine';
 
 describe('applyMove', () => {
   it('correctly moves a white pawn when capturing and removes the captured black pawn', () => {
@@ -52,6 +56,20 @@ describe('applyMove', () => {
     const castled = applyMove(canCastleBoard, 25, 34, 'whitePawn');
 
     expect(castled).toEqual(CastleForBlackAfterGameBoard);
+  });
+
+  it('can remove pieces', () => {
+    const startBoard = { ...StartingBoard };
+    const move = applyMove(startBoard, 4, 0, 'whiteQueen');
+
+    expect(move.whiteQueen).toBe(0n);
+  });
+
+  it('correctly promotes a pawn', () => {
+    const promotionBoard = { ...PromoteForBlackGameBoard };
+    const promoMove = applyMove(promotionBoard, 11, 3, 'blackQueen');
+
+    expect(promoMove.blackQueen).toBeGreaterThan(0);
   });
 });
 
@@ -233,6 +251,29 @@ describe('getFileAndRank', () => {
   );
 });
 
+describe('getBlackPromotionMoveFromBoardStates', () => {
+  it('can work out that a black pawn was promoted', () => {
+    const startBoard = { ...PromoteForBlackGameBoard };
+
+    let queenState = applyMove(startBoard, 11, 3, 'blackQueen');
+    queenState = applyMove(queenState, 11, 0, 'blackPawn');
+
+    const bitMoveFromBoardStates = getBlackPromotionMoveFromBoardStates(startBoard, queenState);
+
+    expect(bitMoveFromBoardStates).toEqual({
+      evaluations: 0,
+      from: 11,
+      to: 3,
+      piece: 'blackPawn',
+      pieceTaken: 'none',
+      score: 0,
+      castleRookFrom: 0,
+      castleRookTo: 0,
+      promotion: 'blackQueen',
+    });
+  });
+});
+
 describe('getMoveFromBoardStates', () => {
   it('can work out that a pawn moved from a starting position', () => {
     const startBoard = { ...StartingBoard };
@@ -247,6 +288,27 @@ describe('getMoveFromBoardStates', () => {
       score: 0,
       castleRookFrom: 0,
       castleRookTo: 0,
+      promotion: 'none',
+    });
+  });
+  it('can work out that a black pawn was promoted', () => {
+    const startBoard = { ...PromoteForBlackGameBoard };
+
+    let queenState = applyMove(startBoard, 11, 3, 'blackQueen');
+    queenState = applyMove(queenState, 11, 0, 'blackPawn');
+
+    const bitMoveFromBoardStates = getMoveFromBoardStates(startBoard, queenState);
+
+    expect(bitMoveFromBoardStates).toEqual({
+      evaluations: 0,
+      from: 11,
+      to: 3,
+      piece: 'blackPawn',
+      pieceTaken: 'none',
+      score: 0,
+      castleRookFrom: 0,
+      castleRookTo: 0,
+      promotion: 'blackQueen',
     });
   });
   it('can work out that a black pawn was taken', () => {
@@ -262,6 +324,7 @@ describe('getMoveFromBoardStates', () => {
       score: 0,
       castleRookFrom: 0,
       castleRookTo: 0,
+      promotion: 'none',
     });
   });
   it('can work out that a white pawn was taken', () => {
@@ -277,6 +340,7 @@ describe('getMoveFromBoardStates', () => {
       score: 0,
       castleRookFrom: 0,
       castleRookTo: 0,
+      promotion: 'none',
     });
   });
 });

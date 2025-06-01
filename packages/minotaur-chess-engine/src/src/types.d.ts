@@ -112,6 +112,7 @@ export type BitMove = {
   evaluations: number;
   castleRookFrom: number;
   castleRookTo: number;
+  promotion: keyof BitBoard;
 };
 
 export type GameNode = {

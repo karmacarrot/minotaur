@@ -19,6 +19,10 @@ export function applyMove(
   to: number,
   pieceBitBoard: keyof BitBoard
 ): BitBoard {
+  if (to === 0) {
+    return clearPosition(bitBoard, from);
+  }
+
   let newBitBoard = { ...bitBoard };
   const fromMask = BigInt(1) << BigInt(64 - from);
   const toMask = BigInt(1) << BigInt(64 - to);
@@ -41,7 +45,7 @@ export function applyMove(
   return newBitBoard;
 }
 
-export function clearPosition(bitBoard: BitBoard, position: number) {
+export function clearPosition(bitBoard: BitBoard, position: number): BitBoard {
   const removalMask = binaryMask64(position, 'all_ones_with_position_as_zero');
   const removalMaskString = bigIntToBinaryString(removalMask);
   MultiLog(LogLevels.warn, removalMaskString, LoggerConfig.verbosity);
@@ -181,12 +185,53 @@ export function allBlackPositions(currentBoard: BitBoard): bigint {
 
 export function getMoveFromBoardStates(before: BitBoard, after: BitBoard): BitMove {
   if (
+    before.blackPawn !== after.blackPawn &&
+    (before.blackQueen !== after.blackQueen ||
+      before.blackBishop !== after.blackBishop ||
+      before.blackRook !== after.blackRook ||
+      before.blackKnight !== after.blackKnight)
+  ) {
+    //black promotion
+    return getBlackPromotionMoveFromBoardStates(before, after);
+  }
+
+  if (
     (before.blackKing !== after.blackKing && before.blackRook !== after.blackRook) ||
     (before.whiteKing !== after.whiteKing && before.whiteRook !== after.whiteRook)
   ) {
     return getCastledMoveFromBoardStates(before, after);
   }
   return getSinglePieceMoveFromBoardStates(before, after);
+}
+
+export function getBlackPromotionMoveFromBoardStates(before: BitBoard, after: BitBoard): BitMove {
+  let move: BitMove = {
+    from: 0,
+    to: 0,
+    piece: 'blackPawn',
+    pieceTaken: 'none',
+    score: 0,
+    evaluations: 0,
+    castleRookFrom: 0,
+    castleRookTo: 0,
+    promotion: 'none',
+  };
+
+  //find missing pawn for from state
+  const beforePawnBitboard = before['blackPawn'];
+  const afterPawnBitboard = after['blackPawn'];
+  const movedPawnFromBitboard = beforePawnBitboard & ~afterPawnBitboard;
+  move.from = findBitPositionReverse(movedPawnFromBitboard);
+
+  //find new queen for to state
+  const beforeQueenBitboard = before['blackQueen'];
+  const afterQueenBitboard = after['blackQueen'];
+  const promotedQueenBitboard = ~beforeQueenBitboard & afterQueenBitboard;
+  move.to = findBitPositionReverse(promotedQueenBitboard);
+
+  move.promotion = 'blackQueen';
+
+  return move;
 }
 
 export function getSinglePieceMoveFromBoardStates(before: BitBoard, after: BitBoard): BitMove {
@@ -199,6 +244,7 @@ export function getSinglePieceMoveFromBoardStates(before: BitBoard, after: BitBo
     evaluations: 0,
     castleRookFrom: 0,
     castleRookTo: 0,
+    promotion: 'none',
   };
 
   for (const piece of Object.keys(before) as (keyof BitBoard)[]) {
@@ -272,6 +318,7 @@ export function getCastledMoveFromBoardStates(before: BitBoard, after: BitBoard)
     evaluations: 0,
     castleRookFrom: 0,
     castleRookTo: 0,
+    promotion: 'none',
   };
 
   if (before.blackKing !== after.blackKing && before.blackRook !== after.blackRook) {

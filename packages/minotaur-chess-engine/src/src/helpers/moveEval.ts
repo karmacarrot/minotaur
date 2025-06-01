@@ -16,10 +16,12 @@ import {
   StartingBoard,
   aTogFilesOnly,
   bTohFilesOnly,
+  blackBackRankPositions,
   diagonalOffsets,
   evalLoggingOff,
   knightMoveOffsets,
   orthagonalOffsets,
+  whiteBackRankPositions,
 } from './definitions';
 import { maxMove } from './search/minimax';
 import { generateNodeId } from './search/nodes/nodeGenerators';
@@ -86,7 +88,7 @@ function evaluateMove(currentBoard: BitBoard, move: BitMove, evaluateForWhite: b
 
 function WhitePawnMovesOneSquare(boardState: BitBoard, allOccupiedPositions: bigint): BitMove[] {
   const moves: BitMove[] = [];
-  const potentialMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions);
+  const potentialMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions, false);
 
   for (let i = 0; i < 64; i++) {
     const moveBit = BigInt(1) << BigInt(i);
@@ -102,6 +104,7 @@ function WhitePawnMovesOneSquare(boardState: BitBoard, allOccupiedPositions: big
         evaluations: 0,
         castleRookFrom: 0,
         castleRookTo: 0,
+        promotion: 'none',
       });
     }
   }
@@ -127,6 +130,7 @@ function WhitePawnMovesTwoSquare(boardState: BitBoard, allOccupiedPositions: big
         evaluations: 0,
         castleRookFrom: 0,
         castleRookTo: 0,
+        promotion: 'none',
       });
     }
   }
@@ -160,6 +164,7 @@ export function WhitePawnCaptures(
         evaluations: 0,
         castleRookFrom: 0,
         castleRookTo: 0,
+        promotion: 'none',
       });
     }
 
@@ -179,6 +184,7 @@ export function WhitePawnCaptures(
         evaluations: 0,
         castleRookFrom: 0,
         castleRookTo: 0,
+        promotion: 'none',
       });
     }
   }
@@ -203,9 +209,13 @@ export function WhitePawnMovesComposite(boardState: BitBoard): BitMove[] {
 
 export function AllWhitePawnMovesOneSquare(
   boardState: BitBoard,
-  allOccupiedPositions: bigint
+  allOccupiedPositions: bigint,
+  includePromotions: boolean
 ): bigint {
-  const singleStepMoves = (boardState.whitePawn >> BigInt(8)) & ~allOccupiedPositions;
+  const allLegalPositions = includePromotions
+    ? allOccupiedPositions
+    : allOccupiedPositions | blackBackRankPositions;
+  const singleStepMoves = (boardState.whitePawn >> BigInt(8)) & ~allLegalPositions;
 
   return singleStepMoves;
 }
@@ -257,7 +267,7 @@ export function AllWhitePawnMovesComposite(boardState: BitBoard): BitBoard {
   const allOccupiedBlackPositions = allBlackPositions(boardState);
   let pawnMoveBoard = { ...EmptyBoard };
 
-  const singleStepMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions);
+  const singleStepMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions, false);
 
   const doubleStepMoves = AllWhitePawnMovesTwoSquare(boardState, allOccupiedPositions);
 
@@ -278,7 +288,7 @@ export function BlackPawnMovesOneSquare(
 ): BitMove[] {
   const moves: BitMove[] = [];
 
-  const potentialMoves = AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions);
+  const potentialMoves = AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions, false);
 
   const a1Position = 64;
   const h8Position = 1;
@@ -301,6 +311,7 @@ export function BlackPawnMovesOneSquare(
         evaluations: 0,
         castleRookFrom: 0,
         castleRookTo: 0,
+        promotion: 'none',
       });
     }
   }
@@ -334,6 +345,7 @@ function BlackPawnMovesTwoSquare(boardState: BitBoard, allOccupiedPositions: big
         evaluations: 0,
         castleRookFrom: 0,
         castleRookTo: 0,
+        promotion: 'none',
       });
     }
   }
@@ -371,6 +383,7 @@ export function BlackPawnCaptures(
         evaluations: 0,
         castleRookFrom: 0,
         castleRookTo: 0,
+        promotion: 'none',
       });
     }
 
@@ -389,6 +402,7 @@ export function BlackPawnCaptures(
         evaluations: 0,
         castleRookFrom: 0,
         castleRookTo: 0,
+        promotion: 'none',
       });
     }
   }
@@ -413,9 +427,20 @@ export function BlackPawnMovesComposite(boardState: BitBoard): BitMove[] {
 
 export function AllBlackPawnMovesOneSquare(
   boardState: BitBoard,
-  allOccupiedPositions: bigint
+  allOccupiedPositions: bigint,
+  includePromotions: boolean
 ): bigint {
-  const singleStepMoves = (boardState.blackPawn << BigInt(8)) & ~allOccupiedPositions;
+  const allLegalPositions = includePromotions
+    ? allOccupiedPositions
+    : allOccupiedPositions | whiteBackRankPositions;
+  const singleStepMoves = (boardState.blackPawn << BigInt(8)) & ~allLegalPositions;
+
+  return singleStepMoves;
+}
+
+export function AllBlackPawnPromotions(boardState: BitBoard, allOccupiedPositions: bigint): bigint {
+  const allIllegalPositions = allOccupiedPositions | ~whiteBackRankPositions;
+  const singleStepMoves = (boardState.blackPawn << BigInt(8)) & ~allIllegalPositions;
 
   return singleStepMoves;
 }
@@ -431,9 +456,17 @@ export function AllBlackPawnMovesTwoSquare(
   const ignoreMovedBlackPawns = { ...boardState };
   ignoreMovedBlackPawns.blackPawn = blackPawnsOnStartRank;
 
-  const oneStepMoves = AllBlackPawnMovesOneSquare(ignoreMovedBlackPawns, allOccupiedPositions);
+  const oneStepMoves = AllBlackPawnMovesOneSquare(
+    ignoreMovedBlackPawns,
+    allOccupiedPositions,
+    false
+  );
   ignoreMovedBlackPawns.blackPawn = oneStepMoves;
-  const twoStepMoves = AllBlackPawnMovesOneSquare(ignoreMovedBlackPawns, allOccupiedPositions);
+  const twoStepMoves = AllBlackPawnMovesOneSquare(
+    ignoreMovedBlackPawns,
+    allOccupiedPositions,
+    false
+  );
 
   return twoStepMoves;
 }
@@ -455,7 +488,7 @@ export function AllBlackPawnMovesComposite(boardState: BitBoard): BitBoard {
   const allOccupiedWhitePositions = allWhitePositions(boardState);
   let pawnMoveBoard = { ...EmptyBoard };
 
-  const singleStepMoves = AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions);
+  const singleStepMoves = AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions, false);
 
   const doubleStepMoves = AllBlackPawnMovesTwoSquare(boardState, allOccupiedPositions);
 

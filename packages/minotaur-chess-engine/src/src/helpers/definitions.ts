@@ -30,6 +30,14 @@ export const bTohFilesOnly = BigInt(
 export const a1 = BigInt('0b1000000000000000000000000000000000000000000000000000000000000000');
 export const h8 = BigInt('0b0000000000000000000000000000000000000000000000000000000000000001');
 
+export const whiteBackRankPositions = BigInt(
+  '0b1111111100000000000000000000000000000000000000000000000000000000'
+);
+
+export const blackBackRankPositions = BigInt(
+  '0b0000000000000000000000000000000000000000000000000000000011111111'
+);
+
 export const StartingBoard: BitBoard = {
   whitePawn: BigInt('0b0000000011111111000000000000000000000000000000000000000000000000'),
   whiteKnight: BigInt('0b0100001000000000000000000000000000000000000000000000000000000000'),
@@ -78,6 +86,8 @@ export enum BoardArrangements {
   BlackShortCastledGameBoard,
   CastleForBlackAfter,
   EnPassantBoard,
+  PromoteForBlack,
+  PromoteForWhite,
 }
 
 export const pieceImages: PieceImages = {

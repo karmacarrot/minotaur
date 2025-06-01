@@ -25,6 +25,7 @@ __export(src_exports, {
   AllBlackPawnMovesComposite: () => AllBlackPawnMovesComposite,
   AllBlackPawnMovesOneSquare: () => AllBlackPawnMovesOneSquare,
   AllBlackPawnMovesTwoSquare: () => AllBlackPawnMovesTwoSquare,
+  AllBlackPawnPromotions: () => AllBlackPawnPromotions,
   AllCompiledMoves: () => AllCompiledMoves,
   AllKingMoves: () => AllKingMoves,
   AllKnightMoves: () => AllKnightMoves,
@@ -66,6 +67,8 @@ __export(src_exports, {
   MinotaurEngineController: () => MinotaurEngineController,
   MultiLog: () => MultiLog,
   NodeFactory: () => NodeFactory,
+  PromoteForBlackGameBoard: () => PromoteForBlackGameBoard,
+  PromoteForWhiteGameBoard: () => PromoteForWhiteGameBoard,
   RankWeightings: () => RankWeightings,
   StartingBoard: () => StartingBoard,
   StartingNode: () => StartingNode,
@@ -85,6 +88,7 @@ __export(src_exports, {
   bitBoardsReadable: () => bitBoardsReadable,
   bitCount: () => bitCount,
   bitMoveToBoardMove: () => bitMoveToBoardMove,
+  blackBackRankPositions: () => blackBackRankPositions,
   blackKingLongCastleDestination: () => blackKingLongCastleDestination,
   blackKingLongCastleRookDestination: () => blackKingLongCastleRookDestination,
   blackKingLongCastleRoute: () => blackKingLongCastleRoute,
@@ -132,6 +136,7 @@ __export(src_exports, {
   generateNodeId: () => generateNodeId,
   getBeforeAndAfterPositions: () => getBeforeAndAfterPositions,
   getBitBoardPosition: () => getBitBoardPosition,
+  getBlackPromotionMoveFromBoardStates: () => getBlackPromotionMoveFromBoardStates,
   getCastleStatus: () => getCastleStatus,
   getCastledMoveFromBoardStates: () => getCastledMoveFromBoardStates,
   getFenFromGameNode: () => getFenFromGameNode,
@@ -171,6 +176,7 @@ __export(src_exports, {
   moveAnyPiece: () => moveAnyPiece,
   movePiece: () => movePiece,
   moveToUciFormat: () => moveToUciFormat,
+  nodeFromBoardAndGameState: () => nodeFromBoardAndGameState,
   numberOfTiles: () => numberOfTiles,
   occupiedBy: () => occupiedBy,
   orthagonalOffsets: () => orthagonalOffsets,
@@ -188,6 +194,7 @@ __export(src_exports, {
   scoredMove: () => scoredMove,
   slidingPieces: () => slidingPieces,
   unicodePieceMap: () => unicodePieceMap,
+  whiteBackRankPositions: () => whiteBackRankPositions,
   whiteKingLongCastleDestination: () => whiteKingLongCastleDestination,
   whiteKingLongCastleRookDestination: () => whiteKingLongCastleRookDestination,
   whiteKingLongCastleRoute: () => whiteKingLongCastleRoute,
@@ -255,6 +262,12 @@ var bTohFilesOnly = BigInt(
 );
 var a1 = BigInt("0b1000000000000000000000000000000000000000000000000000000000000000");
 var h8 = BigInt("0b0000000000000000000000000000000000000000000000000000000000000001");
+var whiteBackRankPositions = BigInt(
+  "0b1111111100000000000000000000000000000000000000000000000000000000"
+);
+var blackBackRankPositions = BigInt(
+  "0b0000000000000000000000000000000000000000000000000000000011111111"
+);
 var StartingBoard = {
   whitePawn: BigInt("0b0000000011111111000000000000000000000000000000000000000000000000"),
   whiteKnight: BigInt("0b0100001000000000000000000000000000000000000000000000000000000000"),
@@ -300,6 +313,8 @@ var BoardArrangements = /* @__PURE__ */ ((BoardArrangements2) => {
   BoardArrangements2[BoardArrangements2["BlackShortCastledGameBoard"] = 10] = "BlackShortCastledGameBoard";
   BoardArrangements2[BoardArrangements2["CastleForBlackAfter"] = 11] = "CastleForBlackAfter";
   BoardArrangements2[BoardArrangements2["EnPassantBoard"] = 12] = "EnPassantBoard";
+  BoardArrangements2[BoardArrangements2["PromoteForBlack"] = 13] = "PromoteForBlack";
+  BoardArrangements2[BoardArrangements2["PromoteForWhite"] = 14] = "PromoteForWhite";
   return BoardArrangements2;
 })(BoardArrangements || {});
 var pieceImages = {
@@ -572,6 +587,9 @@ function MultiLog(outputType, message, outputVerbosity) {
 
 // src/helpers/bitboards.ts
 function applyMove(bitBoard, from, to, pieceBitBoard) {
+  if (to === 0) {
+    return clearPosition(bitBoard, from);
+  }
   let newBitBoard = { ...bitBoard };
   const fromMask = BigInt(1) << BigInt(64 - from);
   const toMask = BigInt(1) << BigInt(64 - to);
@@ -692,10 +710,36 @@ function allBlackPositions(currentBoard) {
   return compositePositions;
 }
 function getMoveFromBoardStates(before, after) {
+  if (before.blackPawn !== after.blackPawn && (before.blackQueen !== after.blackQueen || before.blackBishop !== after.blackBishop || before.blackRook !== after.blackRook || before.blackKnight !== after.blackKnight)) {
+    return getBlackPromotionMoveFromBoardStates(before, after);
+  }
   if (before.blackKing !== after.blackKing && before.blackRook !== after.blackRook || before.whiteKing !== after.whiteKing && before.whiteRook !== after.whiteRook) {
     return getCastledMoveFromBoardStates(before, after);
   }
   return getSinglePieceMoveFromBoardStates(before, after);
+}
+function getBlackPromotionMoveFromBoardStates(before, after) {
+  let move = {
+    from: 0,
+    to: 0,
+    piece: "blackPawn",
+    pieceTaken: "none",
+    score: 0,
+    evaluations: 0,
+    castleRookFrom: 0,
+    castleRookTo: 0,
+    promotion: "none"
+  };
+  const beforePawnBitboard = before["blackPawn"];
+  const afterPawnBitboard = after["blackPawn"];
+  const movedPawnFromBitboard = beforePawnBitboard & ~afterPawnBitboard;
+  move.from = findBitPositionReverse(movedPawnFromBitboard);
+  const beforeQueenBitboard = before["blackQueen"];
+  const afterQueenBitboard = after["blackQueen"];
+  const promotedQueenBitboard = ~beforeQueenBitboard & afterQueenBitboard;
+  move.to = findBitPositionReverse(promotedQueenBitboard);
+  move.promotion = "blackQueen";
+  return move;
 }
 function getSinglePieceMoveFromBoardStates(before, after) {
   let move = {
@@ -706,7 +750,8 @@ function getSinglePieceMoveFromBoardStates(before, after) {
     score: 0,
     evaluations: 0,
     castleRookFrom: 0,
-    castleRookTo: 0
+    castleRookTo: 0,
+    promotion: "none"
   };
   for (const piece of Object.keys(before)) {
     if (piece === "none") continue;
@@ -765,7 +810,8 @@ function getCastledMoveFromBoardStates(before, after) {
     score: 0,
     evaluations: 0,
     castleRookFrom: 0,
-    castleRookTo: 0
+    castleRookTo: 0,
+    promotion: "none"
   };
   if (before.blackKing !== after.blackKing && before.blackRook !== after.blackRook) {
     move.piece = "blackKing";
@@ -1080,6 +1126,36 @@ var EnPassantBoard = {
   blackRook: BigInt(0),
   blackQueen: BigInt(0),
   blackKing: BigInt(0),
+  none: BigInt(0)
+};
+var PromoteForBlackGameBoard = {
+  whitePawn: BigInt("0b0000000000000000000000000000000000011100000000000000000000000000"),
+  blackPawn: BigInt("0b0000000010111111000000000000000000000000000000000000100000000000"),
+  whiteKnight: BigInt(0),
+  whiteBishop: BigInt(0),
+  whiteRook: BigInt(0),
+  whiteQueen: BigInt(0),
+  whiteKing: BigInt("0b0000000000000000000000000000000000000000000000000000000000000001"),
+  blackKnight: BigInt(0),
+  blackBishop: BigInt(0),
+  blackRook: BigInt(0),
+  blackQueen: BigInt(0),
+  blackKing: BigInt("0b1000000000000000000000000000000000000000000000000000000000000000"),
+  none: BigInt(0)
+};
+var PromoteForWhiteGameBoard = {
+  whitePawn: BigInt("0b0000000000111111000000000000000000000000000000000000100000000000"),
+  blackPawn: BigInt(0),
+  whiteKnight: BigInt(0),
+  whiteBishop: BigInt(0),
+  whiteRook: BigInt(0),
+  whiteQueen: BigInt(0),
+  whiteKing: BigInt("0b0000100000000000000000000000000000000000000000000000000000000000"),
+  blackKnight: BigInt(0),
+  blackBishop: BigInt(0),
+  blackRook: BigInt(0),
+  blackQueen: BigInt(0),
+  blackKing: BigInt("0b0000000000000000000000000000000000000000000000000000000000001000"),
   none: BigInt(0)
 };
 
@@ -1456,7 +1532,7 @@ function whitePawnNodes(node) {
 }
 function whitePawnOneSquareNodes(node, allOccupiedPositions) {
   let newNodes = [];
-  const potentialMoves = AllWhitePawnMovesOneSquare(node.boardState, allOccupiedPositions);
+  const potentialMoves = AllWhitePawnMovesOneSquare(node.boardState, allOccupiedPositions, false);
   for (let i = 0; i < 64; i++) {
     const moveBit = BigInt(1) << BigInt(i);
     const offset = 64 - i;
@@ -1521,12 +1597,19 @@ function blackPawnNodes(node) {
   const doubleStepMoves = blackPawnTwoSquareNodes(node, allOccupiedPositions);
   const captures = blackPawnCaptureNodes(node, allOccupiedWhitePositions);
   const enPassantCaptures = blackPawnEnPassantCaptureNodes(node);
-  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures, ...enPassantCaptures];
+  const promotions = blackPawnPromotionNodes(node, allOccupiedPositions);
+  const allMoves = [
+    ...singleStepMoves,
+    ...doubleStepMoves,
+    ...captures,
+    ...enPassantCaptures,
+    ...promotions
+  ];
   return allMoves;
 }
 function blackPawnOneSquareNodes(node, allOccupiedPositions) {
   let newNodes = [];
-  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions);
+  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions, false);
   const a1Position = 64;
   const h8Position = 1;
   for (let position = h8Position; position <= a1Position; position++) {
@@ -1596,19 +1679,15 @@ function blackPawnCaptureNodes(node, allOccupiedWhitePositions) {
 }
 function blackPawnPromotionNodes(node, allOccupiedPositions) {
   let newNodes = [];
-  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions);
+  const potentialMoves = AllBlackPawnPromotions(node.boardState, allOccupiedPositions);
   const a1Position = 64;
   const h8Position = 1;
   for (let position = h8Position; position <= a1Position; position++) {
     const positionBit = BigInt(1) << BigInt(position);
     if (potentialMoves & positionBit) {
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - position + 8,
-        64 - position,
-        "blackPawn"
-      );
-      newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
+      let queenState = applyMove(node.boardState, 64 - position + 8, 64 - position, "blackQueen");
+      queenState = applyMove(queenState, 64 - position + 8, 0, "blackPawn");
+      newNodes = pushNewNode(newNodes, node, queenState, evalLoggingOff, 0);
     }
   }
   return newNodes;
@@ -1784,6 +1863,9 @@ function NodeFactory(parentNode, newBoardState) {
   };
   return newNode;
 }
+function nodeFromBoardAndGameState(boardState, gameState) {
+  return { boardState, gameState, id: generateNodeId(), parentId: generateNodeId() };
+}
 
 // src/helpers/search/minimax.ts
 function maxMove(node, depth, scoreForWhite, evalLogs) {
@@ -1918,7 +2000,7 @@ function evaluateMove(currentBoard, move, evaluateForWhite) {
 }
 function WhitePawnMovesOneSquare(boardState, allOccupiedPositions) {
   const moves = [];
-  const potentialMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions);
+  const potentialMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions, false);
   for (let i = 0; i < 64; i++) {
     const moveBit = BigInt(1) << BigInt(i);
     const offset = 64 - i;
@@ -1931,7 +2013,8 @@ function WhitePawnMovesOneSquare(boardState, allOccupiedPositions) {
         score: 0,
         evaluations: 0,
         castleRookFrom: 0,
-        castleRookTo: 0
+        castleRookTo: 0,
+        promotion: "none"
       });
     }
   }
@@ -1954,7 +2037,8 @@ function WhitePawnMovesTwoSquare(boardState, allOccupiedPositions) {
         score: 0,
         evaluations: 0,
         castleRookFrom: 0,
-        castleRookTo: 0
+        castleRookTo: 0,
+        promotion: "none"
       });
     }
   }
@@ -1977,7 +2061,8 @@ function WhitePawnCaptures2(boardState, allOccupiedBlackPositions) {
         score: 0,
         evaluations: 0,
         castleRookFrom: 0,
-        castleRookTo: 0
+        castleRookTo: 0,
+        promotion: "none"
       });
     }
     fromIndex = i + 9;
@@ -1991,7 +2076,8 @@ function WhitePawnCaptures2(boardState, allOccupiedBlackPositions) {
         score: 0,
         evaluations: 0,
         castleRookFrom: 0,
-        castleRookTo: 0
+        castleRookTo: 0,
+        promotion: "none"
       });
     }
   }
@@ -2006,8 +2092,9 @@ function WhitePawnMovesComposite2(boardState) {
   const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures];
   return allMoves;
 }
-function AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions) {
-  const singleStepMoves = boardState.whitePawn >> BigInt(8) & ~allOccupiedPositions;
+function AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions, includePromotions) {
+  const allLegalPositions = includePromotions ? allOccupiedPositions : allOccupiedPositions | blackBackRankPositions;
+  const singleStepMoves = boardState.whitePawn >> BigInt(8) & ~allLegalPositions;
   return singleStepMoves;
 }
 function AllWhitePawnMovesTwoSquare(boardState, allOccupiedPositions) {
@@ -2035,7 +2122,7 @@ function AllWhitePawnMovesComposite(boardState) {
   const allOccupiedPositions = allPositions(boardState);
   const allOccupiedBlackPositions = allBlackPositions(boardState);
   let pawnMoveBoard = { ...EmptyBoard };
-  const singleStepMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions);
+  const singleStepMoves = AllWhitePawnMovesOneSquare(boardState, allOccupiedPositions, false);
   const doubleStepMoves = AllWhitePawnMovesTwoSquare(boardState, allOccupiedPositions);
   const captures = AllWhitePawnCaptures(boardState, allOccupiedBlackPositions);
   const enPassantCaptures = AllWhitePawnEnPassantCaptures(boardState, allOccupiedBlackPositions);
@@ -2045,7 +2132,7 @@ function AllWhitePawnMovesComposite(boardState) {
 }
 function BlackPawnMovesOneSquare(boardState, allOccupiedPositions) {
   const moves = [];
-  const potentialMoves = AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions);
+  const potentialMoves = AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions, false);
   const a1Position = 64;
   const h8Position = 1;
   for (let position = h8Position; position <= a1Position; position++) {
@@ -2059,7 +2146,8 @@ function BlackPawnMovesOneSquare(boardState, allOccupiedPositions) {
         score: 0,
         evaluations: 0,
         castleRookFrom: 0,
-        castleRookTo: 0
+        castleRookTo: 0,
+        promotion: "none"
       });
     }
   }
@@ -2083,7 +2171,8 @@ function BlackPawnMovesTwoSquare(boardState, allOccupiedPositions) {
         score: 0,
         evaluations: 0,
         castleRookFrom: 0,
-        castleRookTo: 0
+        castleRookTo: 0,
+        promotion: "none"
       });
     }
   }
@@ -2106,7 +2195,8 @@ function BlackPawnCaptures2(boardState, allOccupiedWhitePositions) {
         score: 0,
         evaluations: 0,
         castleRookFrom: 0,
-        castleRookTo: 0
+        castleRookTo: 0,
+        promotion: "none"
       });
     }
     fromIndex = i - 7;
@@ -2120,7 +2210,8 @@ function BlackPawnCaptures2(boardState, allOccupiedWhitePositions) {
         score: 0,
         evaluations: 0,
         castleRookFrom: 0,
-        castleRookTo: 0
+        castleRookTo: 0,
+        promotion: "none"
       });
     }
   }
@@ -2135,8 +2226,14 @@ function BlackPawnMovesComposite2(boardState) {
   const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures];
   return allMoves;
 }
-function AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions) {
-  const singleStepMoves = boardState.blackPawn << BigInt(8) & ~allOccupiedPositions;
+function AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions, includePromotions) {
+  const allLegalPositions = includePromotions ? allOccupiedPositions : allOccupiedPositions | whiteBackRankPositions;
+  const singleStepMoves = boardState.blackPawn << BigInt(8) & ~allLegalPositions;
+  return singleStepMoves;
+}
+function AllBlackPawnPromotions(boardState, allOccupiedPositions) {
+  const allIllegalPositions = allOccupiedPositions | ~whiteBackRankPositions;
+  const singleStepMoves = boardState.blackPawn << BigInt(8) & ~allIllegalPositions;
   return singleStepMoves;
 }
 function AllBlackPawnMovesTwoSquare(boardState, allOccupiedPositions) {
@@ -2144,9 +2241,17 @@ function AllBlackPawnMovesTwoSquare(boardState, allOccupiedPositions) {
   const blackPawnsOnStartRank = boardState.blackPawn & blackPawnsStartRank;
   const ignoreMovedBlackPawns = { ...boardState };
   ignoreMovedBlackPawns.blackPawn = blackPawnsOnStartRank;
-  const oneStepMoves = AllBlackPawnMovesOneSquare(ignoreMovedBlackPawns, allOccupiedPositions);
+  const oneStepMoves = AllBlackPawnMovesOneSquare(
+    ignoreMovedBlackPawns,
+    allOccupiedPositions,
+    false
+  );
   ignoreMovedBlackPawns.blackPawn = oneStepMoves;
-  const twoStepMoves = AllBlackPawnMovesOneSquare(ignoreMovedBlackPawns, allOccupiedPositions);
+  const twoStepMoves = AllBlackPawnMovesOneSquare(
+    ignoreMovedBlackPawns,
+    allOccupiedPositions,
+    false
+  );
   return twoStepMoves;
 }
 function AllBlackPawnCaptures(boardState, allOccupiedWhitePositions) {
@@ -2158,7 +2263,7 @@ function AllBlackPawnMovesComposite(boardState) {
   const allOccupiedPositions = allPositions(boardState);
   const allOccupiedWhitePositions = allWhitePositions(boardState);
   let pawnMoveBoard = { ...EmptyBoard };
-  const singleStepMoves = AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions);
+  const singleStepMoves = AllBlackPawnMovesOneSquare(boardState, allOccupiedPositions, false);
   const doubleStepMoves = AllBlackPawnMovesTwoSquare(boardState, allOccupiedPositions);
   const captures = AllBlackPawnCaptures(boardState, allOccupiedWhitePositions);
   const allMoves = singleStepMoves | doubleStepMoves | captures;
@@ -2654,6 +2759,10 @@ function initBoard(arrangement) {
       return CastleForBlackAfterGameBoard;
     case 12 /* EnPassantBoard */:
       return EnPassantBoard;
+    case 14 /* PromoteForWhite */:
+      return PromoteForWhiteGameBoard;
+    case 13 /* PromoteForBlack */:
+      return PromoteForBlackGameBoard;
     default:
       return StartingBoard;
   }
@@ -3318,6 +3427,7 @@ var MinotaurEngineController = class {
   AllBlackPawnMovesComposite,
   AllBlackPawnMovesOneSquare,
   AllBlackPawnMovesTwoSquare,
+  AllBlackPawnPromotions,
   AllCompiledMoves,
   AllKingMoves,
   AllKnightMoves,
@@ -3359,6 +3469,8 @@ var MinotaurEngineController = class {
   MinotaurEngineController,
   MultiLog,
   NodeFactory,
+  PromoteForBlackGameBoard,
+  PromoteForWhiteGameBoard,
   RankWeightings,
   StartingBoard,
   StartingNode,
@@ -3378,6 +3490,7 @@ var MinotaurEngineController = class {
   bitBoardsReadable,
   bitCount,
   bitMoveToBoardMove,
+  blackBackRankPositions,
   blackKingLongCastleDestination,
   blackKingLongCastleRookDestination,
   blackKingLongCastleRoute,
@@ -3425,6 +3538,7 @@ var MinotaurEngineController = class {
   generateNodeId,
   getBeforeAndAfterPositions,
   getBitBoardPosition,
+  getBlackPromotionMoveFromBoardStates,
   getCastleStatus,
   getCastledMoveFromBoardStates,
   getFenFromGameNode,
@@ -3464,6 +3578,7 @@ var MinotaurEngineController = class {
   moveAnyPiece,
   movePiece,
   moveToUciFormat,
+  nodeFromBoardAndGameState,
   numberOfTiles,
   occupiedBy,
   orthagonalOffsets,
@@ -3481,6 +3596,7 @@ var MinotaurEngineController = class {
   scoredMove,
   slidingPieces,
   unicodePieceMap,
+  whiteBackRankPositions,
   whiteKingLongCastleDestination,
   whiteKingLongCastleRookDestination,
   whiteKingLongCastleRoute,

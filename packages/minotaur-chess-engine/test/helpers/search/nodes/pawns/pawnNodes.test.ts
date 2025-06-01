@@ -22,6 +22,7 @@ import {
   whitePawnNodes,
   whitePawnEnPassantCaptureNodes,
   blackPawnEnPassantCaptureNodes,
+  PromoteForBlackGameBoard,
 } from '@karmacarrot/minotaur-chess-engine';
 import { LogBoardPositions } from '../../../testHelper';
 import { blackPawnPromotionNodes } from '@karmacarrot/minotaur-chess-engine/src/helpers/search/nodes/pawns/pawnNodes';
@@ -139,12 +140,46 @@ describe('whitePawnEnPassantCaptureNodes', () => {
   });
 });
 
-
-describe("blackPawnPromotionNodes", () => {
-
-  it('returns 5 possible nodes for a black pawn about to be promoted', () => {
+describe('blackPawnNodes', () => {
+  it('returns only 4 possible nodes for a black pawn about to be promoted', () => {
     const startBoard = { ...EmptyBoard };
-    startBoard.blackPawn = BigInt('0b0000000010000000000000000000000000000000000000000000000000000000');
+    startBoard.blackPawn = BigInt(
+      '0b0000000010000000000000000000000000000000000000000000000000000000'
+    );
+    const startStatus = { ...InitialGameStatus };
+    const currentNode = {
+      boardState: startBoard,
+      gameState: startStatus,
+      parentId: '',
+      id: generateNodeId(),
+    };
+
+    const blackPawnNodeArray = blackPawnNodes(currentNode);
+    expect(blackPawnNodeArray.length).toBe(4);
+  });
+
+  it('returns only 16 possible nodes from start position', () => {
+    const startBoard = { ...StartingBoard };
+
+    const startStatus = { ...InitialGameStatus };
+    const currentNode = {
+      boardState: startBoard,
+      gameState: startStatus,
+      parentId: '',
+      id: generateNodeId(),
+    };
+
+    const blackPawnNodeArray = blackPawnNodes(currentNode);
+    expect(blackPawnNodeArray.length).toBe(16);
+  });
+});
+
+describe('blackPawnPromotionNodes', () => {
+  it('returns 4 possible nodes for a black pawn about to be promoted', () => {
+    const startBoard = { ...EmptyBoard };
+    startBoard.blackPawn = BigInt(
+      '0b0000000010000000000000000000000000000000000000000000000000000000'
+    );
     const startStatus = { ...InitialGameStatus };
     const currentNode = {
       boardState: startBoard,
@@ -157,7 +192,21 @@ describe("blackPawnPromotionNodes", () => {
     expect(blackPawnNodeArray.length).toBe(4);
   });
 
-})
+  it('returns 32 possible nodes for a black pawn about to be promoted', () => {
+    const startBoard = { ...PromoteForBlackGameBoard };
+
+    const startStatus = { ...InitialGameStatus };
+    const currentNode = {
+      boardState: startBoard,
+      gameState: startStatus,
+      parentId: '',
+      id: generateNodeId(),
+    };
+    const allOccupiedPositions = allPositions(currentNode.boardState);
+    const blackPawnNodeArray = blackPawnPromotionNodes(currentNode, allOccupiedPositions);
+    expect(blackPawnNodeArray.length).toBe(32);
+  });
+});
 
 describe('blackPawnEnPassantCaptureNodes', () => {
   it("returns a possible en passant capture for black from a board where white moves to c4 while black's pawn is on d4", () => {

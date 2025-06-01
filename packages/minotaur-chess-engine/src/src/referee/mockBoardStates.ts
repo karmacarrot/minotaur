@@ -231,3 +231,35 @@ export const EnPassantBoard: BitBoard = {
   blackKing: BigInt(0),
   none: BigInt(0),
 };
+
+export const PromoteForBlackGameBoard: BitBoard = {
+  whitePawn: BigInt('0b0000000000000000000000000000000000011100000000000000000000000000'),
+  blackPawn: BigInt('0b0000000010111111000000000000000000000000000000000000100000000000'),
+  whiteKnight: BigInt(0),
+  whiteBishop: BigInt(0),
+  whiteRook: BigInt(0),
+  whiteQueen: BigInt(0),
+  whiteKing: BigInt('0b0000000000000000000000000000000000000000000000000000000000000001'),
+  blackKnight: BigInt(0),
+  blackBishop: BigInt(0),
+  blackRook: BigInt(0),
+  blackQueen: BigInt(0),
+  blackKing: BigInt('0b1000000000000000000000000000000000000000000000000000000000000000'),
+  none: BigInt(0),
+};
+
+export const PromoteForWhiteGameBoard: BitBoard = {
+  whitePawn: BigInt('0b0000000000111111000000000000000000000000000000000000100000000000'),
+  blackPawn: BigInt(0),
+  whiteKnight: BigInt(0),
+  whiteBishop: BigInt(0),
+  whiteRook: BigInt(0),
+  whiteQueen: BigInt(0),
+  whiteKing: BigInt('0b0000100000000000000000000000000000000000000000000000000000000000'),
+  blackKnight: BigInt(0),
+  blackBishop: BigInt(0),
+  blackRook: BigInt(0),
+  blackQueen: BigInt(0),
+  blackKing: BigInt('0b0000000000000000000000000000000000000000000000000000000000001000'),
+  none: BigInt(0),
+};

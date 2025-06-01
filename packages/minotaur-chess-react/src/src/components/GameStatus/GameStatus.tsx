@@ -1,32 +1,18 @@
+'use client';
+
 import {
   bigIntToBinaryString,
   BitBoard,
-  BoardMove,
   evaluateBoard,
   GameStatus as GameStatusModel,
+  getFenFromGameNode,
+  nodeFromBoardAndGameState,
 } from '@karmacarrot/minotaur-chess-engine';
+
 import { EvaluationBar } from '../EvaluationBar/EvaluationBar';
-import styled from 'styled-components';
-
-function renderMoveHistory(moveHistory: BoardMove[]) {
-  const moveString = (move: BoardMove) => {
-    const moveKey = `${move.FileFrom}${move.FileTo}${move.RankFrom}${move.RankTo}`;
-    return (
-      <li key={moveKey}>
-        {move.PieceMoved} {move.FileFrom}
-        {move.RankFrom} to {move.FileTo}
-        {move.RankTo}
-      </li>
-    );
-  };
-
-  return <ul>{moveHistory.map((x) => moveString(x))}</ul>;
-}
-
-const StatusContainer = styled.div`
-  margin: 50px;
-  float: left;
-`;
+import { Box, TextField, Typography } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { v4 as uuidv4 } from 'uuid';
 
 export function GameStatus({
   gameStatus,
@@ -36,67 +22,101 @@ export function GameStatus({
   boardState: BitBoard;
 }) {
   const evalBoard = evaluateBoard(boardState, gameStatus.isWhitesTurn);
+  const currentNode = nodeFromBoardAndGameState(boardState, gameStatus);
+
+  const rows = [
+    // { id: uuidv4(), property: 'Game over', value: gameStatus.isGameOver ? 'Yes' : 'No' },
+    { id: uuidv4(), property: 'Turn', value: gameStatus.isWhitesTurn ? 'White' : 'Black' },
+    {
+      id: uuidv4(),
+      property: 'White Player',
+      value: gameStatus.whiteComputerControl ? 'Computer' : 'Human',
+    },
+    {
+      id: uuidv4(),
+      property: 'Black Player',
+      value: gameStatus.blackComputerControl ? 'Computer' : 'Human',
+    },
+    {
+      id: uuidv4(),
+      property: 'White Can Castle',
+      value: `${gameStatus.whiteKingCanCastleLong ? 'Long' : ''}${gameStatus.whiteKingCanCastleShort ? ' | Short' : ''}`,
+    },
+    {
+      id: uuidv4(),
+      property: 'Black Can Castle',
+      value: `${gameStatus.blackKingCanCastleLong ? 'Long' : ''}${gameStatus.blackKingCanCastleShort ? ' | Short' : ''}`,
+    },
+    {
+      id: uuidv4(),
+      property: 'White Last Double Pawn',
+      value: gameStatus.lastWhiteDoublePawnMove > 0 ? 'true' : 'false',
+    },
+    {
+      id: uuidv4(),
+      property: 'Black Last Double Pawn',
+      value: gameStatus.lastBlackDoublePawnMove > 0 ? 'true' : 'false',
+    },
+  ];
+
+  const columns: GridColDef[] = [
+    {
+      field: 'property',
+      headerName: '',
+      flex: 1,
+      minWidth: 130,
+      headerClassName: 'MuiDataGrid-columnHeaderTitle',
+    },
+    {
+      field: 'value',
+      headerName: '',
+      flex: 2,
+      minWidth: 180,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            overflowWrap: 'anywhere',
+            whiteSpace: 'normal',
+          }}
+        >
+          {params.value}
+        </Box>
+      ),
+    },
+  ];
 
   return (
-    <StatusContainer>
-      <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-80">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Game Status</h2>
-        <ul className="space-y-3">
-          <li key="turn" className="flex justify-between items-center">
-            <span className="text-gray-400">Turn:</span>
-            <span className="text-lg font-medium">
-              {gameStatus.isWhitesTurn ? 'White' : 'Black'}
-            </span>
-          </li>
-          <li key="history" className="flex flex-col">
-            <span className="text-gray-400">History:</span>
-            <div className="text-sm font-light text-gray-300 mt-1 pl-2">
-              {renderMoveHistory(gameStatus.moveHistory)}
-            </div>
-          </li>
-          <li key="whitePlayer" className="flex justify-between items-center">
-            <span className="text-gray-400">White Player:</span>
-            <span className="text-lg font-medium">
-              {gameStatus.whiteComputerControl ? 'Computer' : 'Human'}
-            </span>
-          </li>
-          <li key="blackPlayer" className="flex justify-between items-center">
-            <span className="text-gray-400">Black Player:</span>
-            <span className="text-lg font-medium">
-              {gameStatus.blackComputerControl ? 'Computer' : 'Human'}
-            </span>
-          </li>
-          <li key="whitePlayerCastle" className="flex justify-between items-center">
-            <span className="text-gray-400">White Player Can Castle:</span>
-            <span className="text-lg font-medium">
-              {gameStatus.whiteKingCanCastleLong ? 'Long' : ''}
-              {' | '}
-              {gameStatus.whiteKingCanCastleShort ? 'Short' : ''}
-            </span>
-          </li>
-          <li key="blackPlayerCastle" className="flex justify-between items-center">
-            <span className="text-gray-400">Black Player Can Castle:</span>
-            <span className="text-lg font-medium">
-              {gameStatus.blackKingCanCastleLong ? 'Long' : ''}
-              {' | '}
-              {gameStatus.blackKingCanCastleShort ? 'Short' : ''}
-            </span>
-          </li>
-          <li key="whiteLastDoublePawnMove" className="flex justify-between items-center">
-            <span className="text-gray-400">White Last Double Pawn Move:</span>
-            <span className="text-lg font-medium">
-              {bigIntToBinaryString(gameStatus.lastWhiteDoublePawnMove)}
-            </span>
-          </li>
-          <li key="blackLastDoublePawnMove" className="flex justify-between items-center">
-            <span className="text-gray-400">Black Last Double Pawn Move:</span>
-            <span className="text-lg font-medium">
-              {bigIntToBinaryString(gameStatus.lastBlackDoublePawnMove)}
-            </span>
-          </li>
-        </ul>
-      </div>
-      <EvaluationBar score={evalBoard}></EvaluationBar>
-    </StatusContainer>
+    <Box sx={{ width: 350, display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Typography variant="h6" align="center">
+        Game Status
+      </Typography>
+
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        density="compact"
+        hideFooter
+        disableColumnMenu
+        sx={{
+          fontSize: '0.8rem',
+          backgroundColor: '#f9f9f9',
+          borderRadius: 1,
+          '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: '#e0e0e0',
+          },
+        }}
+      />
+      <Box sx={{ width: 500, maxWidth: '100%' }}>
+        <TextField
+          style={{ backgroundColor: '#e6cdf3', color: '#ffffff' }}
+          fullWidth
+          label=""
+          id="inputFen"
+          multiline
+          value={getFenFromGameNode(currentNode)}
+        />
+      </Box>
+      <EvaluationBar score={evalBoard} />
+    </Box>
   );
 }

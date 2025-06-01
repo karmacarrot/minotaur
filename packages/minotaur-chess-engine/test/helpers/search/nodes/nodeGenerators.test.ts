@@ -13,6 +13,7 @@ import {
   createEvalLogs,
   blackKingShortCastleDestination,
   blackKingShortCastleRookDestination,
+  PromoteForBlackGameBoard,
 } from '@karmacarrot/minotaur-chess-engine';
 import { LogBoardPositions } from '../../testHelper';
 
@@ -46,6 +47,20 @@ describe('generateLegalMoves', () => {
     expect(castleMove).toBeTruthy;
 
     castleMove && LogBoardPositions(castleMove.boardState);
+  });
+
+  it('includes a promotion move for black when promotion is possible', () => {
+    const startingBoard = { ...PromoteForBlackGameBoard };
+    const startNode = StartingNode();
+    startNode.boardState = startingBoard;
+    startNode.gameState.isWhitesTurn = false;
+
+    const potentialMoves = generateLegalMoves(startNode);
+
+    const promotionMove = potentialMoves.find((x) => x.boardState.blackQueen > 0);
+    expect(promotionMove).toBeTruthy;
+
+    promotionMove && LogBoardPositions(promotionMove.boardState);
   });
 });
 

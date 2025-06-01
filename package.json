@@ -45,5 +45,9 @@
     "packages/minotaur-chess-react/src",
     "packages/minotaur-chess-engine/test",
     "packages/minotaur-chess-react/test"
-  ]
+  ],
+  "dependencies": {
+    "@mui/icons-material": "^7.1.0",
+    "@mui/x-data-grid": "^8.5.0"
+  }
 }

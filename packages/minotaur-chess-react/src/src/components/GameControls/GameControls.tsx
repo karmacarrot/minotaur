@@ -81,6 +81,8 @@ export function GameControls({
             Black Long Castled
           </MenuItem>
           <MenuItem value={BoardArrangements.EnPassantBoard}>En-Passant Board</MenuItem>
+          <MenuItem value={BoardArrangements.PromoteForBlack}>Promotion for black</MenuItem>
+          <MenuItem value={BoardArrangements.PromoteForWhite}>Promotion for white</MenuItem>
         </Select>
         <Button
           variant="contained"

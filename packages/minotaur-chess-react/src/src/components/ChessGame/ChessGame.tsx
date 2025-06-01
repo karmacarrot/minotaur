@@ -1,33 +1,11 @@
 'use client';
 
+import { Box, Container, Typography, List, ListItem, ListItemText, Divider } from '@mui/material';
 import { ChessBoard } from '../ChessBoard/ChessBoard';
-
 import { GameStatus } from '../GameStatus/GameStatus';
 import { GameControls } from '../GameControls/GameControls';
 import { useMinotaur } from '../../hooks/useMinotaur';
 import { ChessGameProps } from '../../definitions';
-import styled from 'styled-components';
-
-const GameContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const BoardContainer = styled.div`
-  width: 100%;
-`;
-
-const DumpContainer = styled.div`
-  width: 100%;
-`;
-
-const IntroContainer = styled.div`
-  margin: 50px;
-`;
-
-const BoardWrapper = styled.div`
-  display: flex;
-`;
 
 export const ChessGame: React.FC<ChessGameProps> = ({ config }) => {
   if (!config || !config.pieceImages) {
@@ -46,27 +24,37 @@ export const ChessGame: React.FC<ChessGameProps> = ({ config }) => {
   } = useMinotaur(400);
 
   return (
-    <div className="content-container">
-      <GameContainer>
-        <BoardContainer>
-          <GameControls
-            updateControl={updateComputerControl}
-            resetGame={resetGame}
-            engineDepth={engineDepth}
-            setDepth={setEngineDepth}
-          ></GameControls>
-          <BoardWrapper>
+    <Container maxWidth="lg" sx={{ py: 0 }}>
+      <Box display="flex" paddingLeft={0} left={0} marginLeft={0} flexDirection="column">
+        <GameControls
+          updateControl={updateComputerControl}
+          resetGame={resetGame}
+          engineDepth={engineDepth}
+          setDepth={setEngineDepth}
+        />
+
+        <Box display="flex" gap={4} paddingLeft={0} left={0} flexWrap="wrap">
+          <Box flexShrink={0}>
             <ChessBoard
               boardArray={boardAsArray}
               movePiece={movePiece}
               blackKingCheck={gameStatus.blackKingChecked}
               whiteKingCheck={gameStatus.whiteKingChecked}
               config={config}
-            ></ChessBoard>
-            <GameStatus boardState={currentBoard} gameStatus={gameStatus}></GameStatus>
-          </BoardWrapper>
-          <IntroContainer>
-            <p>
+            />
+          </Box>
+
+          <Box
+            paddingLeft={0}
+            width={{ xs: '100%', sm: 300 }}
+            minWidth={250}
+            flexGrow={1}
+            sx={{ flexBasis: 'auto' }}
+          >
+            <GameStatus boardState={currentBoard} gameStatus={gameStatus} />
+          </Box>
+          <Box>
+            <Typography variant="body1" paragraph>
               This chess game is using 64-bit binary integers for each type of piece which are then
               merged into an array for React to render into the board. State is managed by React and
               the piece movement is done through applying bitmasks in pure functions. Datastructures
@@ -74,24 +62,40 @@ export const ChessGame: React.FC<ChessGameProps> = ({ config }) => {
               analysis is done by a recursive minimax function with alpha beta pruning yet to be
               implemented. The intention is to first create a strong engine for the pawns then
               slowly expand out to the other pieces.
-            </p>
-            <p>
-              <strong>Current feature list</strong>
-            </p>
-            <ul>
-              <li>Basic moves - done</li>
-              <li>Basic engine minimax game tree search - done</li>
-              <li>Check / checkmate - done</li>
-              <li>Castling - done</li>
-              <li>en passant - in progress</li>
-              <li>alpha / beta pruning, eval optimisations - to do</li>
-            </ul>
-          </IntroContainer>
-        </BoardContainer>
-        {/* <DumpContainer>
-          <DataDump boardState={currentBoard} />
-        </DumpContainer> */}
-      </GameContainer>
-    </div>
+            </Typography>
+
+            <Typography variant="h6">Current feature list</Typography>
+            <List dense>
+              <ListItem>
+                <ListItemText primary="Basic moves - done" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Basic engine minimax game tree search - done" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Check / checkmate - done" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Castling - done" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="en passant - done" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="promotions - in progress" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="engine refactor for UCI handler - in progress" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="alpha / beta pruning, eval optimisations - to do" />
+              </ListItem>
+            </List>
+          </Box>
+        </Box>
+
+        <Divider />
+      </Box>
+    </Container>
   );
 };

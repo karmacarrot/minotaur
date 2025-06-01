@@ -199,11 +199,19 @@ export const useMinotaur = (boardSideLength: number) => {
         console.log('Black to move!');
         const miniMaxResult = await FindBestMoveMiniMax(currentBoard, gameStatus, engineDepth);
         const bestMove = miniMaxResult[0];
-
+        console.log(bestMove);
         if (bestMove.to > 0 && bestMove.from > 0) {
           console.log(`computer moves black ${bestMove.from} to ${bestMove.to}`);
           console.log(`computer made ${bestMove.evaluations} evaluations`);
-          let newBoardState = applyMove(currentBoard, bestMove.from, bestMove.to, bestMove.piece);
+
+          let newBoardState = currentBoard;
+
+          if (bestMove.promotion !== 'none') {
+            newBoardState = applyMove(currentBoard, bestMove.from, bestMove.to, bestMove.promotion);
+            newBoardState = applyMove(newBoardState, bestMove.from, 0, bestMove.piece);
+          } else {
+            newBoardState = applyMove(currentBoard, bestMove.from, bestMove.to, bestMove.piece);
+          }
 
           if (bestMove.castleRookFrom > 0 || bestMove.castleRookTo > 0) {
             newBoardState = applyMove(

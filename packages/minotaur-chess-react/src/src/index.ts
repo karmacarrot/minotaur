@@ -9,5 +9,5 @@ export * from './components/GameStatus/GameStatus';
 export * from './components/Tile/Tile';
 export * from './helpers/boardXYtoRankFile';
 export * from './definitions';
-
+export * from './components/MinotaurHeader/MinotaurHeader';
 export type { MinotaurConfig } from '@karmacarrot/minotaur-chess-engine';

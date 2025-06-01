@@ -4,6 +4,7 @@ import { aTogFilesOnly, bTohFilesOnly, evalLoggingOff } from '../../../definitio
 import {
   AllBlackPawnMovesOneSquare,
   AllBlackPawnMovesTwoSquare,
+  AllBlackPawnPromotions,
   AllWhitePawnMovesOneSquare,
   AllWhitePawnMovesTwoSquare,
 } from '../../../moveEval';
@@ -28,7 +29,7 @@ export function whitePawnNodes(node: GameNode): GameNode[] {
 
 function whitePawnOneSquareNodes(node: GameNode, allOccupiedPositions: bigint): GameNode[] {
   let newNodes: GameNode[] = [];
-  const potentialMoves = AllWhitePawnMovesOneSquare(node.boardState, allOccupiedPositions);
+  const potentialMoves = AllWhitePawnMovesOneSquare(node.boardState, allOccupiedPositions, false);
 
   for (let i = 0; i < 64; i++) {
     const moveBit = BigInt(1) << BigInt(i);
@@ -128,14 +129,22 @@ export function blackPawnNodes(node: GameNode): GameNode[] {
 
   const enPassantCaptures = blackPawnEnPassantCaptureNodes(node);
 
-  const allMoves = [...singleStepMoves, ...doubleStepMoves, ...captures, ...enPassantCaptures];
+  const promotions = blackPawnPromotionNodes(node, allOccupiedPositions);
+
+  const allMoves = [
+    ...singleStepMoves,
+    ...doubleStepMoves,
+    ...captures,
+    ...enPassantCaptures,
+    ...promotions,
+  ];
 
   return allMoves;
 }
 
 function blackPawnOneSquareNodes(node: GameNode, allOccupiedPositions: bigint): GameNode[] {
   let newNodes: GameNode[] = [];
-  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions);
+  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions, false);
   const a1Position = 64;
   const h8Position = 1;
   for (let position = h8Position; position <= a1Position; position++) {
@@ -236,11 +245,9 @@ export function blackPawnCaptureNodes(
   return newNodes;
 }
 
-
-
 export function blackPawnPromotionNodes(node: GameNode, allOccupiedPositions: bigint): GameNode[] {
   let newNodes: GameNode[] = [];
-  const potentialMoves = AllBlackPawnMovesOneSquare(node.boardState, allOccupiedPositions);
+  const potentialMoves = AllBlackPawnPromotions(node.boardState, allOccupiedPositions);
   const a1Position = 64;
   const h8Position = 1;
   for (let position = h8Position; position <= a1Position; position++) {
@@ -249,19 +256,26 @@ export function blackPawnPromotionNodes(node: GameNode, allOccupiedPositions: bi
 
     //if position is in the 'all moves' bigint
     if (potentialMoves & positionBit) {
-      //add it
-      const newBoardState = applyMove(
-        node.boardState,
-        64 - position + 8,
-        64 - position,
-        'blackPawn'
-      );
-      newNodes = pushNewNode(newNodes, node, newBoardState, evalLoggingOff, 0);
+      //promote to queen
+      let queenState = applyMove(node.boardState, 64 - position + 8, 64 - position, 'blackQueen');
+      queenState = applyMove(queenState, 64 - position + 8, 0, 'blackPawn');
+      newNodes = pushNewNode(newNodes, node, queenState, evalLoggingOff, 0);
+      //promote to knight
+      // let knightState = applyMove(node.boardState, 64 - position + 8, 64 - position, 'blackKnight');
+      // knightState = applyMove(knightState, 64 - position + 8, 0, 'blackPawn');
+      // newNodes = pushNewNode(newNodes, node, knightState, evalLoggingOff, 0);
+      // //promote to bishop
+      // let bishopState = applyMove(node.boardState, 64 - position + 8, 64 - position, 'blackBishop');
+      // bishopState = applyMove(bishopState, 64 - position + 8, 0, 'blackPawn');
+      // newNodes = pushNewNode(newNodes, node, bishopState, evalLoggingOff, 0);
+      // //promote to rook
+      // let rookState = applyMove(node.boardState, 64 - position + 8, 64 - position, 'blackRook');
+      // applyMove(rookState, 64 - position + 8, 0, 'blackPawn');
+      // newNodes = pushNewNode(newNodes, node, rookState, evalLoggingOff, 0);
     }
   }
 
   return newNodes;
 }
-
 
 //TODO: promotion nodes

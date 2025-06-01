@@ -17,9 +17,11 @@ import {
   scoredMove,
   EvalWeightings,
   EnPassantBoard,
+  PromoteForBlackGameBoard,
+  outputEvalLogs,
 } from '@karmacarrot/minotaur-chess-engine';
 
-const showEvalOutputs = LoggerConfig.enableEvaluationLogs;
+const showEvalOutputs = true; //LoggerConfig.enableEvaluationLogs;
 
 describe('maxMove function', () => {
   it('picks a central pawn move from a starting board for white', () => {
@@ -129,6 +131,23 @@ describe('maxMove function', () => {
     if (showEvalOutputs) {
       outputEvalLogsHtml(evalLogs, 'picks a central pawn move from a starting board for black');
     }
+  });
+
+  it('includes a move to promote a pawn for black when possible', () => {
+    const startBoard = { ...PromoteForBlackGameBoard };
+    const startStatus = { ...InitialGameStatus };
+    const evalLogs = createEvalLogs();
+
+    startStatus.isWhitesTurn = false;
+    const currentNode = {
+      boardState: startBoard,
+      gameState: startStatus,
+      parentId: '',
+      id: generateNodeId(),
+    };
+    const [bitMove] = maxMove(currentNode, 1, false, evalLogs);
+
+    expect(bitMove.piece).toBe('blackQueen');
   });
 
   it('includes a move to advance a pawn for black when possible', () => {

@@ -27,17 +27,17 @@ export function applyMove(
   const fromMask = BigInt(1) << BigInt(64 - from);
   const toMask = BigInt(1) << BigInt(64 - to);
 
-  MultiLog(
-    LogLevels.info,
-    `apply move to ${bigIntToBinaryString(bitBoard[pieceBitBoard])} from ${from} to ${to} `,
-    LoggerConfig.verbosity
-  );
+  // MultiLog(
+  //   LogLevels.info,
+  //   `apply move to ${bigIntToBinaryString(bitBoard[pieceBitBoard])} from ${from} to ${to} `,
+  //   LoggerConfig.verbosity
+  // );
 
   const fromMaskString = bigIntToBinaryString(fromMask);
   const toMaskString = bigIntToBinaryString(toMask);
 
-  MultiLog(LogLevels.info, `from mask ${fromMaskString}`, LoggerConfig.verbosity);
-  MultiLog(LogLevels.info, `to mask ${toMaskString}`, LoggerConfig.verbosity);
+  // MultiLog(LogLevels.info, `from mask ${fromMaskString}`, LoggerConfig.verbosity);
+  // MultiLog(LogLevels.info, `to mask ${toMaskString}`, LoggerConfig.verbosity);
 
   newBitBoard = clearPosition(newBitBoard, to);
 
@@ -48,13 +48,13 @@ export function applyMove(
 export function clearPosition(bitBoard: BitBoard, position: number): BitBoard {
   const removalMask = binaryMask64(position, 'all_ones_with_position_as_zero');
   const removalMaskString = bigIntToBinaryString(removalMask);
-  MultiLog(LogLevels.warn, removalMaskString, LoggerConfig.verbosity);
+  // MultiLog(LogLevels.warn, removalMaskString, LoggerConfig.verbosity);
 
   let newBitBoard = { ...bitBoard };
   for (let piece in newBitBoard) {
     let pieceBoard = newBitBoard[piece as keyof typeof newBitBoard];
     const pieceBoardString = bigIntToBinaryString(pieceBoard);
-    MultiLog(LogLevels.info, `${piece} is ${pieceBoardString}`, LoggerConfig.verbosity);
+    // MultiLog(LogLevels.info, `${piece} is ${pieceBoardString}`, LoggerConfig.verbosity);
 
     newBitBoard[piece as keyof typeof newBitBoard] = pieceBoard & removalMask;
   }
@@ -65,11 +65,11 @@ export function getBitBoardPosition(file: string, rank: number) {
   const fileNumber = files.indexOf(file);
   const minRank = (rank - 1) * 8;
 
-  MultiLog(
-    LogLevels.info,
-    `position ${file}${rank} minrank: ${minRank} fileNumber: ${fileNumber} `,
-    LoggerConfig.verbosity
-  );
+  // MultiLog(
+  //   LogLevels.info,
+  //   `position ${file}${rank} minrank: ${minRank} fileNumber: ${fileNumber} `,
+  //   LoggerConfig.verbosity
+  // );
 
   return minRank + fileNumber + 1;
 }
@@ -113,8 +113,8 @@ export function binaryMask64(
   if (maskType === 'all_zeroes_with_position_as_one') {
     return binaryMask;
   }
-  MultiLog(LogLevels.info, bigIntToBinaryString(allOnes), LoggerConfig.verbosity);
-  MultiLog(LogLevels.info, bigIntToBinaryString(binaryMask), LoggerConfig.verbosity);
+  // MultiLog(LogLevels.info, bigIntToBinaryString(allOnes), LoggerConfig.verbosity);
+  // MultiLog(LogLevels.info, bigIntToBinaryString(binaryMask), LoggerConfig.verbosity);
 
   return allOnes & ~binaryMask;
 }

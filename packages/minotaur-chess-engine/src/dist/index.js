@@ -193,6 +193,7 @@ __export(src_exports, {
   rookNodes: () => rookNodes,
   scoredMove: () => scoredMove,
   slidingPieces: () => slidingPieces,
+  uciToBitMoves: () => uciToBitMoves,
   unicodePieceMap: () => unicodePieceMap,
   whiteBackRankPositions: () => whiteBackRankPositions,
   whiteKingLongCastleDestination: () => whiteKingLongCastleDestination,
@@ -593,15 +594,8 @@ function applyMove(bitBoard, from, to, pieceBitBoard) {
   let newBitBoard = { ...bitBoard };
   const fromMask = BigInt(1) << BigInt(64 - from);
   const toMask = BigInt(1) << BigInt(64 - to);
-  MultiLog(
-    3 /* info */,
-    `apply move to ${bigIntToBinaryString(bitBoard[pieceBitBoard])} from ${from} to ${to} `,
-    LoggerConfig.verbosity
-  );
   const fromMaskString = bigIntToBinaryString(fromMask);
   const toMaskString = bigIntToBinaryString(toMask);
-  MultiLog(3 /* info */, `from mask ${fromMaskString}`, LoggerConfig.verbosity);
-  MultiLog(3 /* info */, `to mask ${toMaskString}`, LoggerConfig.verbosity);
   newBitBoard = clearPosition(newBitBoard, to);
   newBitBoard[pieceBitBoard] = newBitBoard[pieceBitBoard] & ~fromMask | toMask;
   return newBitBoard;
@@ -609,12 +603,10 @@ function applyMove(bitBoard, from, to, pieceBitBoard) {
 function clearPosition(bitBoard, position) {
   const removalMask = binaryMask64(position, "all_ones_with_position_as_zero");
   const removalMaskString = bigIntToBinaryString(removalMask);
-  MultiLog(0 /* warn */, removalMaskString, LoggerConfig.verbosity);
   let newBitBoard = { ...bitBoard };
   for (let piece in newBitBoard) {
     let pieceBoard = newBitBoard[piece];
     const pieceBoardString = bigIntToBinaryString(pieceBoard);
-    MultiLog(3 /* info */, `${piece} is ${pieceBoardString}`, LoggerConfig.verbosity);
     newBitBoard[piece] = pieceBoard & removalMask;
   }
   return newBitBoard;
@@ -622,11 +614,6 @@ function clearPosition(bitBoard, position) {
 function getBitBoardPosition(file, rank) {
   const fileNumber = files.indexOf(file);
   const minRank = (rank - 1) * 8;
-  MultiLog(
-    3 /* info */,
-    `position ${file}${rank} minrank: ${minRank} fileNumber: ${fileNumber} `,
-    LoggerConfig.verbosity
-  );
   return minRank + fileNumber + 1;
 }
 function getFileAndRank(bitBoardPosition) {
@@ -657,8 +644,6 @@ function binaryMask64(position, maskType) {
   if (maskType === "all_zeroes_with_position_as_one") {
     return binaryMask;
   }
-  MultiLog(3 /* info */, bigIntToBinaryString(allOnes), LoggerConfig.verbosity);
-  MultiLog(3 /* info */, bigIntToBinaryString(binaryMask), LoggerConfig.verbosity);
   return allOnes & ~binaryMask;
 }
 function occupiedBy(currentBoard, position) {
@@ -1959,7 +1944,6 @@ function scoredMove(score, previousBoardState, newBoardState) {
 function FindBestMoves(currentBoard, isWhitesTurn) {
   const legalMoves = generateLegalMoves2(currentBoard, isWhitesTurn);
   const moveScores = [];
-  console.log(`legal moves: ${legalMoves}`);
   for (let possibleMove of legalMoves) {
     const moveResult = evaluateMove(currentBoard, possibleMove, isWhitesTurn);
     moveScores.push({
@@ -2686,11 +2670,6 @@ function isLegalPawnMove(moveAttempted, boardState, gameState) {
   const ranksMoved = Math.abs(moveAttempted.RankFrom - moveAttempted.RankTo);
   const startingRank = isOnStartingRank(moveAttempted);
   const destinationOccupiedBy = occupiedBy(boardState, destinationPosition);
-  MultiLog(
-    1 /* log */,
-    `${startingRank}, ${ranksMoved}, ${moveAttempted.PieceMoved})}`,
-    LoggerConfig.verbosity
-  );
   if (!startingRank && ranksMoved != 1) {
     return false;
   }
@@ -3260,6 +3239,35 @@ function moveToUciFormat(move) {
   const rankAndFileForEndPosition = getFileAndRank(move.to);
   return `${rankAndFileForStartPosition.file}${rankAndFileForStartPosition.rank}${rankAndFileForEndPosition.file}${rankAndFileForEndPosition.rank}`;
 }
+function uciToBitMoves(moveLine, boardState, resetGame) {
+  const moveCommands = moveLine.trim().split(/\s+/);
+  const bitMoves = [];
+  moveCommands.forEach((moveCommand) => {
+    if (moveCommand === "startpos") {
+      resetGame();
+    } else {
+      if (moveCommand && moveCommand !== "moves" && moveCommand !== "position" && moveCommand !== "") {
+        const fromPosition = getBitBoardPosition(moveCommand[0] + "", Number(moveCommand[1]));
+        const toPosition = getBitBoardPosition(moveCommand[2] + "", Number(moveCommand[3]));
+        const piece = occupiedBy(boardState, fromPosition);
+        const takenPiece = occupiedBy(boardState, toPosition);
+        const bitMove = {
+          from: fromPosition,
+          to: toPosition,
+          piece,
+          pieceTaken: takenPiece,
+          castleRookFrom: 0,
+          castleRookTo: 0,
+          score: 0,
+          evaluations: 0,
+          promotion: piece
+        };
+        bitMoves.push(bitMove);
+      }
+    }
+  });
+  return bitMoves;
+}
 
 // src/helpers/state/gameState.ts
 var gameStatusReducer = (state, action) => {
@@ -3318,7 +3326,10 @@ var MinotaurEngineController = class {
     this.currentBoard = initBoard(boardArrangement);
     this.dispatch({ type: "RESET_GAME" });
   }
-  engineBestMove = async () => {
+  handleMoveHistoryUpdates(move) {
+    this.dispatch({ type: "ADD_MOVE", move });
+  }
+  engineBestMove = async (onBoardUpdated, onGameStatusUpdated) => {
     const miniMaxResult = await FindBestMoveMiniMax(
       this.currentBoard,
       this.gameStatus,
@@ -3332,11 +3343,13 @@ var MinotaurEngineController = class {
       fromPosition.rank,
       toPosition.rank,
       fromPosition.file + "",
-      toPosition.file + ""
+      toPosition.file + "",
+      onBoardUpdated,
+      onGameStatusUpdated
     );
     return { boardUpdateResponse: moveUpdateResponse, bestMove };
   };
-  movePiece = (piece, fromRank, toRank, fromFile, toFile) => {
+  movePiece = (piece, fromRank, toRank, fromFile, toFile, onBoardUpdated, onGameStatusUpdated) => {
     if (this.gameStatus.isWhitesTurn && !piece?.toLowerCase().includes("white")) {
       return null;
     }
@@ -3395,6 +3408,13 @@ var MinotaurEngineController = class {
           value: false
         });
       }
+      this.dispatch({
+        type: "SET_CASTLING",
+        castling: this._activeColour() + "Short",
+        value: false
+      });
+      onBoardUpdated(this.currentBoard);
+      onGameStatusUpdated(this.gameStatus);
     }
     return moveResponse;
   };
@@ -3595,6 +3615,7 @@ var MinotaurEngineController = class {
   rookNodes,
   scoredMove,
   slidingPieces,
+  uciToBitMoves,
   unicodePieceMap,
   whiteBackRankPositions,
   whiteKingLongCastleDestination,

@@ -1,0 +1,67 @@
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
+
+function runUciEngine() {
+  return spawn('node', ['uciHandler.ts']); // use ts-node or compiled .js as needed
+}
+
+function sendCommand(proc: ChildProcessWithoutNullStreams, cmd: string) {
+  proc.stdin.write(cmd + '\n');
+}
+
+function waitForResponse(
+  proc: ChildProcessWithoutNullStreams,
+  matchFn: (line: string) => boolean
+): Promise<string> {
+  return new Promise((resolve) => {
+    const onData = (data: Buffer) => {
+      const lines = data.toString().split('\n');
+      for (const line of lines) {
+        if (matchFn(line)) {
+          proc.stdout.off('data', onData);
+          resolve(line.trim());
+          break;
+        }
+      }
+    };
+    proc.stdout.on('data', onData);
+  });
+}
+
+describe('Minotaur UCI Self-Play', () => {
+  it('should play 10 moves without crashing', async () => {
+    const engine = runUciEngine();
+    const moves: string[] = [];
+
+    await waitForResponse(engine, (line) => line.startsWith('uciok'));
+    sendCommand(engine, 'isready');
+    await waitForResponse(engine, (line) => line === 'readyok');
+
+    sendCommand(engine, 'ucinewgame');
+
+    let turn = 0;
+
+    while (turn < 10) {
+      const positionLine =
+        moves.length > 0 ? `position startpos moves ${moves.join(' ')}` : 'position startpos';
+
+      sendCommand(engine, positionLine);
+      sendCommand(engine, 'go');
+
+      const bestmoveLine = await waitForResponse(engine, (line) => line.startsWith('bestmove'));
+      const match = bestmoveLine.match(/^bestmove\s+([a-h][1-8][a-h][1-8][qrbn]?)\b/);
+
+      if (!match) {
+        throw new Error(`Unexpected bestmove line: ${bestmoveLine}`);
+      }
+
+      const move = match[1];
+      moves.push(move);
+      turn++;
+    }
+
+    sendCommand(engine, 'quit');
+    engine.kill();
+
+    expect(moves.length).toBe(10);
+  }, 1000000);
+});

@@ -33,7 +33,7 @@ export function FindBestMoves(currentBoard: BitBoard, isWhitesTurn: boolean): Sc
   const legalMoves = generateLegalMoves(currentBoard, isWhitesTurn);
 
   const moveScores: ScoreArray = [];
-  console.log(`legal moves: ${legalMoves}`);
+  // console.log(`legal moves: ${legalMoves}`);
   for (let possibleMove of legalMoves) {
     const moveResult = evaluateMove(currentBoard, possibleMove, isWhitesTurn);
     moveScores.push({

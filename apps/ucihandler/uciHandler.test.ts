@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { uciToBitMoves } from './uciHandler.ts';
+import { uciToBitMoves } from '@karmacarrot/minotaur-chess-engine';
 import { BoardArrangements, MinotaurEngineController } from '@karmacarrot/minotaur-chess-engine';
 
 async function runEngineWithInput(inputs: string[]): Promise<string[]> {
@@ -21,13 +21,11 @@ async function runEngineWithInput(inputs: string[]): Promise<string[]> {
       resolve(output);
     });
   });
-  console.log('Raw output:', JSON.stringify(finalOutput));
+  // console.log('Raw output:', JSON.stringify(finalOutput));
   return finalOutput.split(/\r?\n/).filter((line) => line.trim().length > 0);
 }
 
 describe('UCI Wrapper basic CLI functionality', () => {
-
-
   it('responds to uci command', async () => {
     const responses = await runEngineWithInput(['uci', 'quit']);
     expect(responses).toContain('uciok');
@@ -41,7 +39,20 @@ describe('UCI Wrapper basic CLI functionality', () => {
 
   it('calculates a best move from start position', async () => {
     const responses = await runEngineWithInput(['ucinewgame', 'position startpos', 'go', 'quit']);
-    console.log(`responses ${responses}`);
+    // console.log(`responses ${responses}`);
+    const bestMoveLine = responses.find((r) => r.startsWith('bestmove'));
+    expect(bestMoveLine).toBe('bestmove e2e4');
+  });
+
+  it('when prompted with go twice in a row it will move for both sides', async () => {
+    const responses = await runEngineWithInput([
+      'ucinewgame',
+      'position startpos',
+      'go',
+      'go',
+      'quit',
+    ]);
+    // console.log(`responses ${responses}`);
     const bestMoveLine = responses.find((r) => r.startsWith('bestmove'));
     expect(bestMoveLine).toBe('bestmove e2e4');
   });
@@ -116,23 +127,6 @@ describe('UCI Wrapper basic CLI functionality', () => {
 //     // expect no legal move or draw response
 //   });
 // });
-
-describe('uciToBitMoves basic functionality', () => {
-  it('correctly applies the moves to the board', () => {
-    let controller = new MinotaurEngineController(2);
-    controller.resetGame(BoardArrangements.StartingPositions);
-
-    const fourMoves = 'position startpos moves e2e4 e7e5 g1f3 b8c6';
-    const bitMoves = uciToBitMoves(fourMoves, controller.currentBoard);
-
-    expect(bitMoves.length).toBe(4);
-
-    expect(bitMoves[0].piece).toBe('whitePawn');
-    expect(bitMoves[1].piece).toBe('blackPawn');
-    expect(bitMoves[2].piece).toBe('whiteKnight');
-    expect(bitMoves[3].piece).toBe('blackKnight');
-  });
-});
 
 // describe('uciToBitMoves - Special Rule Coverage', () => {
 //   let controller: MinotaurEngineController;

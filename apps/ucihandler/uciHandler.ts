@@ -1,74 +1,26 @@
 import * as readline from 'node:readline/promises';
-import path from 'path';
-import fs from 'fs';
 import { stdin as input, stdout as output } from 'node:process';
 import {
   moveToUciFormat,
   getFenFromGameNode,
   LogUnicodeBoardPositions,
-  type BitMove,
   MinotaurEngineController,
   BoardArrangements,
-  getBitBoardPosition,
-  occupiedBy,
-  type BitBoard,
   getFileAndRank,
   type Piece,
 } from '@karmacarrot/minotaur-chess-engine';
 
 const ENGINE_DEPTH = 2;
 
-// const rl = readline.createInterface({ input, output });
-// const logPath = path.resolve('/tmp/uci-engine.log');
-
-// function log(msg: string) {
-//   fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
-// }
-
-// // Test it
-// log('Engine script started');
+const rl = readline.createInterface({ input, output });
 
 let controller: MinotaurEngineController;
+
+resetGame();
 
 export function resetGame() {
   controller = new MinotaurEngineController(ENGINE_DEPTH);
   controller.resetGame(BoardArrangements.StartingPositions);
-}
-
-export function uciToBitMoves(moveLine: string, boardState: BitBoard): BitMove[] {
-  const moveCommands = moveLine.trim().split(/\s+/);
-  const bitMoves: BitMove[] = [];
-
-  moveCommands.forEach((moveCommand: string) => {
-    if (moveCommand === 'startpos') {
-      resetGame();
-    } else {
-      if (
-        moveCommand &&
-        moveCommand !== 'moves' &&
-        moveCommand !== 'position' &&
-        moveCommand !== ''
-      ) {
-        const fromPosition = getBitBoardPosition(moveCommand[0], Number(moveCommand[1]));
-        const toPosition = getBitBoardPosition(moveCommand[2], Number(moveCommand[3]));
-        const piece = occupiedBy(boardState, fromPosition);
-        const takenPiece = occupiedBy(boardState, toPosition);
-        const bitMove: BitMove = {
-          from: fromPosition,
-          to: toPosition,
-          piece: piece as keyof BitBoard,
-          pieceTaken: takenPiece as keyof BitBoard,
-          castleRookFrom: 0,
-          castleRookTo: 0,
-          score: 0,
-          evaluations: 0,
-        };
-        bitMoves.push(bitMove);
-      }
-    }
-  });
-
-  return bitMoves;
 }
 
 rl.on('line', async (line) => {
@@ -86,12 +38,19 @@ rl.on('line', async (line) => {
   } else if (line === 'showmestatus') {
     const state = controller.getState();
     console.log(state.gameState);
-  } else if (line === 'quit') {
+  } else if (line === 'quit' || line === 'exit') {
     rl.close();
   } else if (line === 'ucinewgame') {
     resetGame();
   } else if (line === 'go') {
-    const engineResponse = await controller.engineBestMove();
+    const engineResponse = await controller.engineBestMove(
+      () => {
+        return;
+      },
+      () => {
+        return;
+      }
+    );
     console.log('bestmove ' + moveToUciFormat(engineResponse.bestMove));
   } else if (line.startsWith('position')) {
     if (line.endsWith('startpos')) {
@@ -108,7 +67,13 @@ rl.on('line', async (line) => {
         fromMove.rank,
         toMove.rank,
         fromMove.file + '',
-        toMove.file + ''
+        toMove.file + '',
+        () => {
+          return;
+        },
+        () => {
+          return;
+        }
       );
     });
   } else {

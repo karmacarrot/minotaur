@@ -320,11 +320,11 @@ export function isLegalPawnMove(
   const startingRank = isOnStartingRank(moveAttempted);
   const destinationOccupiedBy = occupiedBy(boardState, destinationPosition);
 
-  MultiLog(
-    LogLevels.log,
-    `${startingRank}, ${ranksMoved}, ${moveAttempted.PieceMoved})}`,
-    LoggerConfig.verbosity
-  );
+  // MultiLog(
+  //   LogLevels.log,
+  //   `${startingRank}, ${ranksMoved}, ${moveAttempted.PieceMoved})}`,
+  //   LoggerConfig.verbosity
+  // );
 
   if (!startingRank && ranksMoved != 1) {
     return false;

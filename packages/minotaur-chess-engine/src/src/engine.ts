@@ -1,10 +1,18 @@
-import { getFile, getRank, initBoard, movePiece as movePieceOnBoard } from './board';
+import { initBoard, movePiece as movePieceOnBoard } from './board';
 import { binaryMask64, getBitBoardPosition, getFileAndRank } from './helpers/bitboards';
 import { BoardArrangements, InitialGameStatus } from './helpers/definitions';
 import { FindBestMoveMiniMax } from './helpers/moveEval';
 import { gameStatusReducer } from './helpers/state/gameState';
 import { isOpponentCheckedMemo } from './referee/referee';
-import { BitBoard, BoardUpdateResponse, BoardXY, EngineResponse, GameNode, Piece } from './types';
+import {
+  BitBoard,
+  BoardMove,
+  BoardUpdateResponse,
+  EngineResponse,
+  GameNode,
+  GameStatus,
+  Piece,
+} from './types';
 
 export class MinotaurEngineController {
   currentBoard = initBoard(BoardArrangements.StartingPositions);
@@ -20,7 +28,14 @@ export class MinotaurEngineController {
     this.dispatch({ type: 'RESET_GAME' });
   }
 
-  engineBestMove = async (): Promise<EngineResponse> => {
+  handleMoveHistoryUpdates(move: BoardMove) {
+    this.dispatch({ type: 'ADD_MOVE', move });
+  }
+
+  engineBestMove = async (
+    onBoardUpdated: (board: BitBoard) => void,
+    onGameStatusUpdated: (status: GameStatus) => void
+  ): Promise<EngineResponse> => {
     const miniMaxResult = await FindBestMoveMiniMax(
       this.currentBoard,
       this.gameStatus,
@@ -36,7 +51,9 @@ export class MinotaurEngineController {
       fromPosition.rank,
       toPosition.rank,
       fromPosition.file + '',
-      toPosition.file + ''
+      toPosition.file + '',
+      onBoardUpdated,
+      onGameStatusUpdated
     );
 
     return { boardUpdateResponse: moveUpdateResponse, bestMove };
@@ -47,7 +64,9 @@ export class MinotaurEngineController {
     fromRank: number,
     toRank: number,
     fromFile: string,
-    toFile: string
+    toFile: string,
+    onBoardUpdated: (board: BitBoard) => void,
+    onGameStatusUpdated: (status: GameStatus) => void
   ): BoardUpdateResponse | null => {
     if (this.gameStatus.isWhitesTurn && !piece?.toLowerCase().includes('white')) {
       return null;
@@ -72,7 +91,6 @@ export class MinotaurEngineController {
     );
 
     if (moveResponse.MoveAttempted.isLegal) {
-      //console.log('move piece legal');
       if ((piece === 'whitePawn' || piece === 'blackPawn') && toFile !== fromFile) {
         if (
           !(
@@ -132,6 +150,15 @@ export class MinotaurEngineController {
           value: false,
         });
       }
+
+      this.dispatch({
+        type: 'SET_CASTLING',
+        castling: this._activeColour() + 'Short',
+        value: false,
+      });
+      //this.handleMoveHistoryUpdates(moveResponse.MoveAttempted);
+      onBoardUpdated(this.currentBoard);
+      onGameStatusUpdated(this.gameStatus);
     }
 
     return moveResponse;

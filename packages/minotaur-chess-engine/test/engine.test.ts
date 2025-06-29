@@ -1,13 +1,12 @@
 import {
+  bitMoveToBoardMove,
   BoardArrangements,
-  BoardXY,
-  getBitBoardPosition,
   MinotaurEngineController,
   Piece,
 } from '@karmacarrot/minotaur-chess-engine';
 
 describe('MinotaurEngineController', () => {
-  let controller: MinotaurEngineController;
+  let controller = new MinotaurEngineController(2);
 
   beforeEach(() => {
     controller = new MinotaurEngineController(2);
@@ -23,7 +22,19 @@ describe('MinotaurEngineController', () => {
   it('should allow a legal move e2 to e4 for white pawn', () => {
     const piece: Piece = 'whitePawn';
 
-    controller.movePiece('whitePawn', 2, 4, 'e', 'e');
+    controller.movePiece(
+      'whitePawn',
+      2,
+      4,
+      'e',
+      'e',
+      () => {
+        return;
+      },
+      () => {
+        return;
+      }
+    );
     const state = controller.getState();
 
     expect(state.gameState.moveHistory).toHaveLength(1);
@@ -32,12 +43,29 @@ describe('MinotaurEngineController', () => {
     expect(lastMove?.PieceMoved).toBe(piece);
   });
 
-  it('should make a best move using minimax', () => {
-    const piece: Piece = 'whitePawn';
-
-    controller.movePiece('whitePawn', 2, 4, 'e', 'e');
-    controller.engineBestMove();
-
+  it('should make a best move using minimax', async () => {
+    controller.movePiece(
+      'whitePawn',
+      2,
+      4,
+      'e',
+      'e',
+      () => {
+        return;
+      },
+      () => {
+        return;
+      }
+    );
+    const engineResponse = await controller.engineBestMove(
+      () => {
+        return;
+      },
+      () => {
+        return;
+      }
+    );
+    expect(engineResponse.bestMove.from).toBeGreaterThan(0);
     const state = controller.getState();
     expect(state.gameState.moveHistory).toHaveLength(2);
   });

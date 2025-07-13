@@ -3220,6 +3220,100 @@ var MinotaurEngineController = class {
     };
   }
 };
+
+// src/helpers/generic.ts
+var normalizedLineEndings = (fileContents) => {
+  return fileContents.replace(/\r\n|\r/g, "\n");
+};
+var splitOnCarriageReturnsAndSpaces = (fileContents) => {
+  return fileContents.trim().split(/\s+/);
+};
+
+// src/helpers/pgn/pgnBuilder.ts
+var gameResults = ["1/2-1/2"];
+var cleanPGN = (pgnToClean) => {
+  return stripCommentsFromPGN(stripTagsFromPGN(normalizedLineEndings(pgnToClean)));
+};
+function pgnInit(event, site, date, round, white, black, result) {
+  let sevenTagRoster = "";
+  sevenTagRoster += `[Event "${event}"]
+`;
+  sevenTagRoster += `[Site "${site}"]
+`;
+  sevenTagRoster += `[Date "${formatDateForPGN(date)}"]
+`;
+  sevenTagRoster += `[Round "${round}"]
+`;
+  sevenTagRoster += `[White "${white}"]
+`;
+  sevenTagRoster += `[Black "${black}"]
+`;
+  sevenTagRoster += `[Result "${result}"]
+`;
+  return sevenTagRoster;
+}
+function parseMovesAndResult(pgnToParse) {
+  let movesArray = [];
+  let result = "";
+  let pgnClean = cleanPGN(pgnToParse);
+  const splitPGN = splitOnCarriageReturnsAndSpaces(pgnClean);
+  let bothMovedNumber = 0;
+  let currentMove = "";
+  for (let i = 0; i < splitPGN.length; i++) {
+    currentMove = "";
+    if (splitPGN[i]?.includes(".")) {
+      const numberSplit = splitPGN[i]?.split(".");
+      if (numberSplit && numberSplit.length === 2) {
+        bothMovedNumber = numberSplit[0] ? parseInt(numberSplit[0]) : 0;
+        currentMove = numberSplit[1] ? numberSplit[1] : "";
+      }
+    } else {
+      currentMove = splitPGN[i] + "";
+    }
+    if (currentMove !== "" && !gameResults.includes(currentMove)) {
+      movesArray.push(currentMove);
+    }
+    if (currentMove !== "" && gameResults.includes(currentMove)) {
+      result = currentMove;
+    }
+  }
+  return { moves: movesArray, result };
+}
+function pgnToGameNode(pgnToParse) {
+  let node = StartingNode();
+  let controller = new MinotaurEngineController(2);
+  controller = new MinotaurEngineController(2);
+  controller.resetGame(0 /* StartingPositions */);
+  const parsedMoves = parseMovesAndResult(pgnToParse);
+  const state = controller.getState();
+  node.boardState = state.boardState;
+  node.gameState = state.gameState;
+  return node;
+}
+function addMoveToPGN(currentPGN, move, moveNumber) {
+  let newPGN = currentPGN;
+  if (moveNumber === 0) {
+    newPGN += `
+`;
+  }
+  newPGN += `${moveNumber}. 
+`;
+  return currentPGN;
+}
+var formatDateForPGN = (date) => `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, "0")}.${date.getDate().toString().padStart(2, "0")}`;
+function stripCommentsFromPGN(pgnToStrip) {
+  const commentsExpression = /\{[^}]*\}/g;
+  let strippedPGN = pgnToStrip.replaceAll(commentsExpression, " ");
+  strippedPGN = strippedPGN.replaceAll("...", ".");
+  return strippedPGN;
+}
+function stripTagsFromPGN(pgnToStrip) {
+  const tagsExpression = /\[.*?\]/g;
+  let strippedPGN = pgnToStrip.replaceAll(tagsExpression, " ");
+  strippedPGN = strippedPGN.replaceAll(/\r\n/g, " ");
+  strippedPGN = strippedPGN.replaceAll(/\n/g, " ");
+  return strippedPGN;
+}
 export {
   AllBishopMoves,
   AllBlackPawnCaptures,
@@ -3277,6 +3371,7 @@ export {
   WhitePawnMovesComposite2 as WhitePawnMovesComposite,
   a1,
   aTogFilesOnly,
+  addMoveToPGN,
   allBlackPositions,
   allOnes,
   allPositions,
@@ -3310,6 +3405,7 @@ export {
   blackPawnTwoSquareNodes,
   blackStartingRank,
   boardMapping,
+  cleanPGN,
   clearPosition,
   countFullMoves,
   countHalfMoves,
@@ -3378,6 +3474,7 @@ export {
   movePiece,
   moveToUciFormat,
   nodeFromBoardAndGameState,
+  normalizedLineEndings,
   numberOfTiles,
   occupiedBy,
   orthagonalOffsets,
@@ -3385,7 +3482,10 @@ export {
   outputEvalLogsHtml,
   outputSingleBitboardHtml,
   outputSinglePiecePositions,
+  parseMovesAndResult,
   pawnsThatCanCaptureEnpassant,
+  pgnInit,
+  pgnToGameNode,
   pieceImages,
   pieceNameToFenName,
   pieceValues,
@@ -3394,6 +3494,9 @@ export {
   rookNodes,
   scoredMove,
   slidingPieces,
+  splitOnCarriageReturnsAndSpaces,
+  stripCommentsFromPGN,
+  stripTagsFromPGN,
   uciToBitMoves,
   unicodePieceMap,
   whiteBackRankPositions,

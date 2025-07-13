@@ -159,3 +159,8 @@ export type EngineResponse = {
   boardUpdateResponse: BoardUpdateResponse | null;
   bestMove: BitMove;
 };
+
+export type PgnMovesAndResult = {
+  moves: string[];
+  result: string;
+};

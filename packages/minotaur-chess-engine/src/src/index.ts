@@ -31,3 +31,7 @@ export * from './helpers/uci/uci';
 export * from './helpers/state/gameState';
 
 export * from './engine';
+
+export * from './helpers/pgn/pgnBuilder';
+
+export * from './helpers/generic';

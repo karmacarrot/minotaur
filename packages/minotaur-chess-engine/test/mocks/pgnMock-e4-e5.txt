@@ -1,0 +1,9 @@
+[Event "E4E5 Mock"]
+[Site "Test Suite"]
+[Date "2025.07.04"]
+[Round "1"]
+[White "WhiteComputer"]
+[Black "BlackComputer"]
+[Result "1/2-1/2"]
+
+1.e4 e5 1/2-1/2

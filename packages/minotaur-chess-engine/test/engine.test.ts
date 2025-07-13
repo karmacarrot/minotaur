@@ -4,6 +4,7 @@ import {
   MinotaurEngineController,
   Piece,
 } from '@karmacarrot/minotaur-chess-engine';
+import { LogBoardPositions } from './helpers/testHelper';
 
 describe('MinotaurEngineController', () => {
   let controller = new MinotaurEngineController(2);
@@ -68,5 +69,28 @@ describe('MinotaurEngineController', () => {
     expect(engineResponse.bestMove.from).toBeGreaterThan(0);
     const state = controller.getState();
     expect(state.gameState.moveHistory).toHaveLength(2);
+  });
+
+  it("should make a best move for the colour's turn using minimax agnostic of who has which pieces", async () => {
+    const turnsToRunFor = 20;
+
+    const engineResponse = () =>
+      controller.engineBestMove(
+        () => {
+          return;
+        },
+        () => {
+          return;
+        }
+      );
+
+    for (let i = 0; i < turnsToRunFor; i++) {
+      await engineResponse();
+    }
+
+    const state = controller.getState();
+    expect(state.gameState.moveHistory).toHaveLength(turnsToRunFor);
+    LogBoardPositions(state.boardState);
+    console.log(state.gameState.moveHistory);
   });
 });

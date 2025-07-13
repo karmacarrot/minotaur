@@ -1,0 +1,222 @@
+[
+  {
+    "FileFrom": "e",
+    "FileTo": "e",
+    "RankFrom": 2,
+    "RankTo": 4,
+    "isLegal": true,
+    "PieceMoved": "whitePawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "e",
+    "FileTo": "e",
+    "RankFrom": 7,
+    "RankTo": 5,
+    "isLegal": true,
+    "PieceMoved": "blackPawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "f",
+    "FileTo": "b",
+    "RankFrom": 1,
+    "RankTo": 5,
+    "isLegal": true,
+    "PieceMoved": "whiteBishop",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "f",
+    "FileTo": "c",
+    "RankFrom": 8,
+    "RankTo": 5,
+    "isLegal": true,
+    "PieceMoved": "blackBishop",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "g",
+    "FileTo": "h",
+    "RankFrom": 1,
+    "RankTo": 3,
+    "isLegal": true,
+    "PieceMoved": "whiteKnight",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "g",
+    "FileTo": "h",
+    "RankFrom": 8,
+    "RankTo": 6,
+    "isLegal": true,
+    "PieceMoved": "blackKnight",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "f",
+    "FileTo": "f",
+    "RankFrom": 2,
+    "RankTo": 3,
+    "isLegal": true,
+    "PieceMoved": "whitePawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "e",
+    "FileTo": "g",
+    "RankFrom": 8,
+    "RankTo": 8,
+    "isLegal": true,
+    "PieceMoved": "blackKing",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "b",
+    "FileTo": "c",
+    "RankFrom": 1,
+    "RankTo": 3,
+    "isLegal": true,
+    "PieceMoved": "whiteKnight",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "d",
+    "FileTo": "d",
+    "RankFrom": 7,
+    "RankTo": 6,
+    "isLegal": true,
+    "PieceMoved": "blackPawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "g",
+    "FileTo": "g",
+    "RankFrom": 2,
+    "RankTo": 4,
+    "isLegal": true,
+    "PieceMoved": "whitePawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "c",
+    "FileTo": "e",
+    "RankFrom": 8,
+    "RankTo": 6,
+    "isLegal": true,
+    "PieceMoved": "blackBishop",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "d",
+    "FileTo": "d",
+    "RankFrom": 2,
+    "RankTo": 3,
+    "isLegal": true,
+    "PieceMoved": "whitePawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "h",
+    "FileTo": "g",
+    "RankFrom": 6,
+    "RankTo": 4,
+    "isLegal": true,
+    "PieceMoved": "blackKnight",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "f",
+    "FileTo": "g",
+    "RankFrom": 3,
+    "RankTo": 4,
+    "isLegal": true,
+    "PieceMoved": "whitePawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "b",
+    "FileTo": "b",
+    "RankFrom": 7,
+    "RankTo": 6,
+    "isLegal": true,
+    "PieceMoved": "blackPawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "c",
+    "FileTo": "d",
+    "RankFrom": 1,
+    "RankTo": 2,
+    "isLegal": true,
+    "PieceMoved": "whiteBishop",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "c",
+    "FileTo": "d",
+    "RankFrom": 5,
+    "RankTo": 4,
+    "isLegal": true,
+    "PieceMoved": "blackBishop",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "c",
+    "FileTo": "a",
+    "RankFrom": 3,
+    "RankTo": 4,
+    "isLegal": true,
+    "PieceMoved": "whiteKnight",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  },
+  {
+    "FileFrom": "c",
+    "FileTo": "c",
+    "RankFrom": 7,
+    "RankTo": 6,
+    "isLegal": true,
+    "PieceMoved": "blackPawn",
+    "PieceTaken": null,
+    "CastleRookFrom": "",
+    "CastleRookTo": ""
+  }
+]

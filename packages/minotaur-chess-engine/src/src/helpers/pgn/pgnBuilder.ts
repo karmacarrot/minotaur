@@ -1,5 +1,6 @@
 import { MinotaurEngineController } from '../../engine';
-import { BoardMove, GameNode, PgnMovesAndResult } from '../../types';
+import { BoardMove, GameNode, PgnMovesAndResult, BitBoard } from '../../types';
+import { getBitBoardPosition, getFileAndRank, occupiedBy } from '../bitboards';
 import { BoardArrangements } from '../definitions';
 import { normalizedLineEndings, splitOnCarriageReturnsAndSpaces } from '../generic';
 import { StartingNode } from '../search/nodes/nodeGenerators';
@@ -29,6 +30,46 @@ export function pgnInit(
   sevenTagRoster += `[Result "${result}"]\n`;
 
   return sevenTagRoster;
+}
+
+export function pgnMoveToBoardMove(
+  pgnMove: string,
+  boardPositions: BitBoard,
+  evaluateAsWhite: boolean
+): BoardMove | null {
+  if (pgnMove.length === 2) {
+    //pawn move
+    const toFile = pgnMove.substring(0, 1);
+    const toRank = pgnMove.substring(1, 2);
+
+    const positionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
+
+    let fromPosition = evaluateAsWhite ? positionAsNumber - 8 : positionAsNumber + 8;
+    let pieceMoved = occupiedBy(boardPositions, fromPosition);
+
+    if (evaluateAsWhite && pieceMoved !== 'whitePawn') {
+      fromPosition = positionAsNumber - 16;
+    }
+    if (!evaluateAsWhite && pieceMoved !== 'blackPawn') {
+      fromPosition = positionAsNumber + 16;
+    }
+
+    const fromFileAndRank = getFileAndRank(fromPosition);
+
+    return {
+      PieceMoved: pieceMoved,
+      PieceTaken: null,
+      FileFrom: fromFileAndRank.file + '',
+      FileTo: toFile,
+      CastleRookFrom: '',
+      CastleRookTo: '',
+      RankFrom: fromFileAndRank.rank,
+      RankTo: parseInt(toRank),
+      isLegal: true,
+    };
+  }
+
+  return null;
 }
 
 export function parseMovesAndResult(pgnToParse: string): PgnMovesAndResult {
@@ -71,6 +112,10 @@ export function pgnToGameNode(pgnToParse: string): GameNode {
   controller.resetGame(BoardArrangements.StartingPositions);
 
   const parsedMoves = parseMovesAndResult(pgnToParse);
+
+  parsedMoves.moves.forEach((move) => {});
+
+  console.log(parsedMoves);
 
   const state = controller.getState();
 

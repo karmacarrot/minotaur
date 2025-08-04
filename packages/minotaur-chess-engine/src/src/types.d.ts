@@ -164,3 +164,17 @@ export type PgnMovesAndResult = {
   moves: string[];
   result: string;
 };
+
+type SAN = {
+  piece: string; //'N', 'Q', etc.
+  targetFile: string;
+  targetRank: number;
+  disambiguationFile?: string;
+  disambiguationRank?: number;
+  isCapture: boolean;
+  isCastleKingside: boolean;
+  isCastleQueenside: boolean;
+  promotion?: string;
+  isCheck: boolean;
+  isMate: boolean;
+};

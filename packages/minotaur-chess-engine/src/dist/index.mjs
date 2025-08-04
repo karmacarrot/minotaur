@@ -3252,6 +3252,34 @@ function pgnInit(event, site, date, round, white, black, result) {
 `;
   return sevenTagRoster;
 }
+function pgnMoveToBoardMove(pgnMove, boardPositions, evaluateAsWhite) {
+  if (pgnMove.length === 2) {
+    const toFile = pgnMove.substring(0, 1);
+    const toRank = pgnMove.substring(1, 2);
+    const positionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
+    let fromPosition = evaluateAsWhite ? positionAsNumber - 8 : positionAsNumber + 8;
+    let pieceMoved = occupiedBy(boardPositions, fromPosition);
+    if (evaluateAsWhite && pieceMoved !== "whitePawn") {
+      fromPosition = positionAsNumber - 16;
+    }
+    if (!evaluateAsWhite && pieceMoved !== "blackPawn") {
+      fromPosition = positionAsNumber + 16;
+    }
+    const fromFileAndRank = getFileAndRank(fromPosition);
+    return {
+      PieceMoved: pieceMoved,
+      PieceTaken: null,
+      FileFrom: fromFileAndRank.file + "",
+      FileTo: toFile,
+      CastleRookFrom: "",
+      CastleRookTo: "",
+      RankFrom: fromFileAndRank.rank,
+      RankTo: parseInt(toRank),
+      isLegal: true
+    };
+  }
+  return null;
+}
 function parseMovesAndResult(pgnToParse) {
   let movesArray = [];
   let result = "";
@@ -3285,6 +3313,9 @@ function pgnToGameNode(pgnToParse) {
   controller = new MinotaurEngineController(2);
   controller.resetGame(0 /* StartingPositions */);
   const parsedMoves = parseMovesAndResult(pgnToParse);
+  parsedMoves.moves.forEach((move) => {
+  });
+  console.log(parsedMoves);
   const state = controller.getState();
   node.boardState = state.boardState;
   node.gameState = state.gameState;
@@ -3485,6 +3516,7 @@ export {
   parseMovesAndResult,
   pawnsThatCanCaptureEnpassant,
   pgnInit,
+  pgnMoveToBoardMove,
   pgnToGameNode,
   pieceImages,
   pieceNameToFenName,

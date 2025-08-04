@@ -5,7 +5,9 @@ import {
   pgnToGameNode,
   stripTagsFromPGN,
   parseMovesAndResult,
+  pgnMoveToBoardMove,
   cleanPGN,
+  StartingBoard,
 } from '@karmacarrot/minotaur-chess-engine';
 import { getFileMock } from '../testHelper';
 describe('pgnInit', () => {
@@ -99,5 +101,68 @@ describe('cleanPGN', () => {
     const strippedPGN = stripTagsFromPGN(mockPGN);
 
     expect(strippedPGN).toBe('1.e4 e5 1/2-1/2');
+  });
+});
+
+describe('pgnMoveToBoardMove', () => {
+  it('creates a boardMove from a PGN formatted pawn move for white double move', () => {
+    const startBoard = StartingBoard;
+    const result = pgnMoveToBoardMove('a4', startBoard, true);
+    expect(result).toEqual({
+      PieceMoved: 'whitePawn',
+      PieceTaken: null,
+      FileFrom: 'a',
+      FileTo: 'a',
+      CastleRookFrom: '',
+      CastleRookTo: '',
+      RankFrom: 2,
+      RankTo: 4,
+      isLegal: true,
+    });
+  });
+  it('creates a boardMove from a PGN formatted pawn move for white single move', () => {
+    const startBoard = StartingBoard;
+    const result = pgnMoveToBoardMove('a3', startBoard, true);
+    expect(result).toEqual({
+      PieceMoved: 'whitePawn',
+      PieceTaken: null,
+      FileFrom: 'a',
+      FileTo: 'a',
+      CastleRookFrom: '',
+      CastleRookTo: '',
+      RankFrom: 2,
+      RankTo: 3,
+      isLegal: true,
+    });
+  });
+  it('creates a boardMove from a PGN formatted pawn move for black double move', () => {
+    const startBoard = StartingBoard;
+    const result = pgnMoveToBoardMove('b5', startBoard, true);
+    expect(result).toEqual({
+      PieceMoved: 'blackPawn',
+      PieceTaken: null,
+      FileFrom: 'b',
+      FileTo: 'b',
+      CastleRookFrom: '',
+      CastleRookTo: '',
+      RankFrom: 7,
+      RankTo: 5,
+      isLegal: true,
+    });
+  });
+  it('creates a boardMove from a PGN formatted pawn move for white single move', () => {
+    const startBoard = StartingBoard;
+    const result = pgnMoveToBoardMove('c6', startBoard, true);
+    expect(result).toEqual({
+      PieceMoved: 'blackPawn',
+      PieceTaken: null,
+      FileFrom: 'c',
+      FileTo: 'c',
+      CastleRookFrom: '',
+      CastleRookTo: '',
+      RankFrom: 7,
+      RankTo: 6,
+      isLegal: true,
+    });
   });
 });

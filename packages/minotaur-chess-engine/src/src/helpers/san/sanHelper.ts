@@ -8,8 +8,10 @@ export function matchSan(san: string): RegExpMatchArray | null {
 }
 
 export function parseSan(san: string): SAN {
-  const castlingKingside = san === 'O-O' || san === '0-0';
-  const castlingQueenside = san === 'O-O-O' || san === '0-0-0';
+  const trimmedSan = san.trim();
+
+  const castlingKingside = trimmedSan === 'O-O' || trimmedSan === '0-0';
+  const castlingQueenside = trimmedSan === 'O-O-O' || trimmedSan === '0-0-0';
 
   if (castlingKingside || castlingQueenside) {
     return {
@@ -24,9 +26,9 @@ export function parseSan(san: string): SAN {
     };
   }
 
-  const match = matchSan(san);
+  const match = matchSan(trimmedSan);
 
-  if (!match) throw new Error(`Could not parse SAN move: ${san}`);
+  if (!match) throw new Error(`Could not parse SAN move: ${trimmedSan}`);
 
   const [_, piece, disFile, disRank, capture, targetFile, targetRank, promotion, checkOrMate] =
     match;

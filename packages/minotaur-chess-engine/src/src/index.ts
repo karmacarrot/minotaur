@@ -35,3 +35,5 @@ export * from './engine';
 export * from './helpers/pgn/pgnBuilder';
 
 export * from './helpers/generic';
+
+export * from './helpers/san/sanHelper';

@@ -165,7 +165,7 @@ export type PgnMovesAndResult = {
   result: string;
 };
 
-type SAN = {
+export type SAN = {
   piece: string; //'N', 'Q', etc.
   targetFile: string;
   targetRank: number;

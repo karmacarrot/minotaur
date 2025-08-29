@@ -3345,6 +3345,46 @@ function stripTagsFromPGN(pgnToStrip) {
   strippedPGN = strippedPGN.replaceAll(/\n/g, " ");
   return strippedPGN;
 }
+
+// src/helpers/san/sanHelper.ts
+function matchSan(san) {
+  const regex = /^([NBRQK]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])(=?[NBRQ]?)([+#]?)$/;
+  const match = san.match(regex);
+  return match;
+}
+function parseSan(san) {
+  const trimmedSan = san.trim();
+  const castlingKingside = trimmedSan === "O-O" || trimmedSan === "0-0";
+  const castlingQueenside = trimmedSan === "O-O-O" || trimmedSan === "0-0-0";
+  if (castlingKingside || castlingQueenside) {
+    return {
+      piece: "K",
+      targetFile: "",
+      targetRank: 0,
+      isCapture: false,
+      isCastleKingside: castlingKingside,
+      isCastleQueenside: castlingQueenside,
+      isCheck: false,
+      isMate: false
+    };
+  }
+  const match = matchSan(trimmedSan);
+  if (!match) throw new Error(`Could not parse SAN move: ${trimmedSan}`);
+  const [_, piece, disFile, disRank, capture, targetFile, targetRank, promotion, checkOrMate] = match;
+  return {
+    piece: piece || "P",
+    targetFile: targetFile + "",
+    targetRank: parseInt(targetRank + "", 10),
+    disambiguationFile: disFile || void 0,
+    disambiguationRank: disRank ? parseInt(disRank, 10) : void 0,
+    isCapture: capture === "x",
+    isCastleKingside: false,
+    isCastleQueenside: false,
+    promotion: promotion?.replace("=", "") || void 0,
+    isCheck: checkOrMate === "+",
+    isMate: checkOrMate === "#"
+  };
+}
 export {
   AllBishopMoves,
   AllBlackPawnCaptures,
@@ -3499,6 +3539,7 @@ export {
   kingNodes,
   knightMoveOffsets,
   knightNodes,
+  matchSan,
   maxMove,
   memoize,
   moveAnyPiece,
@@ -3514,6 +3555,7 @@ export {
   outputSingleBitboardHtml,
   outputSinglePiecePositions,
   parseMovesAndResult,
+  parseSan,
   pawnsThatCanCaptureEnpassant,
   pgnInit,
   pgnMoveToBoardMove,

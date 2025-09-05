@@ -7,7 +7,7 @@ export function matchSan(san: string): RegExpMatchArray | null {
   return match;
 }
 
-export function parseSan(san: string): SAN {
+export function parseSan(san: string): SAN | null {
   const trimmedSan = san.trim();
 
   const castlingKingside = trimmedSan === 'O-O' || trimmedSan === '0-0';
@@ -28,7 +28,7 @@ export function parseSan(san: string): SAN {
 
   const match = matchSan(trimmedSan);
 
-  if (!match) throw new Error(`Could not parse SAN move: ${trimmedSan}`);
+  if (!match) return null;
 
   const [_, piece, disFile, disRank, capture, targetFile, targetRank, promotion, checkOrMate] =
     match;

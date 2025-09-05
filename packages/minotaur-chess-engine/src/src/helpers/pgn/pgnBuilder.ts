@@ -1,8 +1,16 @@
 import { MinotaurEngineController } from '../../engine';
 import { BoardMove, GameNode, PgnMovesAndResult, BitBoard } from '../../types';
-import { getBitBoardPosition, getFileAndRank, occupiedBy } from '../bitboards';
+import {
+  allBlackPositions,
+  allWhitePositions,
+  getBitBoardPosition,
+  getFileAndRank,
+  occupiedBy,
+} from '../bitboards';
 import { BoardArrangements } from '../definitions';
 import { normalizedLineEndings, splitOnCarriageReturnsAndSpaces } from '../generic';
+import { AllKnightMoves } from '../moveEval';
+import { parseSan } from '../san/sanHelper';
 import { StartingNode } from '../search/nodes/nodeGenerators';
 
 const gameResults = ['1/2-1/2'];
@@ -37,36 +45,79 @@ export function pgnMoveToBoardMove(
   boardPositions: BitBoard,
   evaluateAsWhite: boolean
 ): BoardMove | null {
-  if (pgnMove.length === 2) {
-    //pawn move
-    const toFile = pgnMove.substring(0, 1);
-    const toRank = pgnMove.substring(1, 2);
+  const parsedSAN = parseSan(pgnMove);
 
-    const positionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
-
-    let fromPosition = evaluateAsWhite ? positionAsNumber - 8 : positionAsNumber + 8;
-    let pieceMoved = occupiedBy(boardPositions, fromPosition);
-
-    if (evaluateAsWhite && pieceMoved !== 'whitePawn') {
-      fromPosition = positionAsNumber - 16;
-    }
-    if (!evaluateAsWhite && pieceMoved !== 'blackPawn') {
-      fromPosition = positionAsNumber + 16;
-    }
-
-    const fromFileAndRank = getFileAndRank(fromPosition);
-
+  if (parseSan === null) {
     return {
-      PieceMoved: pieceMoved,
+      PieceMoved: null,
       PieceTaken: null,
-      FileFrom: fromFileAndRank.file + '',
-      FileTo: toFile,
+      FileFrom: '',
+      FileTo: '',
       CastleRookFrom: '',
       CastleRookTo: '',
-      RankFrom: fromFileAndRank.rank,
-      RankTo: parseInt(toRank),
-      isLegal: true,
+      RankFrom: 0,
+      RankTo: 0,
+      isLegal: false,
     };
+  }
+
+  let toFile = '';
+  let toRank = '';
+  let positionAsNumber = 0;
+
+  const allFriendlyOccupiedPositions = evaluateAsWhite
+    ? allWhitePositions(boardPositions)
+    : allBlackPositions(boardPositions);
+
+  switch (parsedSAN?.piece) {
+    case 'P':
+      //pawn move
+      toFile = pgnMove.substring(0, 1);
+      toRank = pgnMove.substring(1, 2);
+      positionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
+      let fromPosition = evaluateAsWhite ? positionAsNumber - 8 : positionAsNumber + 8;
+      let pieceMoved = occupiedBy(boardPositions, fromPosition);
+
+      if (pieceMoved === null) {
+        fromPosition = evaluateAsWhite ? positionAsNumber - 16 : positionAsNumber + 16;
+        pieceMoved = occupiedBy(boardPositions, fromPosition);
+      }
+
+      const fromFileAndRank = getFileAndRank(fromPosition);
+
+      return {
+        PieceMoved: pieceMoved,
+        PieceTaken: null,
+        FileFrom: fromFileAndRank.file + '',
+        FileTo: toFile,
+        CastleRookFrom: '',
+        CastleRookTo: '',
+        RankFrom: fromFileAndRank.rank,
+        RankTo: parseInt(toRank),
+        isLegal: true,
+      };
+
+    case 'N':
+      //knight move
+      toFile = pgnMove.substring(1, 2);
+      toRank = pgnMove.substring(2, 3);
+      positionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
+
+      const allKnightMoves = AllKnightMoves(boardPositions);
+
+      const fromFileAndRankKnight = getFileAndRank(fromPosition);
+
+      return {
+        PieceMoved: pieceMoved,
+        PieceTaken: null,
+        FileFrom: fromFileAndRankKnight.file + '',
+        FileTo: toFile,
+        CastleRookFrom: '',
+        CastleRookTo: '',
+        RankFrom: fromFileAndRankKnight.rank,
+        RankTo: parseInt(toRank),
+        isLegal: true,
+      };
   }
 
   return null;

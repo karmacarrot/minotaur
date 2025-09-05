@@ -137,7 +137,7 @@ describe('pgnMoveToBoardMove', () => {
   });
   it('creates a boardMove from a PGN formatted pawn move for black double move', () => {
     const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('b5', startBoard, true);
+    const result = pgnMoveToBoardMove('b5', startBoard, false);
     expect(result).toEqual({
       PieceMoved: 'blackPawn',
       PieceTaken: null,
@@ -150,9 +150,9 @@ describe('pgnMoveToBoardMove', () => {
       isLegal: true,
     });
   });
-  it('creates a boardMove from a PGN formatted pawn move for white single move', () => {
+  it('creates a boardMove from a PGN formatted pawn move for black single move', () => {
     const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('c6', startBoard, true);
+    const result = pgnMoveToBoardMove('c6', startBoard, false);
     expect(result).toEqual({
       PieceMoved: 'blackPawn',
       PieceTaken: null,
@@ -165,4 +165,126 @@ describe('pgnMoveToBoardMove', () => {
       isLegal: true,
     });
   });
+
+  it('parses a legal white knight move from the start (Nf3)', () => {
+    const startBoard = StartingBoard;
+    const result = pgnMoveToBoardMove('Nf3', startBoard, true);
+    expect(result).toEqual(
+      expect.objectContaining({
+        FileFrom: 'g',
+        RankFrom: 1,
+        FileTo: 'f',
+        RankTo: 3,
+        isLegal: true,
+      })
+    );
+  });
+
+  it('parses a legal black knight move from the start (Nc6)', () => {
+    const startBoard = StartingBoard;
+    const result = pgnMoveToBoardMove('Nc6', startBoard, false);
+    expect(result).toEqual(
+      expect.objectContaining({
+        FileFrom: 'b',
+        RankFrom: 8,
+        FileTo: 'c',
+        RankTo: 6,
+        isLegal: true,
+      })
+    );
+  });
+
+  // it('rejects an illegal pawn capture when no piece exists on the target square (exd5 from start)', () => {
+  //   const startBoard = StartingBoard;
+  //   const result = pgnMoveToBoardMove('exd5', startBoard, true);
+  //   expect(result).toEqual(
+  //     expect.objectContaining({
+  //       isLegal: false,
+  //     })
+  //   );
+  // });
+
+  // it('rejects a bishop move blocked by own pawn from the start (Bb5)', () => {
+  //   const startBoard = StartingBoard;
+  //   const result = pgnMoveToBoardMove('Bb5', startBoard, true);
+  //   expect(result).toEqual(
+  //     expect.objectContaining({
+  //       isLegal: false,
+  //     })
+  //   );
+  // });
+
+  // it('rejects a rook move blocked by own pawn from the start (Ra3)', () => {
+  //   const startBoard = StartingBoard;
+  //   const result = pgnMoveToBoardMove('Ra3', startBoard, true);
+  //   expect(result).toEqual(
+  //     expect.objectContaining({
+  //       isLegal: false,
+  //     })
+  //   );
+  // });
+
+  // it('rejects a queen move blocked by own pawn from the start (Qh5)', () => {
+  //   const startBoard = StartingBoard;
+  //   const result = pgnMoveToBoardMove('Qh5', startBoard, true);
+  //   expect(result).toEqual(
+  //     expect.objectContaining({
+  //       isLegal: false,
+  //     })
+  //   );
+  // });
+
+  // it('rejects kingside castling from the start because path is blocked (O-O)', () => {
+  //   const startBoard = StartingBoard;
+  //   const result = pgnMoveToBoardMove('O-O', startBoard, true);
+  //   expect(result).toEqual(
+  //     expect.objectContaining({
+  //       isLegal: false,
+  //     })
+  //   );
+  // });
+
+  // it('rejects a black pawn move when it is white to move (c5 with white to move)', () => {
+  //   const startBoard = StartingBoard;
+  //   const result = pgnMoveToBoardMove('c5', startBoard, true);
+  //   expect(result).toEqual(
+  //     expect.objectContaining({
+  //       isLegal: false,
+  //     })
+  //   );
+  // });
+
+  // it('rejects off-board destination (e9)', () => {
+  //   const startBoard = StartingBoard;
+  //   const result = pgnMoveToBoardMove('e9', startBoard, true);
+  //   expect(result).toEqual(
+  //     expect.objectContaining({
+  //       isLegal: false,
+  //     })
+  //   );
+  // });
+
+  it('rejects malformed SAN or unsupported suffix (e4!!)', () => {
+    const startBoard = StartingBoard;
+    const result = pgnMoveToBoardMove('e4!!', startBoard, true);
+    expect(result).toEqual(
+      expect.objectContaining({
+        isLegal: false,
+      })
+    );
+  });
+
+  // --- Placeholders for midgame scenarios (need custom board setups) ---
+
+  it.todo('handles en passant capture correctly for white and black (e.g., exd6 ep)');
+  it.todo('handles pawn promotion without capture (e8=Q, e1=Q for black)');
+  it.todo('handles pawn promotion with capture (exd8=Q, ...=N, ...=B, ...=R)');
+  it.todo('accepts both O-O and 0-0 (and O-O-O / 0-0-0) when legal and sets rook fields');
+  it.todo('rejects castling through check, into check, or while in check');
+  it.todo('validates sliding piece path blocking (bishop/rook/queen) in general midgame positions');
+  it.todo(
+    'rejects ambiguous SAN without proper disambiguation (e.g., two knights to the same square)'
+  );
+  it.todo('accepts minimal SAN disambiguation (Nbd2 / R1e2) and resolves the correct origin');
+  it.todo('rejects moves that leave own king in check (self-check)');
 });

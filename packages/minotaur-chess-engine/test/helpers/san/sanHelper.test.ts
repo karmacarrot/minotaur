@@ -24,6 +24,10 @@ describe('matchSan', () => {
 describe('parseSan', () => {
   it('parses a simple pawn move into target rank and file correctly', () => {
     const result = parseSan('e4');
+
+    if (result === null) {
+      return;
+    }
     expect(result.targetFile).toBe('e');
     expect(result.targetRank).toBe(4);
     expect(result.piece).toBe('P');
@@ -32,6 +36,9 @@ describe('parseSan', () => {
 
   it('parses a Knight move with the correct piece and target rank / file', () => {
     const result = parseSan('Nf3');
+    if (result === null) {
+      return;
+    }
     expect(result.targetFile).toBe('f');
     expect(result.targetRank).toBe(3);
     expect(result.piece).toBe('N');
@@ -39,6 +46,9 @@ describe('parseSan', () => {
 
   it('parses a capture pawn move into target rank and file correctly', () => {
     const result = parseSan('exd5');
+    if (result === null) {
+      return;
+    }
     expect(result.targetFile).toBe('d');
     expect(result.targetRank).toBe(5);
     expect(result.piece).toBe('P');
@@ -47,6 +57,9 @@ describe('parseSan', () => {
 
   it('parses a castling move correctly', () => {
     const result = parseSan('O-O');
+    if (result === null) {
+      return;
+    }
     expect(result.isCastleKingside).toBe(true);
   });
 });

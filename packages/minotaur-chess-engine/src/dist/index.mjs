@@ -3229,6 +3229,46 @@ var splitOnCarriageReturnsAndSpaces = (fileContents) => {
   return fileContents.trim().split(/\s+/);
 };
 
+// src/helpers/san/sanHelper.ts
+function matchSan(san) {
+  const regex = /^([NBRQK]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])(=?[NBRQ]?)([+#]?)$/;
+  const match = san.match(regex);
+  return match;
+}
+function parseSan(san) {
+  const trimmedSan = san.trim();
+  const castlingKingside = trimmedSan === "O-O" || trimmedSan === "0-0";
+  const castlingQueenside = trimmedSan === "O-O-O" || trimmedSan === "0-0-0";
+  if (castlingKingside || castlingQueenside) {
+    return {
+      piece: "K",
+      targetFile: "",
+      targetRank: 0,
+      isCapture: false,
+      isCastleKingside: castlingKingside,
+      isCastleQueenside: castlingQueenside,
+      isCheck: false,
+      isMate: false
+    };
+  }
+  const match = matchSan(trimmedSan);
+  if (!match) return null;
+  const [_, piece, disFile, disRank, capture, targetFile, targetRank, promotion, checkOrMate] = match;
+  return {
+    piece: piece || "P",
+    targetFile: targetFile + "",
+    targetRank: parseInt(targetRank + "", 10),
+    disambiguationFile: disFile || void 0,
+    disambiguationRank: disRank ? parseInt(disRank, 10) : void 0,
+    isCapture: capture === "x",
+    isCastleKingside: false,
+    isCastleQueenside: false,
+    promotion: promotion?.replace("=", "") || void 0,
+    isCheck: checkOrMate === "+",
+    isMate: checkOrMate === "#"
+  };
+}
+
 // src/helpers/pgn/pgnBuilder.ts
 var gameResults = ["1/2-1/2"];
 var cleanPGN = (pgnToClean) => {
@@ -3253,30 +3293,43 @@ function pgnInit(event, site, date, round, white, black, result) {
   return sevenTagRoster;
 }
 function pgnMoveToBoardMove(pgnMove, boardPositions, evaluateAsWhite) {
-  if (pgnMove.length === 2) {
-    const toFile = pgnMove.substring(0, 1);
-    const toRank = pgnMove.substring(1, 2);
-    const positionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
-    let fromPosition = evaluateAsWhite ? positionAsNumber - 8 : positionAsNumber + 8;
-    let pieceMoved = occupiedBy(boardPositions, fromPosition);
-    if (evaluateAsWhite && pieceMoved !== "whitePawn") {
-      fromPosition = positionAsNumber - 16;
-    }
-    if (!evaluateAsWhite && pieceMoved !== "blackPawn") {
-      fromPosition = positionAsNumber + 16;
-    }
-    const fromFileAndRank = getFileAndRank(fromPosition);
+  const parsedSAN = parseSan(pgnMove);
+  if (parseSan === null) {
     return {
-      PieceMoved: pieceMoved,
+      PieceMoved: null,
       PieceTaken: null,
-      FileFrom: fromFileAndRank.file + "",
-      FileTo: toFile,
+      FileFrom: "",
+      FileTo: "",
       CastleRookFrom: "",
       CastleRookTo: "",
-      RankFrom: fromFileAndRank.rank,
-      RankTo: parseInt(toRank),
-      isLegal: true
+      RankFrom: 0,
+      RankTo: 0,
+      isLegal: false
     };
+  }
+  switch (parsedSAN?.piece) {
+    case "P":
+      const toFile = pgnMove.substring(0, 1);
+      const toRank = pgnMove.substring(1, 2);
+      const positionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
+      let fromPosition = evaluateAsWhite ? positionAsNumber - 8 : positionAsNumber + 8;
+      let pieceMoved = occupiedBy(boardPositions, fromPosition);
+      if (pieceMoved === null) {
+        fromPosition = evaluateAsWhite ? positionAsNumber - 16 : positionAsNumber + 16;
+        pieceMoved = occupiedBy(boardPositions, fromPosition);
+      }
+      const fromFileAndRank = getFileAndRank(fromPosition);
+      return {
+        PieceMoved: pieceMoved,
+        PieceTaken: null,
+        FileFrom: fromFileAndRank.file + "",
+        FileTo: toFile,
+        CastleRookFrom: "",
+        CastleRookTo: "",
+        RankFrom: fromFileAndRank.rank,
+        RankTo: parseInt(toRank),
+        isLegal: true
+      };
   }
   return null;
 }
@@ -3344,46 +3397,6 @@ function stripTagsFromPGN(pgnToStrip) {
   strippedPGN = strippedPGN.replaceAll(/\r\n/g, " ");
   strippedPGN = strippedPGN.replaceAll(/\n/g, " ");
   return strippedPGN;
-}
-
-// src/helpers/san/sanHelper.ts
-function matchSan(san) {
-  const regex = /^([NBRQK]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])(=?[NBRQ]?)([+#]?)$/;
-  const match = san.match(regex);
-  return match;
-}
-function parseSan(san) {
-  const trimmedSan = san.trim();
-  const castlingKingside = trimmedSan === "O-O" || trimmedSan === "0-0";
-  const castlingQueenside = trimmedSan === "O-O-O" || trimmedSan === "0-0-0";
-  if (castlingKingside || castlingQueenside) {
-    return {
-      piece: "K",
-      targetFile: "",
-      targetRank: 0,
-      isCapture: false,
-      isCastleKingside: castlingKingside,
-      isCastleQueenside: castlingQueenside,
-      isCheck: false,
-      isMate: false
-    };
-  }
-  const match = matchSan(trimmedSan);
-  if (!match) throw new Error(`Could not parse SAN move: ${trimmedSan}`);
-  const [_, piece, disFile, disRank, capture, targetFile, targetRank, promotion, checkOrMate] = match;
-  return {
-    piece: piece || "P",
-    targetFile: targetFile + "",
-    targetRank: parseInt(targetRank + "", 10),
-    disambiguationFile: disFile || void 0,
-    disambiguationRank: disRank ? parseInt(disRank, 10) : void 0,
-    isCapture: capture === "x",
-    isCastleKingside: false,
-    isCastleQueenside: false,
-    promotion: promotion?.replace("=", "") || void 0,
-    isCheck: checkOrMate === "+",
-    isMate: checkOrMate === "#"
-  };
 }
 export {
   AllBishopMoves,

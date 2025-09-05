@@ -169,15 +169,17 @@ describe('pgnMoveToBoardMove', () => {
   it('parses a legal white knight move from the start (Nf3)', () => {
     const startBoard = StartingBoard;
     const result = pgnMoveToBoardMove('Nf3', startBoard, true);
-    expect(result).toEqual(
-      expect.objectContaining({
-        FileFrom: 'g',
-        RankFrom: 1,
-        FileTo: 'f',
-        RankTo: 3,
-        isLegal: true,
-      })
-    );
+    expect(result).toEqual({
+      PieceMoved: 'whiteKnight',
+      PieceTaken: null,
+      FileFrom: 'g',
+      RankFrom: 1,
+      FileTo: 'f',
+      RankTo: 3,
+      CastleRookFrom: '',
+      CastleRookTo: '',
+      isLegal: true,
+    });
   });
 
   it('parses a legal black knight move from the start (Nc6)', () => {

@@ -3307,15 +3307,18 @@ function pgnMoveToBoardMove(pgnMove, boardPositions, evaluateAsWhite) {
       isLegal: false
     };
   }
+  let toFile = "";
+  let toRank = "";
+  let toPositionAsNumber = 0;
   switch (parsedSAN?.piece) {
     case "P":
-      const toFile = pgnMove.substring(0, 1);
-      const toRank = pgnMove.substring(1, 2);
-      const positionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
-      let fromPosition = evaluateAsWhite ? positionAsNumber - 8 : positionAsNumber + 8;
+      toFile = pgnMove.substring(0, 1);
+      toRank = pgnMove.substring(1, 2);
+      toPositionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
+      let fromPosition = evaluateAsWhite ? toPositionAsNumber - 8 : toPositionAsNumber + 8;
       let pieceMoved = occupiedBy(boardPositions, fromPosition);
       if (pieceMoved === null) {
-        fromPosition = evaluateAsWhite ? positionAsNumber - 16 : positionAsNumber + 16;
+        fromPosition = evaluateAsWhite ? toPositionAsNumber - 16 : toPositionAsNumber + 16;
         pieceMoved = occupiedBy(boardPositions, fromPosition);
       }
       const fromFileAndRank = getFileAndRank(fromPosition);
@@ -3327,6 +3330,51 @@ function pgnMoveToBoardMove(pgnMove, boardPositions, evaluateAsWhite) {
         CastleRookFrom: "",
         CastleRookTo: "",
         RankFrom: fromFileAndRank.rank,
+        RankTo: parseInt(toRank),
+        isLegal: true
+      };
+    case "N":
+      toFile = pgnMove.substring(1, 2);
+      toRank = pgnMove.substring(2, 3);
+      toPositionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
+      const boardPositionWithMove = structuredClone(boardPositions);
+      if (evaluateAsWhite) {
+        boardPositionWithMove.whiteKnight = binaryMask64(
+          toPositionAsNumber,
+          "all_zeroes_with_position_as_one"
+        );
+      } else {
+        boardPositionWithMove.blackKnight = binaryMask64(
+          toPositionAsNumber,
+          "all_zeroes_with_position_as_one"
+        );
+      }
+      const allFriendlyOccupiedPositions = evaluateAsWhite ? allWhitePositions(boardPositionWithMove) : allBlackPositions(boardPositionWithMove);
+      const allKnightMoves = AllKnightMoves(
+        boardPositionWithMove,
+        allFriendlyOccupiedPositions,
+        evaluateAsWhite
+      );
+      const pieceMovedBoard = allKnightMoves & (evaluateAsWhite ? boardPositions.whiteKnight : boardPositions.blackKnight);
+      const pieceMovedPosition = findBitPosition(pieceMovedBoard) || 0;
+      console.log(
+        `knight with move applied ${bigIntToBinaryString(boardPositionWithMove.whiteKnight)}`
+      );
+      console.log(`to ${toFile} ${toRank}`);
+      console.log(`position as number ${toPositionAsNumber}`);
+      console.log(`all knight moves ${bigIntToBinaryString(allKnightMoves)}`);
+      console.log(`knight positions ${bigIntToBinaryString(boardPositions.whiteKnight)}`);
+      console.log(`piece moved board ${bigIntToBinaryString(pieceMovedBoard)}`);
+      console.log(`moved position ${pieceMovedPosition}`);
+      const fromFileAndRankKnight = getFileAndRank(pieceMovedPosition);
+      return {
+        PieceMoved: evaluateAsWhite ? "whiteKnight" : "blackKnight",
+        PieceTaken: null,
+        FileFrom: fromFileAndRankKnight.file + "",
+        FileTo: toFile,
+        CastleRookFrom: "",
+        CastleRookTo: "",
+        RankFrom: fromFileAndRankKnight.rank,
         RankTo: parseInt(toRank),
         isLegal: true
       };

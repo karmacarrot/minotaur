@@ -3357,15 +3357,6 @@ function pgnMoveToBoardMove(pgnMove, boardPositions, evaluateAsWhite) {
       );
       const pieceMovedBoard = allKnightMoves & (evaluateAsWhite ? boardPositions.whiteKnight : boardPositions.blackKnight);
       const pieceMovedPosition = findBitPosition(pieceMovedBoard) || 0;
-      console.log(
-        `knight with move applied ${bigIntToBinaryString(boardPositionWithMove.whiteKnight)}`
-      );
-      console.log(`to ${toFile} ${toRank}`);
-      console.log(`position as number ${toPositionAsNumber}`);
-      console.log(`all knight moves ${bigIntToBinaryString(allKnightMoves)}`);
-      console.log(`knight positions ${bigIntToBinaryString(boardPositions.whiteKnight)}`);
-      console.log(`piece moved board ${bigIntToBinaryString(pieceMovedBoard)}`);
-      console.log(`moved position ${pieceMovedPosition}`);
       const fromFileAndRankKnight = getFileAndRank(pieceMovedPosition);
       return {
         PieceMoved: evaluateAsWhite ? "whiteKnight" : "blackKnight",

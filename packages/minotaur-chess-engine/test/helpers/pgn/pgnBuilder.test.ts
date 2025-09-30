@@ -196,15 +196,15 @@ describe('pgnMoveToBoardMove', () => {
     );
   });
 
-  // it('rejects an illegal pawn capture when no piece exists on the target square (exd5 from start)', () => {
-  //   const startBoard = StartingBoard;
-  //   const result = pgnMoveToBoardMove('exd5', startBoard, true);
-  //   expect(result).toEqual(
-  //     expect.objectContaining({
-  //       isLegal: false,
-  //     })
-  //   );
-  // });
+  it('rejects an illegal pawn capture when no piece exists on the target square (exd5 from start)', () => {
+    const startBoard = StartingBoard;
+    const result = pgnMoveToBoardMove('exd5', startBoard, true);
+    expect(result).toEqual(
+      expect.objectContaining({
+        isLegal: false,
+      })
+    );
+  });
 
   // it('rejects a bishop move blocked by own pawn from the start (Bb5)', () => {
   //   const startBoard = StartingBoard;

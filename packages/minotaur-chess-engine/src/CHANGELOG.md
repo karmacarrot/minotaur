@@ -1,3 +1,17 @@
+# [1.14.0](https://github.com/karmacarrot/minotaur/compare/v1.13.0...v1.14.0) (2025-09-30)
+
+
+### Bug Fixes
+
+* upgrading next, react, MUI, fixing unknown prop issues, bug in dropdown ([abab3a4](https://github.com/karmacarrot/minotaur/commit/abab3a4c65bb567833f6a29e69a12192925b79fd))
+
+
+### Features
+
+* adding functions around PGN handling ([d4c8dec](https://github.com/karmacarrot/minotaur/commit/d4c8deceafe93689197ed83499c56e7424d8eeeb))
+* adding SAN parsing functions ([f05da3e](https://github.com/karmacarrot/minotaur/commit/f05da3e4f0ba0677cf67c427e0deeddaa99ff77a))
+* promotion working for computer ([7f11c5b](https://github.com/karmacarrot/minotaur/commit/7f11c5b73b65cf018a7f84ea7764dd2752955c2a))
+
 # [1.13.0](https://github.com/karmacarrot/minotaur/compare/v1.12.1...v1.13.0) (2025-05-18)
 
 

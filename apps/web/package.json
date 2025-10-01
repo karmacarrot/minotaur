@@ -11,9 +11,12 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@karmacarrot/ui": "*",
     "@karmacarrot/minotaur-chess-react": "*",
     "next": "15.3.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "peerDependencies": {
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },

@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/karmacarrot/minotaur/compare/v1.14.0...v1.15.0) (2025-10-18)
+
+
+### Features
+
+* wip on pgn to board move ([0739ca1](https://github.com/karmacarrot/minotaur/commit/0739ca10cfbb12065f1a4885d691ae2799c47802))
+
 # [1.14.0](https://github.com/karmacarrot/minotaur/compare/v1.13.0...v1.14.0) (2025-09-30)
 
 

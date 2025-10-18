@@ -49,6 +49,8 @@ describe('parseSan', () => {
     if (result === null) {
       return;
     }
+    expect(result.disambiguationFile).toBe('e');
+
     expect(result.targetFile).toBe('d');
     expect(result.targetRank).toBe(5);
     expect(result.piece).toBe('P');

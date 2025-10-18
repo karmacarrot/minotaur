@@ -1,5 +1,6 @@
+import { movePiece } from '../../board';
 import { MinotaurEngineController } from '../../engine';
-import { BoardMove, GameNode, PgnMovesAndResult, BitBoard } from '../../types';
+import { BoardMove, GameNode, PgnMovesAndResult, BitBoard, GameStatus } from '../../types';
 import {
   allBlackPositions,
   allWhitePositions,
@@ -46,11 +47,13 @@ export function pgnInit(
 export function pgnMoveToBoardMove(
   pgnMove: string,
   boardPositions: BitBoard,
-  evaluateAsWhite: boolean
+  gameStatus: GameStatus
 ): BoardMove | null {
   const parsedSAN = parseSan(pgnMove);
 
-  if (parseSan === null) {
+  console.log(`parsed san: ${JSON.stringify(parsedSAN)}`);
+
+  if (parsedSAN === null) {
     return {
       PieceMoved: null,
       PieceTaken: null,
@@ -65,99 +68,49 @@ export function pgnMoveToBoardMove(
   }
 
   let toFile = '';
-  let toRank = '';
-  let toPositionAsNumber = 0;
+  let toRank = 0;
 
-  switch (parsedSAN?.piece) {
-    case 'P':
-      //pawn move
-      toFile = pgnMove.substring(0, 1);
-      toRank = pgnMove.substring(1, 2);
-      toPositionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
-      let fromPosition = evaluateAsWhite ? toPositionAsNumber - 8 : toPositionAsNumber + 8;
-      let pieceMoved = occupiedBy(boardPositions, fromPosition);
+  toFile = parsedSAN.targetFile;
+  toRank = parsedSAN.targetRank;
 
-      if (pieceMoved === null) {
-        fromPosition = evaluateAsWhite ? toPositionAsNumber - 16 : toPositionAsNumber + 16;
-        pieceMoved = occupiedBy(boardPositions, fromPosition);
-      }
-
-      const fromFileAndRank = getFileAndRank(fromPosition);
-
-      return {
-        PieceMoved: pieceMoved,
-        PieceTaken: null,
-        FileFrom: fromFileAndRank.file + '',
-        FileTo: toFile,
-        CastleRookFrom: '',
-        CastleRookTo: '',
-        RankFrom: fromFileAndRank.rank,
-        RankTo: parseInt(toRank),
-        isLegal: true,
-      };
-
-    case 'N':
-      //knight move
-      toFile = pgnMove.substring(1, 2);
-      toRank = pgnMove.substring(2, 3);
-      toPositionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
-
-      const boardPositionWithMove = structuredClone(boardPositions);
-
-      if (evaluateAsWhite) {
-        boardPositionWithMove.whiteKnight = binaryMask64(
-          toPositionAsNumber,
-          'all_zeroes_with_position_as_one'
-        );
-      } else {
-        boardPositionWithMove.blackKnight = binaryMask64(
-          toPositionAsNumber,
-          'all_zeroes_with_position_as_one'
-        );
-      }
-
-      const allFriendlyOccupiedPositions = evaluateAsWhite
-        ? allWhitePositions(boardPositionWithMove)
-        : allBlackPositions(boardPositionWithMove);
-      const allKnightMoves = AllKnightMoves(
-        boardPositionWithMove,
-        allFriendlyOccupiedPositions,
-        evaluateAsWhite
-      );
-
-      const pieceMovedBoard =
-        allKnightMoves &
-        (evaluateAsWhite ? boardPositions.whiteKnight : boardPositions.blackKnight);
-
-      const pieceMovedPosition = findBitPosition(pieceMovedBoard) || 0;
-
-      // console.log(
-      //   `knight with move applied ${bigIntToBinaryString(boardPositionWithMove.whiteKnight)}`
-      // );
-      // console.log(`to ${toFile} ${toRank}`);
-      // console.log(`position as number ${toPositionAsNumber}`);
-
-      // console.log(`all knight moves ${bigIntToBinaryString(allKnightMoves)}`);
-      // console.log(`knight positions ${bigIntToBinaryString(boardPositions.whiteKnight)}`);
-      // console.log(`piece moved board ${bigIntToBinaryString(pieceMovedBoard)}`);
-
-      // console.log(`moved position ${pieceMovedPosition}`);
-      const fromFileAndRankKnight = getFileAndRank(pieceMovedPosition);
-
-      return {
-        PieceMoved: evaluateAsWhite ? 'whiteKnight' : 'blackKnight',
-        PieceTaken: null,
-        FileFrom: fromFileAndRankKnight.file + '',
-        FileTo: toFile,
-        CastleRookFrom: '',
-        CastleRookTo: '',
-        RankFrom: fromFileAndRankKnight.rank,
-        RankTo: parseInt(toRank),
-        isLegal: true,
-      };
+  if (
+    parsedSAN.disambiguationFile + '' === '' ||
+    parsedSAN.disambiguationRank === undefined ||
+    parsedSAN.disambiguationRank === 0
+  ) {
+    //figure out where it moved from
+    //look at all moves for that piece in the current board state
+    //match the one that moves to the same place this move does
+    //return the starting position
   }
 
-  return null;
+  const toPositionAsNumber = getBitBoardPosition(toFile, toRank);
+  const fromPositionAsNumber = getBitBoardPosition(
+    parsedSAN.disambiguationFile + '',
+    parsedSAN.disambiguationRank ? parsedSAN.disambiguationRank : 0
+  );
+  // toPositionAsNumber = getBitBoardPosition(toFile, toRank);
+  // let fromPosition = evaluateAsWhite ? toPositionAsNumber - 8 : toPositionAsNumber + 8;
+  let pieceMoved = occupiedBy(boardPositions, fromPositionAsNumber);
+
+  // if (pieceMoved === null) {
+  //   fromPosition = evaluateAsWhite ? toPositionAsNumber - 16 : toPositionAsNumber + 16;
+  //   pieceMoved = occupiedBy(boardPositions, fromPosition);
+  // }
+
+  // const fromFileAndRank = getFileAndRank(fromPosition);
+
+  let moveResponse = movePiece(
+    boardPositions,
+    pieceMoved,
+    parsedSAN.disambiguationRank ? parsedSAN.disambiguationRank : 0,
+    parsedSAN.disambiguationFile + '',
+    toRank,
+    toFile,
+    gameStatus
+  );
+
+  return moveResponse.MoveAttempted;
 }
 
 export function parseMovesAndResult(pgnToParse: string): PgnMovesAndResult {

@@ -3524,9 +3524,10 @@ function pgnInit(event, site, date, round, white, black, result) {
 `;
   return sevenTagRoster;
 }
-function pgnMoveToBoardMove(pgnMove, boardPositions, evaluateAsWhite) {
+function pgnMoveToBoardMove(pgnMove, boardPositions, gameStatus) {
   const parsedSAN = parseSan(pgnMove);
-  if (parseSan === null) {
+  console.log(`parsed san: ${JSON.stringify(parsedSAN)}`);
+  if (parsedSAN === null) {
     return {
       PieceMoved: null,
       PieceTaken: null,
@@ -3540,69 +3541,27 @@ function pgnMoveToBoardMove(pgnMove, boardPositions, evaluateAsWhite) {
     };
   }
   let toFile = "";
-  let toRank = "";
-  let toPositionAsNumber = 0;
-  switch (parsedSAN?.piece) {
-    case "P":
-      toFile = pgnMove.substring(0, 1);
-      toRank = pgnMove.substring(1, 2);
-      toPositionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
-      let fromPosition = evaluateAsWhite ? toPositionAsNumber - 8 : toPositionAsNumber + 8;
-      let pieceMoved = occupiedBy(boardPositions, fromPosition);
-      if (pieceMoved === null) {
-        fromPosition = evaluateAsWhite ? toPositionAsNumber - 16 : toPositionAsNumber + 16;
-        pieceMoved = occupiedBy(boardPositions, fromPosition);
-      }
-      const fromFileAndRank = getFileAndRank(fromPosition);
-      return {
-        PieceMoved: pieceMoved,
-        PieceTaken: null,
-        FileFrom: fromFileAndRank.file + "",
-        FileTo: toFile,
-        CastleRookFrom: "",
-        CastleRookTo: "",
-        RankFrom: fromFileAndRank.rank,
-        RankTo: parseInt(toRank),
-        isLegal: true
-      };
-    case "N":
-      toFile = pgnMove.substring(1, 2);
-      toRank = pgnMove.substring(2, 3);
-      toPositionAsNumber = getBitBoardPosition(toFile, parseInt(toRank));
-      const boardPositionWithMove = structuredClone(boardPositions);
-      if (evaluateAsWhite) {
-        boardPositionWithMove.whiteKnight = binaryMask64(
-          toPositionAsNumber,
-          "all_zeroes_with_position_as_one"
-        );
-      } else {
-        boardPositionWithMove.blackKnight = binaryMask64(
-          toPositionAsNumber,
-          "all_zeroes_with_position_as_one"
-        );
-      }
-      const allFriendlyOccupiedPositions = evaluateAsWhite ? allWhitePositions(boardPositionWithMove) : allBlackPositions(boardPositionWithMove);
-      const allKnightMoves = AllKnightMoves(
-        boardPositionWithMove,
-        allFriendlyOccupiedPositions,
-        evaluateAsWhite
-      );
-      const pieceMovedBoard = allKnightMoves & (evaluateAsWhite ? boardPositions.whiteKnight : boardPositions.blackKnight);
-      const pieceMovedPosition = findBitPosition(pieceMovedBoard) || 0;
-      const fromFileAndRankKnight = getFileAndRank(pieceMovedPosition);
-      return {
-        PieceMoved: evaluateAsWhite ? "whiteKnight" : "blackKnight",
-        PieceTaken: null,
-        FileFrom: fromFileAndRankKnight.file + "",
-        FileTo: toFile,
-        CastleRookFrom: "",
-        CastleRookTo: "",
-        RankFrom: fromFileAndRankKnight.rank,
-        RankTo: parseInt(toRank),
-        isLegal: true
-      };
+  let toRank = 0;
+  toFile = parsedSAN.targetFile;
+  toRank = parsedSAN.targetRank;
+  if (parsedSAN.disambiguationFile + "" === "" || parsedSAN.disambiguationRank === void 0 || parsedSAN.disambiguationRank === 0) {
   }
-  return null;
+  const toPositionAsNumber = getBitBoardPosition(toFile, toRank);
+  const fromPositionAsNumber = getBitBoardPosition(
+    parsedSAN.disambiguationFile + "",
+    parsedSAN.disambiguationRank ? parsedSAN.disambiguationRank : 0
+  );
+  let pieceMoved = occupiedBy(boardPositions, fromPositionAsNumber);
+  let moveResponse = movePiece(
+    boardPositions,
+    pieceMoved,
+    parsedSAN.disambiguationRank ? parsedSAN.disambiguationRank : 0,
+    parsedSAN.disambiguationFile + "",
+    toRank,
+    toFile,
+    gameStatus
+  );
+  return moveResponse.MoveAttempted;
 }
 function parseMovesAndResult(pgnToParse) {
   let movesArray = [];

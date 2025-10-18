@@ -8,6 +8,7 @@ import {
   pgnMoveToBoardMove,
   cleanPGN,
   StartingBoard,
+  StartingNode,
 } from '@karmacarrot/minotaur-chess-engine';
 import { getFileMock } from '../testHelper';
 describe('pgnInit', () => {
@@ -106,8 +107,10 @@ describe('cleanPGN', () => {
 
 describe('pgnMoveToBoardMove', () => {
   it('creates a boardMove from a PGN formatted pawn move for white double move', () => {
-    const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('a4', startBoard, true);
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const result = pgnMoveToBoardMove('a4', startBoard, gameState);
     expect(result).toEqual({
       PieceMoved: 'whitePawn',
       PieceTaken: null,
@@ -121,8 +124,10 @@ describe('pgnMoveToBoardMove', () => {
     });
   });
   it('creates a boardMove from a PGN formatted pawn move for white single move', () => {
-    const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('a3', startBoard, true);
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const result = pgnMoveToBoardMove('a3', startBoard, gameState);
     expect(result).toEqual({
       PieceMoved: 'whitePawn',
       PieceTaken: null,
@@ -136,8 +141,10 @@ describe('pgnMoveToBoardMove', () => {
     });
   });
   it('creates a boardMove from a PGN formatted pawn move for black double move', () => {
-    const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('b5', startBoard, false);
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const result = pgnMoveToBoardMove('b5', startBoard, gameState);
     expect(result).toEqual({
       PieceMoved: 'blackPawn',
       PieceTaken: null,
@@ -151,8 +158,10 @@ describe('pgnMoveToBoardMove', () => {
     });
   });
   it('creates a boardMove from a PGN formatted pawn move for black single move', () => {
-    const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('c6', startBoard, false);
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const result = pgnMoveToBoardMove('c6', startBoard, gameState);
     expect(result).toEqual({
       PieceMoved: 'blackPawn',
       PieceTaken: null,
@@ -167,8 +176,10 @@ describe('pgnMoveToBoardMove', () => {
   });
 
   it('parses a legal white knight move from the start (Nf3)', () => {
-    const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('Nf3', startBoard, true);
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const result = pgnMoveToBoardMove('Nf3', startBoard, gameState);
     expect(result).toEqual({
       PieceMoved: 'whiteKnight',
       PieceTaken: null,
@@ -183,8 +194,10 @@ describe('pgnMoveToBoardMove', () => {
   });
 
   it('parses a legal black knight move from the start (Nc6)', () => {
-    const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('Nc6', startBoard, false);
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const result = pgnMoveToBoardMove('Nc6', startBoard, gameState);
     expect(result).toEqual(
       expect.objectContaining({
         FileFrom: 'b',
@@ -197,8 +210,10 @@ describe('pgnMoveToBoardMove', () => {
   });
 
   it('rejects an illegal pawn capture when no piece exists on the target square (exd5 from start)', () => {
-    const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('exd5', startBoard, true);
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const result = pgnMoveToBoardMove('exd3', startBoard, gameState);
     expect(result).toEqual(
       expect.objectContaining({
         isLegal: false,
@@ -267,8 +282,10 @@ describe('pgnMoveToBoardMove', () => {
   // });
 
   it('rejects malformed SAN or unsupported suffix (e4!!)', () => {
-    const startBoard = StartingBoard;
-    const result = pgnMoveToBoardMove('e4!!', startBoard, true);
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const result = pgnMoveToBoardMove('e4!!', startBoard, gameState);
     expect(result).toEqual(
       expect.objectContaining({
         isLegal: false,

@@ -271,6 +271,14 @@ describe('movePiece', () => {
     expect(updateResponse.CastleShortLost).toBe(true);
     expect(updateResponse.CastleLongLost).toBe(false);
   });
+
+  it('should know a pawn capture move into an empty square is illegal', () => {
+    const startNode = StartingNode();
+    const startBoard = startNode.boardState;
+    const gameState = startNode.gameState;
+    const updateResponse = movePiece(startBoard, 'whitePawn', 2, 'e', 3, 'd', gameState);
+    expect(updateResponse.MoveAttempted.isLegal).toBe(false);
+  });
 });
 
 describe('handleCastleMove', () => {

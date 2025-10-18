@@ -623,7 +623,7 @@ declare class MinotaurEngineController {
 
 declare const cleanPGN: (pgnToClean: string) => string;
 declare function pgnInit(event: string, site: string, date: Date, round: string, white: string, black: string, result: string): string;
-declare function pgnMoveToBoardMove(pgnMove: string, boardPositions: BitBoard, evaluateAsWhite: boolean): BoardMove | null;
+declare function pgnMoveToBoardMove(pgnMove: string, boardPositions: BitBoard, gameStatus: GameStatus): BoardMove | null;
 declare function parseMovesAndResult(pgnToParse: string): PgnMovesAndResult;
 declare function pgnToGameNode(pgnToParse: string): GameNode;
 declare function addMoveToPGN(currentPGN: string, move: BoardMove, moveNumber: number): string;
